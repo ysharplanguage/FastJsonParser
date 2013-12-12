@@ -19,6 +19,10 @@ Although it is promisingly fast, please note this parser/deserializer is still m
 
 Still, feel free to fork/bugfix/augment/improve at your own will.
 
+I do think there is still room for raw performance improvement. In fact, I am not quite done experimenting my ideas in that respect, and will try to continue doing so on this repository.
+
+Of course, I welcome your informed input and feedback.
+
 Please read the [LICENSE](https://github.com/ysharplanguage/FastJsonParser/blob/master/LICENSE.md).
 
 Public interface
