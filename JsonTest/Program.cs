@@ -42,22 +42,22 @@ namespace Test
 			(.NET 4.0 target, on Ideapad w/ Intel Core i5 CPU @ 2.50GHz, 6GB RAM, running Win7 64bit)
 
 			"Loop" Test of tiny JSON (deserializing x times the JSON contained in the tiny.json.txt file = 91 bytes):
-			10,000 iterations: in ~ 75 milliseconds vs. JSON.NET 5.0 r8 in ~ 250 milliseconds
-			100,000 iterations: in ~ 650 milliseconds vs. JSON.NET 5.0 r8 in ~ 900 milliseconds
-			1,000,000 iterations: in ~ 6.4 seconds vs. JSON.NET 5.0 r8 in ~ 8.3 seconds
+			10,000 iterations: in ~ 65 milliseconds vs. JSON.NET 5.0 r8 in ~ 250 milliseconds vs. ServiceStack in ~ 125 milliseconds
+			100,000 iterations: in ~ 600 milliseconds vs. JSON.NET 5.0 r8 in ~ 900 milliseconds vs. ServiceStack in ~ 650 milliseconds
+			1,000,000 iterations: in ~ 5.9 seconds vs. JSON.NET 5.0 r8 in ~ 8.3 seconds vs. ServiceStack in ~ 6.1 seconds
 
-			"Loop" Test of small JSON (deserializing x times the JSON contained in the small.json.txt file ~ 3.5 kb):
-			10,000 iterations: in ~ 1.2 second vs. JSON.NET 5.0 r8 in ~ 2.2 seconds
-			100,000 iterations: in ~ 12.4 seconds vs. JSON.NET 5.0 r8... OutOfMemoryException
+			"Loop" Test of small JSON (deserializing x times the JSON contained in the small.json.txt file ~ 3.5 KB):
+			10,000 iterations: in ~ 1.2 second vs. JSON.NET 5.0 r8 in ~ 2.2 seconds vs. ServiceStack... N/A
+			100,000 iterations: in ~ 12.4 seconds vs. JSON.NET 5.0 r8... OutOfMemoryException vs. ServiceStack... N/A
 
 			Note: fathers.json.txt was generated using:
 			http://experiments.mennovanslooten.nl/2010/mockjson/tryit.html
 
-			"Fathers" Test (12 mb JSON file):
-			Parsed in ~ 290 milliseconds vs. JSON.NET 5.0 r8 in ~ 510 milliseconds
+			"Fathers" Test (12 MB JSON file):
+			Parsed in ~ 275 milliseconds vs. JSON.NET 5.0 r8 in ~ 500 milliseconds vs. ServiceStack in ~ 575 milliseconds
 
-			"Huge" Test (180 mb JSON file):
-			Parsed in ~ 9.75 seconds vs. JSON.NET 5.0 r8... OutOfMemoryException
+			"Huge" Test (180 MB JSON file):
+			Parsed in ~ 9.75 seconds vs. JSON.NET 5.0 r8... OutOfMemoryException vs. ServiceStack... N/A
 		 */
 
 		static void LoopTest(string parserName, Func<string, object> parseFunc, string testFile, int count)
@@ -216,7 +216,7 @@ namespace Test
 
 			Test(typeof(JavaScriptSerializer).FullName, msJss.DeserializeObject, HUGE_TEST_FILE_PATH);
 			Test("JSON.NET 5.0 r8", JsonConvert.DeserializeObject, HUGE_TEST_FILE_PATH);//(JSON.NET: OutOfMemoryException)
-			Test("ServiceStack", new JsonSerializer<object>().DeserializeFromString, HUGE_TEST_FILE_PATH);
+			//Test("ServiceStack", new JsonSerializer<object>().DeserializeFromString, HUGE_TEST_FILE_PATH);
 			Test(typeof(JsonParser).FullName, new JsonParser().Parse<object>, HUGE_TEST_FILE_PATH);
 
 			StreamTest();
