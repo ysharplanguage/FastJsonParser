@@ -107,7 +107,7 @@ namespace Test
             System.Diagnostics.Debug.Assert(n == count);
 
             Console.WriteLine();
-            Console.WriteLine("... Done, in {0} ms. Throughput: {1} characters / seconds.", tm.ToString("0,0"), (1000 * (decimal)(count * json.Length) / (tm > 0 ? tm : 1)).ToString("0,0.00"));
+            Console.WriteLine("... Done, in {0} ms. Throughput: {1} characters / second.", tm.ToString("0,0"), (1000 * (decimal)(count * json.Length) / (tm > 0 ? tm : 1)).ToString("0,0.00"));
             Console.WriteLine();
             Console.WriteLine("\tMemory used : {0}", ((decimal)finalMemory).ToString("0,0"));
             Console.WriteLine();
@@ -143,7 +143,7 @@ namespace Test
             var consumption = finalMemory - initialMemory;
 
             Console.WriteLine();
-            Console.WriteLine("... Done, in {0} ms. Throughput: {1} characters / seconds.", tm.ToString("0,0"), (1000 * (decimal)json.Length / (tm > 0 ? tm : 1)).ToString("0,0.00"));
+            Console.WriteLine("... Done, in {0} ms. Throughput: {1} characters / second.", tm.ToString("0,0"), (1000 * (decimal)json.Length / (tm > 0 ? tm : 1)).ToString("0,0.00"));
             Console.WriteLine();
             Console.WriteLine("\tMemory used : {0}", ((decimal)finalMemory).ToString("0,0"));
             Console.WriteLine();
