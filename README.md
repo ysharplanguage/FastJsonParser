@@ -10,7 +10,7 @@ Goal
 
 This aims at parsing textual JSON data, and to deserialize it into our (strongly typed) POCOs, as fast as possible.
 
-The only tier of interest for this parser is the server tier. There are other .NET librairies with good performances, and already well tested/supported, including for mobile devices running .NET (JSON.NET and ServiceStack come to mind).
+The only tier of interest for this parser is the server tier. There are other JSON librairies with good performances, and already well tested/documented, which support mobile devices running .NET (JSON.NET and ServiceStack come to mind).
 
 Dev status warning
 ------------------
