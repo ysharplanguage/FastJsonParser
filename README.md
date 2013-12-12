@@ -7,7 +7,7 @@ The complete source code (Visual Studio 2010 solution), tests, and test data, ar
 
 Dev status warning
 ------------------
-Although promisingly fast, please note this parser/deserializer is still much experimental. I do *not* recommend it for any production use, at this stage. For one thing, it's in need of more extensive JSON conformance tests.
+Although it is promisingly fast, please note this parser/deserializer is still much experimental, also. I do *not* recommend it for any production use, at this stage. For one thing, it's in need of more extensive JSON conformance tests.
 
 Still, feel free to fork/bugfix/augment/improve at your own will.
 
