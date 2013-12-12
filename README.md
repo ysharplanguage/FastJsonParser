@@ -1,5 +1,5 @@
-System.Text.JsonParser
-======================
+System.Text.Json
+================
 
 A minimalistic, and pretty fast JSON parser.
 
