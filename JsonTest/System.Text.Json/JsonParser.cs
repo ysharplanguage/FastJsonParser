@@ -32,7 +32,7 @@ Inquiries : ysharp {dot} design {at} gmail {dot} com
  */
 
 // On GitHub:
-// https://github.com/ysharplanguage/JSONParser
+// https://github.com/ysharplanguage/FastJsonParser
 
 using System;
 using System.Collections;
