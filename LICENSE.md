@@ -1,8 +1,7 @@
-/*
- * Copyright (c) 2013 Cyril Jandia
- *
- * http://www.cjandia.com/
- *
+Copyright (c) 2013 Cyril Jandia
+
+http://www.cjandia.com/
+
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
 ``Software''), to deal in the Software without restriction, including
@@ -28,5 +27,3 @@ other dealings in this Software without prior written authorization
 from Cyril Jandia.
 
 Inquiries : ysharp {dot} design {at} gmail {dot} com
- *
- */
