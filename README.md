@@ -15,9 +15,11 @@ The only tier of interest for this parser is the server tier. There are other JS
 Early development status warning
 --------------------------------
 
-Although it is promisingly fast, please note this parser/deserializer is still experimental, also. I do *not* recommend it for any production use, at this stage. For one thing, it's in need of more extensive JSON conformance tests.
+Although it is promisingly fast, please note this parser/deserializer is still experimental, also.
 
-Still, feel free to fork/bugfix/augment/improve at your own will.
+I do *not* recommend it for any use in production, at this stage. This may evolve soon, but for one thing to begin with, it's in need of more extensive JSON conformance tests.
+
+That being said, feel free to fork/bugfix/augment/improve it at your own will.
 
 I do think there is still room for raw performance improvement. In fact, I am not quite done experimenting with my ideas in that respect, and will try to continue doing so on this repository.
 
