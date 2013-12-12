@@ -71,7 +71,7 @@ None worth of the name for now, but the only thing I'm kind of craving and would
 Effort
 ------
 
-(For the curious.) I've worked on this thing for about two months now, only in my (rare) week-end spare time.
+(For the curious.) I've worked on this thing for about two months now, although only in my (rare) week-end spare time.
 
 Questions?
 ----------
