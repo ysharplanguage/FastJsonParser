@@ -66,12 +66,7 @@ https://github.com/zeMirco/sf-city-lots-json
 Roadmap
 -------
 
-None worth of the name for now, but the only thing I'm kind of craving and would like to support soon, is the ability to deserialize to anonymous types. I've done it before, it's just I need to think a bit more about it before adding it (vs. my first attempt), in order to avoid the potential significant loss in performances I'm aware of.
-
-Effort
-------
-
-(For the curious.) I've worked on this thing for about two months now, although only in my (rare) week-end spare time.
+None worth of the name for now. Yet, one thing I'm craving (so to speak) to support as soon as possible, is the ability to deserialize into anonymous types. I've done it before, but I need more thinking about it (vs. my first attempt), in order to avoid the potential significant loss in performances I'm aware of.
 
 Questions?
 ----------
