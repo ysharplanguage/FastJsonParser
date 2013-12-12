@@ -79,7 +79,7 @@ Roadmap
 
 None worth of the name for now. Yet, one thing I'm craving (so to speak) to support as soon as possible, is the ability to deserialize into anonymous types. I've done it before, but I need more thinking about it (vs. my first attempt), in order to avoid the potential significant loss in performances I'm aware of.
 
-Another, quite obvious, item on the wish list is to provide some support for custom deserialization. Design-wise, I do have a preference for a [functional approach](http://en.wikipedia.org/wiki/First-class_function#Language_support) which would be based on (more or less) arbitrary "reviver" [delegate types](http://en.wikipedia.org/wiki/Delegate_(CLI)#Technical_Implementation_Details), for use by the parser's methods. Again, the main implementation challenge will be not drifting too much from the current speed performance ballpark.
+Another, quite obvious, item on the wish list is to provide some support for custom deserialization. Design-wise, I do have a preference for a [functional approach](http://en.wikipedia.org/wiki/First-class_function#Language_support) which would be based on (more or less) arbitrary "reviver" [delegate types](http://en.wikipedia.org/wiki/Delegate_%28CLI%29#Technical_Implementation_Details), for use by the parser's methods. Again, the main implementation challenge will be not drifting too much from the current speed performance ballpark.
 
 Questions?
 ----------
