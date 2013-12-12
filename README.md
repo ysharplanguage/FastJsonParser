@@ -13,6 +13,19 @@ Still, feel free to fork/bugfix/augment/improve at your own will.
 
 Please read the [LICENSE](https://github.com/ysharplanguage/FastJsonParser/blob/master/LICENSE.md).
 
+Public interface
+----------------
+
+Consists in two generic *instance* methods:
+
+    T Parse<T>(string input)
+
+and
+
+    T Parse<T>(System.IO.Stream input)
+    
+(being able to parse JSON text coming from a stream is a must-have, IMO; similar support for StreamReader should be easy to add along the same line; coming soon hopefully)
+
 Performances
 ------------
 
