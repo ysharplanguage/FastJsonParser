@@ -8,9 +8,9 @@ The complete source code (Visual Studio 2010 solution), tests, and test data, ar
 Goal
 ----
 
-This aims at parsing textual JSON data, and to deserialize it into our (strongly typed) POCOs, as fast as possible.
+This aims at parsing textual JSON data, and to deserialize it into our (strongly typed) [POCO](http://en.wikipedia.org/wiki/Plain_Old_CLR_Object)s, as fast as possible.
 
-The only tier of interest for this parser is the server tier. There are other JSON librairies with good performances, and already well tested/documented, which support mobile devices running .NET (JSON.NET and ServiceStack come to mind).
+The only tier of interest for this parser is the server tier. There are other JSON librairies with good performances, and already well tested/documented, which support mobile devices running .NET ([JSON.NET](http://james.newtonking.com/json) and [ServiceStack](https://servicestack.net/) come to mind).
 
 Dev status warning
 ------------------
@@ -36,7 +36,7 @@ and
 
     T Parse<T>(System.IO.Stream input)
     
-(being able to parse JSON text coming from a stream is a must-have, IMO - "have mercy of your CLR's large object heap", if you see what I mean... - thus, similar support for StreamReader should be easy to add along the same lines; coming soon hopefully)
+(being able to parse JSON text coming from a stream is a must-have, IMO - "have mercy of your CLR's large object heap", [if you see what I mean...](http://msdn.microsoft.com/en-us/magazine/cc534993.aspx) - thus, similar support for StreamReader should be easy to add along the same lines; coming soon hopefully)
 
 Performances
 ------------
@@ -79,7 +79,7 @@ Roadmap
 
 None worth of the name for now. Yet, one thing I'm craving (so to speak) to support as soon as possible, is the ability to deserialize into anonymous types. I've done it before, but I need more thinking about it (vs. my first attempt), in order to avoid the potential significant loss in performances I'm aware of.
 
-Another, quite obvious, item on the wish list is to provide some support for custom deserialization. Design-wise, I do have a preference for a functional approach based on (more or less) arbitrary "reviver" delegate types, for use by the parser's methods. Again, the main implementation challenge will be not drifting too much from the current speed performance ballpark.
+Another, quite obvious, item on the wish list is to provide some support for custom deserialization. Design-wise, I do have a preference for a [functional approach](http://en.wikipedia.org/wiki/First-class_function#Language_support) which would be based on (more or less) arbitrary "reviver" [delegate types](http://en.wikipedia.org/wiki/Delegate_(CLI)#Technical_Implementation_Details), for use by the parser's methods. Again, the main implementation challenge will be not drifting too much from the current speed performance ballpark.
 
 Questions?
 ----------
