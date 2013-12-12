@@ -12,10 +12,10 @@ This aims at parsing textual JSON data, and to deserialize it into our (strongly
 
 The only tier of interest for this parser is the server tier. There are other JSON librairies with good performances, and already well tested/documented, which support mobile devices running .NET ([JSON.NET](http://james.newtonking.com/json) and [ServiceStack](https://servicestack.net/) come to mind).
 
-Dev status warning
-------------------
+Early development status warning
+--------------------------------
 
-Although it is promisingly fast, please note this parser/deserializer is still much experimental, also. I do *not* recommend it for any production use, at this stage. For one thing, it's in need of more extensive JSON conformance tests.
+Although it is promisingly fast, please note this parser/deserializer is still experimental, also. I do *not* recommend it for any production use, at this stage. For one thing, it's in need of more extensive JSON conformance tests.
 
 Still, feel free to fork/bugfix/augment/improve at your own will.
 
