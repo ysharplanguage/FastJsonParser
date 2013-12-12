@@ -30,3 +30,6 @@ Here are some figures, from the tests that are provided (note: YMMV)
 * "Huge" Test (180 MB JSON file):
     * Parsed in ~ 9.75 seconds vs. JSON.NET 5.0 r8... OutOfMemoryException vs. ServiceStack... N/A
 
+As for huge.json.txt, it is just a copy of this file:
+
+https://github.com/zeMirco/sf-city-lots-json
