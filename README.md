@@ -43,7 +43,7 @@ and
 Performances
 ------------
 
-Here are some figures, from the tests that are provided here (note: such figures are always much dependent on the test data/the way testing is performed; YMMV, so it's always a good idea to make your own benchmarks, using *your* test data with the "shape" you're interested in)...
+Here are some figures, from the tests that are provided here (note: such figures are always much dependent on the test data/the way testing is performed; YMMV, so it's always a good idea to make your own benchmarks, using *your* test data with the "shape" you're interested in, and that you expect to see with a good probability in your domain)...
 
 (.NET 4.0 target, on an Ideapad w/ Intel Core i5 CPU @ 2.50GHz, 6GB RAM, running Win7 64bit, 98% idle CPU)
 
