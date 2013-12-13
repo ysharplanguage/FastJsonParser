@@ -10,7 +10,7 @@ Goal
 
 This aims at parsing textual JSON data, and to deserialize it into our (strongly typed) [POCO](http://en.wikipedia.org/wiki/Plain_Old_CLR_Object)s, as fast as possible.
 
-The only tiers of interest for this parser are the desktop/server tiers. There are other JSON librairies with good performances, and already well tested/documented, which support mobile devices running a more limited .NET flavors ([JSON.NET](http://james.newtonking.com/json) and [ServiceStack](https://servicestack.net/) come to mind).
+The only tiers of interest for this parser are the desktop/server tiers. There are other JSON librairies with good performances, and already well tested/documented, which support mobile devices running more limited flavors of .NET ([JSON.NET](http://james.newtonking.com/json) and [ServiceStack](https://servicestack.net/) come to mind).
 
 Early development status warning
 --------------------------------
