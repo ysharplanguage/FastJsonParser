@@ -48,28 +48,28 @@ Here are some figures, from the tests that are provided here. Note such figures 
 (.NET 4.0 target, on a humble Ideapad Intel Core i5 CPU @ 2.50GHz, 6 GB RAM, running Win7 64bit, 98% idle CPU)
 
 * "Loop" Test of tiny JSON (deserializing x times the JSON contained in the tiny.json.txt file = 126 bytes):
-    * 10,000 iterations: in ~ 65 milliseconds vs. JSON.NET 5.0 r8 in ~ 250 milliseconds vs. ServiceStack in ~ 125 milliseconds
+    * 10,000 iterations: in ~ 65 milliseconds vs. JSON.NET **v5.0 r8** in ~ 250 milliseconds vs. ServiceStack **v3.9.59** in ~ 125 milliseconds
         * Yields System.Text.Json.JsonParser's throughput : 20,322,580 bytes / second
-    * 100,000 iterations: in ~ 600 milliseconds vs. JSON.NET 5.0 r8 in ~ 900 milliseconds vs. ServiceStack in ~ 650 milliseconds
+    * 100,000 iterations: in ~ 600 milliseconds vs. JSON.NET in ~ 900 milliseconds vs. ServiceStack in ~ 650 milliseconds
         * Yields System.Text.Json.JsonParser's throughput : 21,428,571 bytes / second
-    * 1,000,000 iterations: in ~ 5.9 seconds vs. JSON.NET 5.0 r8 in ~ 8.3 seconds vs. ServiceStack in ~ 6.1 seconds
+    * 1,000,000 iterations: in ~ 5.9 seconds vs. JSON.NET in ~ 8.3 seconds vs. ServiceStack in ~ 6.1 seconds
         * Yields System.Text.Json.JsonParser's throughput : 21,265,822 bytes / second
 
 * "Loop" Test of small JSON (deserializing x times the JSON contained in the small.json.txt file ~ 3.5 KB):
-    * 10,000 iterations: in ~ 1.2 second vs. JSON.NET 5.0 r8 in ~ 2.2 seconds vs. ServiceStack... N/A
+    * 10,000 iterations: in ~ 1.2 second vs. JSON.NET in ~ 2.2 seconds vs. ServiceStack... N/A
         * Yields System.Text.Json.JsonParser's throughput : 27,657,587 bytes / second
-    * 100,000 iterations: in ~ 12.4 seconds vs. JSON.NET 5.0 r8... OutOfMemoryException vs. ServiceStack... N/A
+    * 100,000 iterations: in ~ 12.4 seconds vs. JSON.NET... OutOfMemoryException vs. ServiceStack... N/A
         * Yields System.Text.Json.JsonParser's throughput : 28,028,391 bytes / second
 
 * Note: fathers.json.txt was generated using:
     * http://experiments.mennovanslooten.nl/2010/mockjson/tryit.html
 
 * "Fathers" Test (12 MB JSON file):
-    * Parsed in ~ 275 milliseconds vs. JSON.NET 5.0 r8 in ~ 500 milliseconds vs. ServiceStack in ~ 575 milliseconds
+    * Parsed in ~ 275 milliseconds vs. JSON.NET in ~ 500 milliseconds vs. ServiceStack in ~ 575 milliseconds
         * Yields System.Text.Json.JsonParser's throughput : 45,335,269 bytes / second
 
 * "Huge" Test (180 MB JSON file):
-    * Parsed in ~ 9.75 seconds vs. JSON.NET 5.0 r8... OutOfMemoryException vs. ServiceStack... N/A
+    * Parsed in ~ 9.75 seconds vs. JSON.NET... OutOfMemoryException vs. ServiceStack... N/A
         * Yields System.Text.Json.JsonParser's throughput : 19,899,152 bytes / second
 
 As for huge.json.txt, it is just a copy of this file:
