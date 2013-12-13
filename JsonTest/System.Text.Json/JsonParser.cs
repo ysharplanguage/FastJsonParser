@@ -69,7 +69,7 @@ namespace System.Text.Json
         private Action<int> Next;
         private Func<int> Read;
         private Func<int> Space;
-        private char[] txt;
+        private string txt;
         private int len;
         private int lln;
         private int chr;
@@ -413,8 +413,10 @@ namespace System.Text.Json
         private object Str(int outer)
         {
             var a = ((outer < OBJECT) ? types[-outer].Props : null);
-            int n = ((a != null) ? a.Length : 0), c = 0, i = 0, cc = 0, nc = 0;
-            PropInfo p = null; string s = null; var ec = false; var ch = chr;
+            int n = ((a != null) ? a.Length : 0), c = 0, i = 0, nc = 0;
+            PropInfo p = null; bool k = (n > 0), ec = false;
+            string s = null;
+            var ch = chr;
             if (ch == '"')
             {
                 Read();
@@ -438,13 +440,11 @@ namespace System.Text.Json
                             break;
                     }
                     if (ch < EOF) { if (!ec || (ch >= 128)) Char(nc = ch); else { nc = Esc(ch); ec = false; } } else break;
-                    if (i < n)
+                    if (k)
                     {
                         while ((i < n) && ((c >= (s = (p = a[i]).Name).Length) || (s[c] != nc))) i++;
-                        if ((i >= n) && ((c == 0) || (s[c - 1] != cc))) i = n;
                         c++;
                     }
-                    cc = nc;
                 }
             }
             throw Error((outer > OBJECT) ? "Bad literal" : "Bad key");
@@ -598,8 +598,7 @@ namespace System.Text.Json
         private T DoParse<T>(string input)
         {
             len = input.Length;
-            txt = new char[len];
-            input.CopyTo(0, txt, 0, len);
+            txt = input;
             Reset(StringRead, StringNext, StringChar, StringSpace);
             return (T)Val(Entry(typeof(T)));
         }
