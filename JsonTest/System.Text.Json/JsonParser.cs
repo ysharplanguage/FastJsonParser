@@ -393,7 +393,7 @@ namespace System.Text.Json
                 if ((ch == '-') || (ch == '+')) ch = Char(ch);
                 while ((ch >= '0') && (ch <= '9')) ch = Char(ch);
             }
-            if (it != 0) { n *= it; if ((int.MinValue <= n) && (n <= int.MaxValue)) return (int)n; else return n; }
+            if (it != 0) { n *= it; return n; }
             s = ((lsb.Length > 0) ? lsb.ToString() : new string(lbf, 0, lln));
             return ((outer > STRING) ? types[outer].Convert(s) : s);
         }
@@ -407,7 +407,7 @@ namespace System.Text.Json
         private TEnum Enum<TEnum>(int outer) where TEnum : struct
         {
             var ch = Space();
-            return ((ch == '"') ? (TEnum)System.Enum.Parse(typeof(TEnum), (string)Str(OBJECT)) : (TEnum)Num(OBJECT));
+            return ((ch == '"') ? (TEnum)System.Enum.Parse(typeof(TEnum), (string)Str(OBJECT)) : (TEnum)(object)Int32(OBJECT));
         }
 
         private object Str(int outer)
