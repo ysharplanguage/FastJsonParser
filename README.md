@@ -43,9 +43,9 @@ and
 Performances
 ------------
 
-Here are some figures, from the tests that are provided here (note: such figures are always much dependent on the test data/the way testing is performed; YMMV, so it's always a good idea to make your own benchmarks, using *your* test data in the data "shape" you're interested in, and that you expect to encounter with a good probability in your domain)...
+Here are some figures, from the tests that are provided here. Note such figures are always much dependent on the test data and the way testing is performed. YMMV, so it's always a good idea to make your own benchmarks, using *your* test data in the data "shape" you're interested in, and that you expect to encounter with a good probability in your domain...
 
-(.NET 4.0 target, on an Ideapad w/ Intel Core i5 CPU @ 2.50GHz, 6GB RAM, running Win7 64bit, 98% idle CPU)
+(.NET 4.0 target, on a humble Ideapad Intel Core i5 CPU @ 2.50GHz, 6 GB RAM, running Win7 64bit, 98% idle CPU)
 
 * "Loop" Test of tiny JSON (deserializing x times the JSON contained in the tiny.json.txt file = 126 bytes):
     * 10,000 iterations: in ~ 65 milliseconds vs. JSON.NET 5.0 r8 in ~ 250 milliseconds vs. ServiceStack in ~ 125 milliseconds
