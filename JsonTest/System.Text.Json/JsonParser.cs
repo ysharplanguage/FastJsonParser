@@ -64,7 +64,7 @@ namespace System.Text.Json
         private StringBuilder lsb = new StringBuilder();
         private char[] lbf = new char[LBS];
         private char[] stc = new char[1];
-        private System.IO.StreamReader str;
+        private System.IO.TextReader str;
         private Func<int, int> Char;
         private Action<int> Next;
         private Func<int> Read;
@@ -586,21 +586,21 @@ namespace System.Text.Json
             return Closure(outer);
         }
 
-        private T DoParse<T>(System.IO.Stream input)
-        {
-            Reset(StreamRead, StreamNext, StreamChar, StreamSpace);
-            using (str = new System.IO.StreamReader(input))
-            {
-                return (T)Val(Entry(typeof(T)));
-            }
-        }
-
         private T DoParse<T>(string input)
         {
             len = input.Length;
             txt = input;
             Reset(StringRead, StringNext, StringChar, StringSpace);
             return (T)Val(Entry(typeof(T)));
+        }
+
+        private T DoParse<T>(System.IO.TextReader input)
+        {
+            Reset(StreamRead, StreamNext, StreamChar, StreamSpace);
+            using (str = input)
+            {
+                return (T)Val(Entry(typeof(T)));
+            }
         }
 
         public JsonParser()
@@ -615,16 +615,22 @@ namespace System.Text.Json
             Entry(typeof(string), typeof(char));
         }
 
-        public T Parse<T>(System.IO.Stream input)
+        public T Parse<T>(string input)
         {
             if (input == null) throw new ArgumentNullException("input", "cannot be null");
             return DoParse<T>(input);
         }
 
-        public T Parse<T>(string input)
+        public T Parse<T>(System.IO.TextReader input)
         {
             if (input == null) throw new ArgumentNullException("input", "cannot be null");
             return DoParse<T>(input);
+        }
+
+        public T Parse<T>(System.IO.Stream input)
+        {
+            if (input == null) throw new ArgumentNullException("input", "cannot be null");
+            return DoParse<T>(new System.IO.StreamReader(input));
         }
     }
 }
