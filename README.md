@@ -64,7 +64,7 @@ instances, for JSON *arrays* which are ordered collections of values.
 
 The leaves will be from any of these types:
 
-   void, bool, string
+    void, bool, string
 
 Performances
 ------------
