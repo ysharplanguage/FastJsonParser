@@ -1,6 +1,9 @@
 System.Text.Json
 ================
 
+"Small is beautiful." (Well, yes :)
+---------------------
+
 A minimalistic, and pretty fast JSON parser/deserializer.
 
 The complete source code (with a Visual Studio 2010 solution) is pretty short, coming with a few tests, and test data, all in the "JsonTest" folder.
