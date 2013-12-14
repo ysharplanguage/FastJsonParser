@@ -261,7 +261,7 @@ namespace Test
             System.Threading.Thread.MemoryBarrier();
             var initialMemory = System.GC.GetTotalMemory(true);
 
-            var stream = new System.IO.FileStream(FATHERS_TEST_FILE_PATH, System.IO.FileMode.Open);
+            var stream = new System.IO.StreamReader(FATHERS_TEST_FILE_PATH);
             Console.WriteLine("\"Fathers\" Test... streamed (press a key)");
             Console.WriteLine();
             Console.ReadKey();
