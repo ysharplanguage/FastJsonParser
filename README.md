@@ -102,7 +102,7 @@ Note such figures (either the burning monk's, or in the below) are always much d
         * Yields System.Text.Json.JsonParser's throughput : 45,335,269 bytes / second
 
 * "Huge" Test (180 MB JSON file):
-    * Parsed in ~ 9.75 seconds vs. JSON.NET... OutOfMemoryException vs. ServiceStack... N/A
+    * Parsed in ~ 8.9 seconds vs. JSON.NET... OutOfMemoryException vs. ServiceStack... N/A
         * Yields System.Text.Json.JsonParser's throughput : 19,899,152 bytes / second
 
 As for huge.json.txt, it is just a copy of this file:
