@@ -101,7 +101,7 @@ Again, the main implementation challenge will be not drifting too much from the 
 
 Indeed, pure parsing + deserialization speed isn't in fact the *long term* goal on this end, not for any *arbitrary* JSON anyway. For another, and broader project still in design stage I have, I intend to use JSON as a malleable IR (intermediary representation) for code and meta data transformations that I will need to make happen in-between a high level source language (e.g., C#, or F#,...) and the target CIL (or, even, some other low-level target).
 
-JSON.NET's deserialization is great (and so is ServiceStack's) - really, they are - but I would like to have something of my own in my toolbox much smaller/manageable (in terms of # of SLOC of the code base) for whatever unforeseen requirements to the deserialization process (from JSON text into CLR types and values) I may have to tackle.
+JSON.NET's deserialization is great (and so is ServiceStack's) - really, they are - but I would like to have something of my own in my toolbox much smaller/manageable (in terms of # of SLOC of the code base) for whatever unforeseen requirements of the deserialization process (from JSON text into CLR types and values) I may have to tackle.
 
 Put otherwise: thru their respective feature sets, by design, both JSON.NET's and ServiceStack's make (and that's perfectly natural) a number of assumptions regarding the most frequent use cases for custom deserialization for this or that "shape" of incoming JSON, and how to easily handle these problems in a more or less generic fashion (cf. their "custom converters", and the like...)
 
