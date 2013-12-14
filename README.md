@@ -54,11 +54,11 @@ for the generic type argument, as in, e.g.:
 
 It will then deserialize the input into a tree made of
 
-   Dictionary&lt;string, object&gt;
+    Dictionary&lt;string, object&gt;
    
 instances, for JSON *objects* which are unordered sets of name/value pairs, and of
 
-   List&lt;object&gt;
+    List&lt;object&gt;
    
 instances, for JSON *arrays* which are ordered collections of values.
 
