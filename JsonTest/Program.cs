@@ -48,7 +48,7 @@ namespace Test
 
             "Loop" Test of small JSON (deserializing x times the JSON contained in the small.json.txt file ~ 3.5 KB):
             10,000 iterations: in ~ 1.2 second vs. JSON.NET 5.0 r8 in ~ 2.2 seconds vs. ServiceStack... N/A
-            100,000 iterations: in ~ 12.4 seconds vs. JSON.NET 5.0 r8... OutOfMemoryException vs. ServiceStack... N/A
+            100,000 iterations: in ~ 12.1 seconds vs. JSON.NET 5.0 r8... OutOfMemoryException vs. ServiceStack... N/A
 
             Note: fathers.json.txt was generated using:
             http://experiments.mennovanslooten.nl/2010/mockjson/tryit.html
