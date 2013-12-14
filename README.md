@@ -107,7 +107,7 @@ Put otherwise: thru their respective feature sets, by design, both JSON.NET's an
 
 My problem space is quite different: I know that most likely I will *not* need a *generic* way to solve a *specific* deserialization sub-problem very efficiently (which nobody can really do - there is "no silver bullet" / "one size fits all" for that), and instead I will most likely only need a *specific* way to solve it, by extending this small parser's functionality only where and how that's exactly needed (while trying to maintain the good performances).
 
-Also, this parser/deserializer is/was a nice learning opportunity for me to verify by myself what I had read many times before, that is, where exactly the parsing slow downs and memory consumption costs often come from.
+Also, this parser/deserializer is/was a nice learning opportunity for me to verify by myself what I had read many times before, that is, where exactly the parsing slowdowns and memory consumption costs most often come from.
 
 Other questions?
 ----------------
