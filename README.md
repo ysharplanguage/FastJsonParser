@@ -43,7 +43,14 @@ and
 Performances
 ------------
 
-Here are some figures, from the tests that are provided here. Note such figures are always much dependent on the test data and the way testing is performed. YMMV, so it's always a good idea to make your own benchmarks, using *your* test data in the data "shape" you're interested in, and that you expect to encounter with a good probability in your domain...
+In the following below: some figures, from the tests that are provided here.
+
+I obtain quite similar performance ratios for the same 3 parsers/deserializers when compared one-to-one, after I adapt and run (for this JsonParser, which doesn't provide object-to-JSON text serialization) "the burning monk's" simple speed tester for JSON, which can be found at
+:
+
+http://theburningmonk.com/2013/09/binary-and-json-serializer-benchmarks-updated/
+
+Note such figures (either the burning monk's, or in the below) are always much dependent on the test data and the way testing is performed. YMMV, so it's always a good idea to make your own benchmarks, using *your* test data in the data "shape" you're interested in, and that you expect to encounter with a good probability in your domain...
 
 (.NET 4.0 target, on a humble Ideapad Intel Core i5 CPU @ 2.50GHz, 6 GB RAM, running Win7 64bit, 98% idle CPU)
 
