@@ -3,7 +3,7 @@ System.Text.Json
 
 A minimalistic, and pretty fast JSON parser/deserializer.
 
-The complete source code (Visual Studio 2010 solution), tests, and test data, are in the "JsonTest" folder.
+The complete source code (with a Visual Studio 2010 solution) is pretty short, coming with a few tests, and test data, all in the "JsonTest" folder.
 
 Goal
 ----
