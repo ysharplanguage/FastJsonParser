@@ -44,6 +44,28 @@ and
     
 (To be able to parse JSON text coming from a reader (or stream) being a must-have, IMO - "*have mercy for your CLR's large object heap*", [if you see what I mean...](http://msdn.microsoft.com/en-us/magazine/cc534993.aspx))
 
+Note if you don't care about deserializing whatever input JSON into POCOs, you can just call these methods with
+
+    object
+
+for the generic type argument, as in, e.g.:
+
+    parser.Parse<object>(@" [ { ""greetings"": ""hello"" } ] ")
+
+It will then deserialize into a tree made of
+
+   Dictionary<string, object>
+   
+instances, for JSON *objects* which are unordered sets of name/value pairs, and of
+
+   List<object>
+   
+instances, for JSON *arrays* which are ordered collections of values.
+
+The leaves will be from any of these types:
+
+   void, bool, string
+
 Performances
 ------------
 
