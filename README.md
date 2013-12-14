@@ -94,7 +94,22 @@ Another, quite obvious, item on the wish list is to provide some support for cus
 
 Again, the main implementation challenge will be not drifting too much from the current speed performance ballpark.
 
-Questions?
-----------
+"But, why such an ad-hoc parser? Why 'speed', anyway?"
+------------------------------------------------------
+
+"... Why do you care, when you already have the excellent JSON.NET and ServiceStack around?"
+
+Indeed, parsing speed isn't in fact the very end goal on this end. For another, and broader project still in design stage I have, I intend to use JSON as a malleable IR (intermediary representation) for code and meta data transformations that I will need to make happen in-between a high level source language (e.g., C#, or F#,...) and the target CIL (or, even, some other low-level target).
+
+JSON.NET's deserialization is great (and so is ServiceStack's) - really, they are - but I would like to have something of my own in my toolbox much smaller/manageable (in terms of # of SLOC of the code base) for whatever unforeseen requirements to the deserialization process (from JSON text into CLR types and values) I may have to tackle.
+
+Put otherwise: thru their respective feature sets, by design, both JSON.NET's and ServiceStack's make (and that's perfectly natural) a number of assumptions regarding the most frequent use cases for custom deserialization for this or that "shape" of incoming JSON, and how to easily handle these problems in a more or less generic fashion (cf. their "custom converters", and the like...)
+
+My problem space is quite different: I know that most likely I will *not* need a *generic* way to solve a *specific* deserialization sub-problem very efficiently (which nobody can really do - there is "no silver bullet" / "one size fits all" for that), and instead I will most likely only need a *specific* way to solve it, by extending this small parser's functionality only where and how that's exactly needed (while trying to maintain the good performances).
+
+Also, this parser/deserializer is/was a nice learning opportunity for me to verify by myself what I had read many times before, that is, where exactly the parsing slow downs and memory consumption costs often come from.
+
+Other questions?
+----------------
 
 ysharp {dot} design {at} gmail {dot} com
