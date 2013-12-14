@@ -611,7 +611,7 @@ namespace System.Text.Json
             parse['-'] = Num; parse['"'] = Str; parse['{'] = Obj; parse['['] = Arr;
             for (var input = 0; input < 128; input++) parse[input] = (parse[input] ?? Error);
             Entry(typeof(object));
-            Entry(typeof(object[]), typeof(object));
+            Entry(typeof(List<object>), typeof(object));
             Entry(typeof(string), typeof(char));
         }
 
