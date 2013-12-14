@@ -30,15 +30,19 @@ Please read the [LICENSE](https://github.com/ysharplanguage/FastJsonParser/blob/
 Public interface
 ----------------
 
-Consists in two generic *instance* methods:
+Consists in three generic *instance* methods:
 
     T Parse<T>(string input)
 
 and
 
+    T Parse<T>(System.IO.TextReader input)
+
+and
+
     T Parse<T>(System.IO.Stream input)
     
-(being able to parse JSON text coming from a stream is a must-have, IMO - "*have mercy for your CLR's large object heap*", [if you see what I mean...](http://msdn.microsoft.com/en-us/magazine/cc534993.aspx) - thus, similar support for StreamReader should be easy to add along the same lines; coming soon hopefully)
+(To be able to parse JSON text coming from a reader (or stream) being a must-have, IMO - "*have mercy for your CLR's large object heap*", [if you see what I mean...](http://msdn.microsoft.com/en-us/magazine/cc534993.aspx))
 
 Performances
 ------------
