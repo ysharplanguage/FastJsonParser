@@ -91,7 +91,7 @@ Note such figures (either the burning monk's, or in the below) are always much d
 * "Loop" Test of small JSON (deserializing x times the JSON contained in the small.json.txt file ~ 3.5 KB):
     * 10,000 iterations: in ~ 1.2 second vs. JSON.NET in ~ 2.2 seconds vs. ServiceStack... N/A
         * Yields System.Text.Json.JsonParser's throughput : 27,657,587 bytes / second
-    * 100,000 iterations: in ~ 12.4 seconds vs. JSON.NET... OutOfMemoryException vs. ServiceStack... N/A
+    * 100,000 iterations: in ~ 12.1 seconds vs. JSON.NET... OutOfMemoryException vs. ServiceStack... N/A
         * Yields System.Text.Json.JsonParser's throughput : 28,028,391 bytes / second
 
 * Note: fathers.json.txt was generated using:
