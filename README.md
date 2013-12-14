@@ -52,13 +52,13 @@ for the generic type argument, as in, e.g.:
 
     parser.Parse<object>(@" [ { ""greetings"": ""hello"" } ] ")
 
-It will then deserialize into a tree made of
+It will then deserialize the input into a tree made of
 
-   Dictionary<string, object>
+   Dictionary&lt;string, object&gt;
    
 instances, for JSON *objects* which are unordered sets of name/value pairs, and of
 
-   List<object>
+   List&lt;object&gt;
    
 instances, for JSON *arrays* which are ordered collections of values.
 
