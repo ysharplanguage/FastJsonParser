@@ -97,9 +97,9 @@ Again, the main implementation challenge will be not drifting too much from the 
 "But, why such an ad-hoc parser? Why 'speed', anyway?"
 ------------------------------------------------------
 
-"... Why do you care, when you already have the excellent JSON.NET and ServiceStack around?"
+"... Why do you even care, when you already have the excellent, fast, feature-rich JSON.NET and ServiceStack around?"
 
-Indeed, parsing speed isn't in fact the very end goal on this end. For another, and broader project still in design stage I have, I intend to use JSON as a malleable IR (intermediary representation) for code and meta data transformations that I will need to make happen in-between a high level source language (e.g., C#, or F#,...) and the target CIL (or, even, some other low-level target).
+Indeed, pure parsing + deserialization speed isn't in fact the *long term* goal on this end, not for any *arbitrary* JSON anyway. For another, and broader project still in design stage I have, I intend to use JSON as a malleable IR (intermediary representation) for code and meta data transformations that I will need to make happen in-between a high level source language (e.g., C#, or F#,...) and the target CIL (or, even, some other low-level target).
 
 JSON.NET's deserialization is great (and so is ServiceStack's) - really, they are - but I would like to have something of my own in my toolbox much smaller/manageable (in terms of # of SLOC of the code base) for whatever unforeseen requirements to the deserialization process (from JSON text into CLR types and values) I may have to tackle.
 
