@@ -57,7 +57,7 @@ namespace Test
             Parsed in ~ 275 milliseconds vs. JSON.NET 5.0 r8 in ~ 500 milliseconds vs. ServiceStack in ~ 575 milliseconds
 
             "Huge" Test (180 MB JSON file):
-            Parsed in ~ 9.75 seconds vs. JSON.NET 5.0 r8... OutOfMemoryException vs. ServiceStack... N/A
+            Parsed in ~ 8.7 seconds vs. JSON.NET 5.0 r8... OutOfMemoryException vs. ServiceStack... N/A
          */
 
         static void LoopTest(string parserName, Func<string, object> parseFunc, string testFile, int count)
