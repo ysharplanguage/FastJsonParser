@@ -101,30 +101,46 @@ Versions used: JSON.NET **v5.0 r8** and ServiceStack **v3.9.59**
 
 So, without further ado:
 
+* Rick's "Boon" small test, slightly modified (deserializing x times the JSON contained in the [boon-small.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/boon-small.json.txt) file = 79 bytes) - with POCO target (1 class):
+    * 10,000,000 iterations: in ~ 28.1 seconds
+        * vs. Microsoft's JavaScriptSerializer in 302.3 seconds (bad omen #1)
+        * vs. JSON.NET in ~ 56.5 seconds
+        * vs. ServiceStack in ~ 40.7 seconds
+        * (Which yields System.Text.Json.JsonParser's throughput : 28,090,886 bytes / second)
+
+Rick's original test can be found at:
+
+http://rick-hightower.blogspot.com/2013/11/benchmark-for-json-parsing-boon-scores.html
+
 * "Loop" Test of tiny JSON (deserializing x times the JSON contained in the [tiny.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/tiny.json.txt) file = 126 bytes) - with POCO target (1 class):
     * 10,000 iterations: in ~ 65 milliseconds (pretty good)
+        * vs. Microsoft's JavaScriptSerializer in ~ 550 milliseconds (bad omen #2)
         * vs. JSON.NET in ~ 250 milliseconds
         * vs. ServiceStack in ~ 125 milliseconds
-        * Which yields System.Text.Json.JsonParser's throughput : 20,322,580 bytes / second
+        * (Which yields System.Text.Json.JsonParser's throughput : 20,322,580 bytes / second)
     * 100,000 iterations: in ~ 600 milliseconds (not bad)
+        * vs. Microsoft's JavaScriptSerializer in ~ 4.9 seconds (ahem!)
         * vs. JSON.NET in ~ 900 milliseconds
         * vs. ServiceStack in ~ 650 milliseconds
-        * Which yields System.Text.Json.JsonParser's throughput : 21,428,571 bytes / second
+        * (Which yields System.Text.Json.JsonParser's throughput : 21,428,571 bytes / second)
     * 1,000,000 iterations: in ~ 5.9 seconds (not bad either)
+        * vs. Microsoft's JavaScriptSerializer in 49.8 seconds (cough!)
         * vs. JSON.NET in ~ 8.3 seconds
         * vs. ServiceStack in ~ 6.1 seconds
-        * Which yields System.Text.Json.JsonParser's throughput : 21,265,822 bytes / second
+        * (Which yields System.Text.Json.JsonParser's throughput : 21,265,822 bytes / second)
     * [tiny.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/tiny.json.txt)
 
 * "Loop" Test of small JSON (deserializing x times the JSON contained in the [small.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/small.json.txt) file ~ 3.5 KB) - "loosely-typed" deserialization:
     * 10,000 iterations: in ~ 1.2 second (pretty good)
+        * vs. Microsoft's JavaScriptSerializer in ~ 6.7 seconds
         * vs. JSON.NET in ~ 2.2 seconds
         * vs. ServiceStack... N / A
-        * Which yields System.Text.Json.JsonParser's throughput : 27,657,587 bytes / second
+        * (Which yields System.Text.Json.JsonParser's throughput : 27,657,587 bytes / second)
     * 100,000 iterations: in ~ 12.1 seconds (not bad)
+        * vs. Microsoft's JavaScriptSerializer in ~ 66.5 seconds
         * vs. JSON.NET... OutOfMemoryException
         * vs. ServiceStack... N / A
-        * Which yields System.Text.Json.JsonParser's throughput : 28,028,391 bytes / second
+        * (Which yields System.Text.Json.JsonParser's throughput : 28,028,391 bytes / second)
     * [small.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/small.json.txt) being just a copy of the "{ "web-app": { "servlet": [ ... ] ... } }" sample, at:
         * http://www.json.org/example.html
 
@@ -132,9 +148,10 @@ So, without further ado:
 
 * "Fathers" Test (12 MB JSON file) - with POCO targets (4 distinct classes):
     * Parsed in ~ 275 milliseconds (!)
+        * vs. Microsoft's JavaScriptSerializer in ~ 2.6 seconds
         * vs. JSON.NET in ~ 500 milliseconds
         * vs. ServiceStack in ~ 575 milliseconds
-        * Which yields System.Text.Json.JsonParser's throughput : 45,335,269 bytes / second (!)
+        * (Which yields System.Text.Json.JsonParser's throughput : 45,335,269 bytes / second) (!)
     * Note: [fathers.json.txt](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/TestData/fathers.json.txt) was generated using this nifty online helper:
         * http://experiments.mennovanslooten.nl/2010/mockjson/tryit.html
 
@@ -142,9 +159,10 @@ So, without further ado:
 
 * "Huge" Test (180 MB JSON file) - "loosely-typed" deserialization:
     * Parsed in ~ 8.7 seconds (not bad)
+        * vs. Microsoft's JavaScriptSerializer in ~ 62 seconds
         * vs. JSON.NET... OutOfMemoryException
         * vs. ServiceStack... N / A
-        * Which yields System.Text.Json.JsonParser's throughput : 21,778,542 bytes / second
+        * (Which yields System.Text.Json.JsonParser's throughput : 21,778,542 bytes / second)
     * As for huge.json.txt, it is just a copy of this file:
         * https://github.com/zeMirco/sf-city-lots-json
 
