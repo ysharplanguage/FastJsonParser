@@ -71,7 +71,7 @@ The leaves will be from any of these types:
     bool
     string
     
-(One can read [this Eric Lippert's post](http://ericlippert.com/2013/07/25/what-is-the-type-of-the-null-literal/) about the so-called "null type".)
+(One can read [this very informative post of Eric Lippert](http://ericlippert.com/2013/07/25/what-is-the-type-of-the-null-literal/) about the so-called "null type", btw.)
 
 Performances
 ------------
