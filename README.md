@@ -71,7 +71,7 @@ The leaves will be from any of these types:
     bool
     string
 
-In this case of, say, "loosely typed" deserialization, you may ask: "But what about the JSON number literals in the input?"
+In this case of, say, "loosely typed" deserialization, you may ask: "But what about the JSON number literals in the input - why turning them into *strings*?"
 
 I would ask in turn: "In absence of more specific type information about the deserialization target, who's likely best placed to decide whether the number in
 
