@@ -166,6 +166,61 @@ http://rick-hightower.blogspot.com/2013/11/benchmark-for-json-parsing-boon-score
     * As for huge.json.txt, it is just a copy of this file:
         * https://github.com/zeMirco/sf-city-lots-json
 
+Target POCOs (those used by some of the above tests)
+----------------------------------------------------
+
+Here they are, for the curious and/or impatient:
+
+        public class BoonSmall
+        {
+            public string debug { get; set; }
+            public IList<int> nums { get; set; }
+        }
+
+
+        public class Person
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
+            public bool Married { get; set; }
+            public string Address { get; set; }
+            // Just to be sure we support that one, too:
+            public IEnumerable<int> Scores { get; set; }
+            public object Data { get; set; }
+        }
+
+
+        public class FathersData
+        {
+            public Father[] fathers { get; set; }
+        }
+
+
+        public class Father
+        {
+            public int id { get; set; }
+            public string name { get; set; }
+            public bool married { get; set; }
+            // Lists...
+            public List<Son> sons { get; set; }
+            // ... or arrays for collections, that's fine:
+            public Daughter[] daughters { get; set; }
+        }
+
+
+        public class Son
+        {
+            public int age { get; set; }
+            public string name { get; set; }
+        }
+
+
+        public class Daughter
+        {
+            public int age { get; set; }
+            public string name { get; set; }
+        }
+
 Roadmap
 -------
 
