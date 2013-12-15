@@ -67,7 +67,9 @@ instances, for JSON *arrays* which are ordered collections of values.
 
 The leaves will be from any of these types:
 
-    void, bool, string
+    [null type](http://ericlippert.com/2013/07/25/what-is-the-type-of-the-null-literal/)"
+    bool
+    string
 
 Performances
 ------------
