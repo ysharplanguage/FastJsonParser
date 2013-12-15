@@ -112,10 +112,7 @@ Versions used: JSON.NET v5.0 r8 and ServiceStack v3.9.59
         * vs. JSON.NET in ~ 8.3 seconds
         * vs. ServiceStack in ~ 6.1 seconds
         * Which yields System.Text.Json.JsonParser's throughput : 21,265,822 bytes / second
-    * Here's tiny.json.txt's content:
-
-
-    {"Id" :789 ,"Name":"Albert\tSimple", "Married" :true, "Address": "Planet Earth", "Scores":[1,2,3,4,5,6,7,8,9,10],"Data":null}
+    * [tiny.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/tiny.json.txt)
 
 * "Loop" Test of small JSON (deserializing x times the JSON contained in the small.json.txt file ~ 3.5 KB) - "loosedly typed" deserialization:
     * 10,000 iterations: in ~ 1.2 second
@@ -126,7 +123,7 @@ Versions used: JSON.NET v5.0 r8 and ServiceStack v3.9.59
         * vs. JSON.NET... OutOfMemoryException
         * vs. ServiceStack... N / A
         * Which yields System.Text.Json.JsonParser's throughput : 28,028,391 bytes / second
-    * small.json.txt being just a copy of the "{ "web-app": { "servlet": [ ... ] ... } }" sample, at:
+    * [small.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/small.json.txt) being just a copy of the "{ "web-app": { "servlet": [ ... ] ... } }" sample, at:
         * http://www.json.org/example.html
 
 * "Fathers" Test (12 MB JSON file) - with POCO targets (3 distinct classes):
@@ -134,7 +131,7 @@ Versions used: JSON.NET v5.0 r8 and ServiceStack v3.9.59
         * vs. JSON.NET in ~ 500 milliseconds
         * vs. ServiceStack in ~ 575 milliseconds
         * Which yields System.Text.Json.JsonParser's throughput : 45,335,269 bytes / second
-    * Note: fathers.json.txt was generated using this nifty online helper:
+    * Note: [fathers.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/fathers.json.txt) was generated using this nifty online helper:
         * http://experiments.mennovanslooten.nl/2010/mockjson/tryit.html
 
 * "Huge" Test (180 MB JSON file) - "loosedly typed" deserialization:
