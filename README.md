@@ -97,7 +97,7 @@ Note such figures (either the "burning monk's", or these below) are always much 
 
 Versions used: JSON.NET **v5.0 r8** and ServiceStack **v3.9.59**
 
-(For a .NET 4.0 target, on a humble Ideapad Intel Core i5 CPU @ 2.50GHz, 6 GB RAM, running Win7 64bit, 98% idle CPU)
+(For a .NET 4.0 target, on a humble Ideapad Intel Core i5 CPU @ 2.50GHz, 6 GB RAM, running Win7 64bit, with a ~ 98%..99% idle CPU)
 
 So, without further ado:
 
