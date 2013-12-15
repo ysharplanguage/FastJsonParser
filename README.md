@@ -131,7 +131,7 @@ Versions used: JSON.NET v5.0 r8 and ServiceStack v3.9.59
         * vs. JSON.NET in ~ 500 milliseconds
         * vs. ServiceStack in ~ 575 milliseconds
         * Which yields System.Text.Json.JsonParser's throughput : 45,335,269 bytes / second
-    * Note: [fathers.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/fathers.json.txt) was generated using this nifty online helper:
+    * Note: [fathers.json.txt](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/TestData/fathers.json.txt) was generated using this nifty online helper:
         * http://experiments.mennovanslooten.nl/2010/mockjson/tryit.html
 
 * "Huge" Test (180 MB JSON file) - "loosedly typed" deserialization:
