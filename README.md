@@ -95,9 +95,11 @@ http://theburningmonk.com/2013/09/binary-and-json-serializer-benchmarks-updated/
 
 Note such figures (either the "burning monk's", or these below) are always much dependent on the test data and the way testing is performed. YMMV, so it's always a good idea to make *your own* benchmarks, using *your* test data, in the data "shape" you're interested in, and that you expect to encounter with a good probability in your domain.
 
-Versions used: JSON.NET v5.0 r8 and ServiceStack v3.9.59
+Versions used: JSON.NET **v5.0 r8** and ServiceStack **v3.9.59**
 
-(.NET 4.0 target, on a humble Ideapad Intel Core i5 CPU @ 2.50GHz, 6 GB RAM, running Win7 64bit, 98% idle CPU)
+(For a .NET 4.0 target, on a humble Ideapad Intel Core i5 CPU @ 2.50GHz, 6 GB RAM, running Win7 64bit, 98% idle CPU)
+
+So, without further ado:
 
 * "Loop" Test of tiny JSON (deserializing x times the JSON contained in the tiny.json.txt file = 126 bytes) - with POCO target (1 class):
     * 10,000 iterations: in ~ 65 milliseconds
