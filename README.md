@@ -136,6 +136,8 @@ So, without further ado:
     * Note: [fathers.json.txt](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/TestData/fathers.json.txt) was generated using this nifty online helper:
         * http://experiments.mennovanslooten.nl/2010/mockjson/tryit.html
 
+(The latter, "fathers" test, is the one with the results that intrigued the most the very first few times I ran it - and it still does - but I haven't taken the time yet to do more serious profiling to explain these timing differences I didn't quite expect... and also interesting if only between JSON.NET vs. ServiceStack)
+
 * "Huge" Test (180 MB JSON file) - "loosely-typed" deserialization:
     * Parsed in ~ 8.7 seconds
         * vs. JSON.NET... OutOfMemoryException
