@@ -161,8 +161,8 @@ Again, the main implementation challenge will be not drifting too much from the 
 
 In any case, I don't plan to make this small JSON deserializer as general-purpose and extensible as JSON.NET or ServiceStack's, I just want to keep it as simple, short and fast as possible for my future needs (read on).
 
-"But, why such an ad-hoc parser? Why 'speed', anyway?"
-------------------------------------------------------
+"But, why this ad-hoc parser, and 'need for speed', anyway?"
+------------------------------------------------------------
 
 "... Why do you even care, when you already have the excellent, fast, feature-rich JSON.NET and ServiceStack around?"
 
@@ -170,9 +170,7 @@ Indeed, pure parsing + deserialization speed isn't in fact my *long term* goal, 
 
 JSON.NET's deserialization performances are great, and so are ServiceStack's - really, they are already - but I would like to have something of my own in my toolbox much smaller/manageable (in terms of # of SLOC), and simpler to extend, for whatever unforeseen requirements of the deserialization process (from JSON text into CLR types and values) I may have to tackle.
 
-Put otherwise: by design, thru their respective feature sets, both JSON.NET's and ServiceStack's make (and that's perfectly natural) a number of assumptions for the most frequent use cases of custom deserialization they're interested in, with this or that "shape" of JSON, and how to easily solve these problems in a more or less generic fashion (i.e., via their "custom converters", and the like).
-
-From an earlier experiment on that other project, I already know that my problem space will be quite different. I found out that I will *not* need a *generic* way to solve a *specific* deserialization sub-problem very efficiently (which nobody can really do - there is "no silver bullet" / "one size fits all" for that), but instead I will only need a *specific* way to solve it, by extending this small parser's functionality only where and how that's exactly needed (while trying to maintain its good performances).
+From an earlier experiment on that other project, I found out that I will *not* need a *generic* way to solve a *specific* deserialization sub-problem very efficiently (which nobody can really do - as there is "no silver bullet" / "one size fits all" for that matter), but instead I will only need a *specific* way to solve it, by extending this small parser's functionality only where and how that's exactly needed (while trying to maintain its good performances).
 
 Finally, this parser/deserializer is/was a nice learning opportunity for me to verify by myself what I had read many times before, that is, where exactly the parsing slowdowns and memory consumption costs most often come from.
 
