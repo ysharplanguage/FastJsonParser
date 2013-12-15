@@ -71,13 +71,13 @@ The leaves will be from any of these types:
     bool
     string
 
-In this case of, say, "loosely typed" deserialization, you may ask: "But what about the JSON number literals in the input - why turning them into *strings*?"
+In this case of, say, "loosely typed" deserialization, you may ask: "But what about the JSON number literals in the input - why deserializing them as *strings*?"
 
-I would ask in turn: "In absence of more specific type information about the deserialization target, who's likely best placed to decide whether the number in
+I would then ask my turn: "In absence of more specific type information about the deserialization target, who's likely best placed to decide whether the number after the colon, in
 
     "SomeNumber": 123.456
 
-should be deserialized into a *System.Single*, *System.Double*, or *System.Decimal* (but obviously not into some integer) - is it this parser, or is it your application?"
+should be deserialized into a *System.Single*, a *System.Double*, or a *System.Decimal* (but obviously not into some integer) - is it this parser, or is it your application?"
 
 In my opinion, it's the latter.
 
