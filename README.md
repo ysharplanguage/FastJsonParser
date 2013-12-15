@@ -74,12 +74,12 @@ Performances
 
 In the following below: some figures, from the tests that are provided here.
 
-I obtain quite similar performance ratios for the same 3 parsers/deserializers when compared one-to-one, after I adapt and run (for this JsonParser, which doesn't provide object-to-JSON text serialization) "the burning monk's" simple speed tester for JSON, which can be found at
+Consistently enough, I also obtain quite similar performance ratios for the same 3 parsers/deserializers when compared one-to-one, after I adapt (for this JsonParser, which doesn't provide object-to-JSON text *serialization*) and run "the burning monk's" simple speed tester for JSON, which can be found at
 :
 
 http://theburningmonk.com/2013/09/binary-and-json-serializer-benchmarks-updated/
 
-Note such figures (either the burning monk's, or in the below) are always much dependent on the test data and the way testing is performed. YMMV, so it's always a good idea to make your own benchmarks, using *your* test data in the data "shape" you're interested in, and that you expect to encounter with a good probability in your domain...
+Note such figures (either the "burning monk's", or those below) are always much dependent on the test data and the way testing is performed. YMMV, so it's always a good idea to make your own benchmarks, using *your* test data in the data "shape" you're interested in, and that you expect to encounter with a good probability in your domain...
 
 (.NET 4.0 target, on a humble Ideapad Intel Core i5 CPU @ 2.50GHz, 6 GB RAM, running Win7 64bit, 98% idle CPU)
 
@@ -97,20 +97,17 @@ Note such figures (either the burning monk's, or in the below) are always much d
     * 100,000 iterations: in ~ 12.1 seconds vs. JSON.NET... OutOfMemoryException vs. ServiceStack... N/A
         * Yields System.Text.Json.JsonParser's throughput : 28,028,391 bytes / second
 
-* Note: fathers.json.txt was generated using:
-    * http://experiments.mennovanslooten.nl/2010/mockjson/tryit.html
-
 * "Fathers" Test (12 MB JSON file):
     * Parsed in ~ 275 milliseconds vs. JSON.NET in ~ 500 milliseconds vs. ServiceStack in ~ 575 milliseconds
         * Yields System.Text.Json.JsonParser's throughput : 45,335,269 bytes / second
+    * Note: fathers.json.txt was generated using this nifty online helper:
+        * http://experiments.mennovanslooten.nl/2010/mockjson/tryit.html
 
 * "Huge" Test (180 MB JSON file):
     * Parsed in ~ 8.7 seconds vs. JSON.NET... OutOfMemoryException vs. ServiceStack... N/A
         * Yields System.Text.Json.JsonParser's throughput : 21,778,542 bytes / second
-
-As for huge.json.txt, it is just a copy of this file:
-
-https://github.com/zeMirco/sf-city-lots-json
+    * As for huge.json.txt, it is just a copy of this file:
+        * https://github.com/zeMirco/sf-city-lots-json
 
 Roadmap
 -------
@@ -123,6 +120,8 @@ Another, quite obvious, item on the wish list is to provide some support for cus
 
 Again, the main implementation challenge will be not drifting too much from the current speed performance ballpark.
 
+In any case, I don't plan to make this small JSON deserializer as general-purpose and extensible as JSON.NET or ServiceStack's, I just want to keep it as simple, short and fast as possible for my future needs (read on).
+
 "But, why such an ad-hoc parser? Why 'speed', anyway?"
 ------------------------------------------------------
 
@@ -134,9 +133,9 @@ JSON.NET's deserialization is great (and so is ServiceStack's) - really, they ar
 
 Put otherwise: thru their respective feature sets, by design, both JSON.NET's and ServiceStack's make (and that's perfectly natural) a number of assumptions regarding the most frequent use cases for custom deserialization for this or that "shape" of incoming JSON, and how to easily handle these problems in a more or less generic fashion (cf. their "custom converters", and the like...)
 
-My problem space is quite different: I know that most likely I will *not* need a *generic* way to solve a *specific* deserialization sub-problem very efficiently (which nobody can really do - there is "no silver bullet" / "one size fits all" for that), and instead I will most likely only need a *specific* way to solve it, by extending this small parser's functionality only where and how that's exactly needed (while trying to maintain the good performances).
+From an earlier experiment on that other project, I already know that my problem space will be quite different. I found out that I will *not* need a *generic* way to solve a *specific* deserialization sub-problem very efficiently (which nobody can really do - there is "no silver bullet" / "one size fits all" for that), but instead I will only need a *specific* way to solve it, by extending this small parser's functionality only where and how that's exactly needed (while trying to maintain its good performances).
 
-Also, this parser/deserializer is/was a nice learning opportunity for me to verify by myself what I had read many times before, that is, where exactly the parsing slowdowns and memory consumption costs most often come from.
+Finally, this parser/deserializer is/was a nice learning opportunity for me to verify by myself what I had read many times before, that is, where exactly the parsing slowdowns and memory consumption costs most often come from.
 
 Other questions?
 ----------------
