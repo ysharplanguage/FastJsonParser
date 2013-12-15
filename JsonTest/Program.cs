@@ -22,6 +22,7 @@ namespace Test
 {
     class Program
     {
+        const string BOON_SMALL_TEST_FILE_PATH = @"..\..\TestData\boon-small.json.txt";
         const string TINY_TEST_FILE_PATH = @"..\..\TestData\tiny.json.txt";
         const string SMALL_TEST_FILE_PATH = @"..\..\TestData\small.json.txt";
         const string FATHERS_TEST_FILE_PATH = @"..\..\TestData\fathers.json.txt";
@@ -48,7 +49,7 @@ namespace Test
 
             "Loop" Test of small JSON (deserializing x times the JSON contained in the small.json.txt file ~ 3.5 KB):
             10,000 iterations: in ~ 1.2 second vs. JSON.NET 5.0 r8 in ~ 2.2 seconds vs. ServiceStack... N/A
-            100,000 iterations: in ~ 12.1 seconds vs. JSON.NET 5.0 r8... OutOfMemoryException vs. ServiceStack... N/A
+            100,000 iterations: in ~ 12.4 seconds vs. JSON.NET 5.0 r8... OutOfMemoryException vs. ServiceStack... N/A
 
             Note: fathers.json.txt was generated using:
             http://experiments.mennovanslooten.nl/2010/mockjson/tryit.html
@@ -159,6 +160,12 @@ namespace Test
             Console.ReadKey();
         }
 
+        public class BoonSmall
+        {
+            public string debug { get; set; }
+            public IList<int> nums { get; set; }
+        }
+
         public class Person
         {
             public int Id { get; set; }
@@ -200,6 +207,11 @@ namespace Test
 
         static void SpeedTests()
         {
+            LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 10000000, true);
+            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 10000000, true);
+            LoopTest("ServiceStack", new JsonSerializer<BoonSmall>().DeserializeFromString, BOON_SMALL_TEST_FILE_PATH, 10000000, true);
+            LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 10000000, true);
+
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<Person>, TINY_TEST_FILE_PATH, 10000);
             LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<Person>, TINY_TEST_FILE_PATH, 10000);
             LoopTest("ServiceStack", new JsonSerializer<Person>().DeserializeFromString, TINY_TEST_FILE_PATH, 10000);
