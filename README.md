@@ -99,7 +99,7 @@ Versions used: JSON.NET v5.0 r8 and ServiceStack v3.9.59
 
 (.NET 4.0 target, on a humble Ideapad Intel Core i5 CPU @ 2.50GHz, 6 GB RAM, running Win7 64bit, 98% idle CPU)
 
-* "Loop" Test of tiny JSON (deserializing x times the JSON contained in the tiny.json.txt file = 126 bytes):
+* "Loop" Test of tiny JSON (deserializing x times the JSON contained in the tiny.json.txt file = 126 bytes) - with POCO target (1 class):
     * 10,000 iterations: in ~ 65 milliseconds
         * vs. JSON.NET in ~ 250 milliseconds
         * vs. ServiceStack in ~ 125 milliseconds
@@ -114,7 +114,7 @@ Versions used: JSON.NET v5.0 r8 and ServiceStack v3.9.59
         * Which yields System.Text.Json.JsonParser's throughput : 21,265,822 bytes / second
     * [tiny.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/tiny.json.txt)
 
-* "Loop" Test of small JSON (deserializing x times the JSON contained in the small.json.txt file ~ 3.5 KB) - "loosedly typed" deserialization:
+* "Loop" Test of small JSON (deserializing x times the JSON contained in the small.json.txt file ~ 3.5 KB) - "loosely-typed" deserialization:
     * 10,000 iterations: in ~ 1.2 second
         * vs. JSON.NET in ~ 2.2 seconds
         * vs. ServiceStack... N / A
@@ -126,7 +126,7 @@ Versions used: JSON.NET v5.0 r8 and ServiceStack v3.9.59
     * [small.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/small.json.txt) being just a copy of the "{ "web-app": { "servlet": [ ... ] ... } }" sample, at:
         * http://www.json.org/example.html
 
-* "Fathers" Test (12 MB JSON file) - with POCO targets (3 distinct classes):
+* "Fathers" Test (12 MB JSON file) - with POCO targets (4 distinct classes):
     * Parsed in ~ 275 milliseconds
         * vs. JSON.NET in ~ 500 milliseconds
         * vs. ServiceStack in ~ 575 milliseconds
@@ -134,7 +134,7 @@ Versions used: JSON.NET v5.0 r8 and ServiceStack v3.9.59
     * Note: [fathers.json.txt](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/TestData/fathers.json.txt) was generated using this nifty online helper:
         * http://experiments.mennovanslooten.nl/2010/mockjson/tryit.html
 
-* "Huge" Test (180 MB JSON file) - "loosedly typed" deserialization:
+* "Huge" Test (180 MB JSON file) - "loosely-typed" deserialization:
     * Parsed in ~ 8.7 seconds
         * vs. JSON.NET... OutOfMemoryException
         * vs. ServiceStack... N / A
