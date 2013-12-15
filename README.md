@@ -172,6 +172,8 @@ From an earlier experiment on that other project, I already know that my problem
 
 Finally, this parser/deserializer is/was a nice learning opportunity for me to verify by myself what I had read many times before, that is, where exactly the parsing slowdowns and memory consumption costs most often come from.
 
+(I'll let you make your own guesses ;)
+
 Other questions?
 ----------------
 
