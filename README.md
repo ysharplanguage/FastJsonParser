@@ -128,7 +128,7 @@ So, without further ado:
     * [small.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/small.json.txt) being just a copy of the "{ "web-app": { "servlet": [ ... ] ... } }" sample, at:
         * http://www.json.org/example.html
 
-(unfortunately, quite unfamiliar with it, I'm still trying to understand how, in absence of POCOs, to have ServiceStack's willing to deserialize into trees of dictionaries and lists, just like we can do it easily with JSON.NET, the JavaScriptSerializer, or my parser here.)
+(unfortunately, quite unfamiliar with it, I'm still trying to understand how, in absence of POCOs, to have ServiceStack's be willing to deserialize into trees of dictionaries and lists, just like we can do it easily with JSON.NET, the JavaScriptSerializer, or my parser here.)
 
 * "Fathers" Test (12 MB JSON file) - with POCO targets (4 distinct classes):
     * Parsed in ~ 275 milliseconds (!)
