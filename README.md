@@ -70,8 +70,18 @@ The leaves will be from any of these types:
     null type
     bool
     string
-    
-(One can read [this very informative post of Eric Lippert](http://ericlippert.com/2013/07/25/what-is-the-type-of-the-null-literal/) about the so-called "null type", btw.)
+
+In this case of, say, "loosely typed" deserialization, you may ask: "But what about the JSON number literals in the input?"
+
+I would ask in turn: "In absence of more specific type information about the deserialization target, who's likely best placed to decide whether the number in
+
+    "SomeNumber": 123.456
+
+should be deserialized into a *System.Single*, *System.Double*, or *System.Decimal* (but obviously not into some integer) - is it this parser, or is it your application?"
+
+In my opinion, it's the latter.
+
+(Also, one can read [this very informative post of Eric Lippert](http://ericlippert.com/2013/07/25/what-is-the-type-of-the-null-literal/) about the so-called "null type", btw.)
 
 Performances
 ------------
