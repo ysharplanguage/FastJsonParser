@@ -117,16 +117,18 @@ So, without further ado:
     * [tiny.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/tiny.json.txt)
 
 * "Loop" Test of small JSON (deserializing x times the JSON contained in the small.json.txt file ~ 3.5 KB) - "loosely-typed" deserialization:
-    * 10,000 iterations: in ~ 1.2 second
+    * 10,000 iterations: in ~ 1.2 second (pretty good)
         * vs. JSON.NET in ~ 2.2 seconds
         * vs. ServiceStack... N / A
         * Which yields System.Text.Json.JsonParser's throughput : 27,657,587 bytes / second
-    * 100,000 iterations: in ~ 12.1 seconds
+    * 100,000 iterations: in ~ 12.1 seconds (not bad)
         * vs. JSON.NET... OutOfMemoryException
         * vs. ServiceStack... N / A
         * Which yields System.Text.Json.JsonParser's throughput : 28,028,391 bytes / second
     * [small.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/small.json.txt) being just a copy of the "{ "web-app": { "servlet": [ ... ] ... } }" sample, at:
         * http://www.json.org/example.html
+
+(unfortunately, quite unfamiliar with it, I'm still trying to understand how, in absence of POCOs, to have ServiceStack's willing to deserialize into trees of dictionaries and lists, just like we can do it easily with JSON.NET, the JavaScriptSerializer, or my parser here.)
 
 * "Fathers" Test (12 MB JSON file) - with POCO targets (4 distinct classes):
     * Parsed in ~ 275 milliseconds (!)
