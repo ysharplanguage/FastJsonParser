@@ -45,7 +45,7 @@ and
 
     T Parse<T>(System.IO.Stream input)
     
-(To be able to parse JSON text coming from a reader (or stream) being a must-have, IMO - "*have mercy for your CLR's large object heap*", [if you see what I mean...](http://msdn.microsoft.com/en-us/magazine/cc534993.aspx))
+(The capability to parse JSON text coming thru a reader (or stream) being clearly a must-have, past a certain size of payload - "*have mercy for your CLR's large object heap*", [if you see what I mean...](http://msdn.microsoft.com/en-us/magazine/cc534993.aspx))
 
 Note if you don't care about deserializing whatever input JSON into POCOs, you can just call these methods with
 
