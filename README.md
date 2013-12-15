@@ -102,15 +102,15 @@ Versions used: JSON.NET **v5.0 r8** and ServiceStack **v3.9.59**
 So, without further ado:
 
 * "Loop" Test of tiny JSON (deserializing x times the JSON contained in the tiny.json.txt file = 126 bytes) - with POCO target (1 class):
-    * 10,000 iterations: in ~ 65 milliseconds
+    * 10,000 iterations: in ~ 65 milliseconds (pretty good)
         * vs. JSON.NET in ~ 250 milliseconds
         * vs. ServiceStack in ~ 125 milliseconds
         * Which yields System.Text.Json.JsonParser's throughput : 20,322,580 bytes / second
-    * 100,000 iterations: in ~ 600 milliseconds
+    * 100,000 iterations: in ~ 600 milliseconds (not bad)
         * vs. JSON.NET in ~ 900 milliseconds
         * vs. ServiceStack in ~ 650 milliseconds
         * Which yields System.Text.Json.JsonParser's throughput : 21,428,571 bytes / second
-    * 1,000,000 iterations: in ~ 5.9 seconds
+    * 1,000,000 iterations: in ~ 5.9 seconds (not bad either)
         * vs. JSON.NET in ~ 8.3 seconds
         * vs. ServiceStack in ~ 6.1 seconds
         * Which yields System.Text.Json.JsonParser's throughput : 21,265,822 bytes / second
@@ -129,7 +129,7 @@ So, without further ado:
         * http://www.json.org/example.html
 
 * "Fathers" Test (12 MB JSON file) - with POCO targets (4 distinct classes):
-    * Parsed in ~ 275 milliseconds
+    * Parsed in ~ 275 milliseconds (!)
         * vs. JSON.NET in ~ 500 milliseconds
         * vs. ServiceStack in ~ 575 milliseconds
         * Which yields System.Text.Json.JsonParser's throughput : 45,335,269 bytes / second
@@ -139,7 +139,7 @@ So, without further ado:
 (The latter, "fathers" test, is the one with the results that intrigued me the most the very first few times I ran it - and it still does - but I haven't taken the time yet to do more serious profiling to explain these timing differences I didn't quite expect, which are also interesting if only between JSON.NET vs. ServiceStack...)
 
 * "Huge" Test (180 MB JSON file) - "loosely-typed" deserialization:
-    * Parsed in ~ 8.7 seconds
+    * Parsed in ~ 8.7 seconds (not bad)
         * vs. JSON.NET... OutOfMemoryException
         * vs. ServiceStack... N / A
         * Which yields System.Text.Json.JsonParser's throughput : 21,778,542 bytes / second
