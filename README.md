@@ -101,7 +101,7 @@ Versions used: JSON.NET **v5.0 r8** and ServiceStack **v3.9.59**
 
 So, without further ado:
 
-* "Loop" Test of tiny JSON (deserializing x times the JSON contained in the tiny.json.txt file = 126 bytes) - with POCO target (1 class):
+* "Loop" Test of tiny JSON (deserializing x times the JSON contained in the [tiny.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/tiny.json.txt) file = 126 bytes) - with POCO target (1 class):
     * 10,000 iterations: in ~ 65 milliseconds (pretty good)
         * vs. JSON.NET in ~ 250 milliseconds
         * vs. ServiceStack in ~ 125 milliseconds
@@ -116,7 +116,7 @@ So, without further ado:
         * Which yields System.Text.Json.JsonParser's throughput : 21,265,822 bytes / second
     * [tiny.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/tiny.json.txt)
 
-* "Loop" Test of small JSON (deserializing x times the JSON contained in the small.json.txt file ~ 3.5 KB) - "loosely-typed" deserialization:
+* "Loop" Test of small JSON (deserializing x times the JSON contained in the [small.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/small.json.txt) file ~ 3.5 KB) - "loosely-typed" deserialization:
     * 10,000 iterations: in ~ 1.2 second (pretty good)
         * vs. JSON.NET in ~ 2.2 seconds
         * vs. ServiceStack... N / A
@@ -134,11 +134,11 @@ So, without further ado:
     * Parsed in ~ 275 milliseconds (!)
         * vs. JSON.NET in ~ 500 milliseconds
         * vs. ServiceStack in ~ 575 milliseconds
-        * Which yields System.Text.Json.JsonParser's throughput : 45,335,269 bytes / second
+        * Which yields System.Text.Json.JsonParser's throughput : 45,335,269 bytes / second (!)
     * Note: [fathers.json.txt](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/TestData/fathers.json.txt) was generated using this nifty online helper:
         * http://experiments.mennovanslooten.nl/2010/mockjson/tryit.html
 
-(The latter, "fathers" test, is the one with the results that intrigued me the most the very first few times I ran it - and it still does - but I haven't taken the time yet to do more serious profiling to explain these timing differences I didn't quite expect, which are also interesting if only between JSON.NET vs. ServiceStack, btw...)
+(The latter, "fathers" test, is the one with the results that intrigued me the most the very first few times I ran it - and it still does... but I haven't taken the time yet to do more serious profiling to explain these timing differences I didn't quite expect, which are also interesting if only between JSON.NET vs. ServiceStack, btw...)
 
 * "Huge" Test (180 MB JSON file) - "loosely-typed" deserialization:
     * Parsed in ~ 8.7 seconds (not bad)
