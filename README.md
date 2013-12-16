@@ -22,7 +22,9 @@ Although it is promisingly fast, please note this parser/deserializer is still e
 
 I do *not* recommend it for any use in production, at this stage. This may evolve soon, but for one thing to begin with, it's in need of more extensive JSON conformance tests.
 
-That being said, feel free to fork/bugfix/augment/improve it at your own will.
+That being said, feel free to fork / bugfix / augment / improve it at your own will.
+
+(You only risk to have some fun doing so. :) 
 
 I do think there is still room for raw performance improvement. In fact, I am not quite done experimenting with my ideas in that respect, and will try to continue doing so in this repository.
 
