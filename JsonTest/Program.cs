@@ -212,6 +212,11 @@ namespace Test
             LoopTest("ServiceStack", new JsonSerializer<BoonSmall>().DeserializeFromString, BOON_SMALL_TEST_FILE_PATH, 10000000, true);
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 10000000, true);
 
+            LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().DeserializeObject, BOON_SMALL_TEST_FILE_PATH, 10000000, true);
+            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject, BOON_SMALL_TEST_FILE_PATH, 10000000, true);
+            //LoopTest("ServiceStack", new JsonSerializer<object>().DeserializeFromString, BOON_SMALL_TEST_FILE_PATH, 10000000, true);
+            LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<object>, BOON_SMALL_TEST_FILE_PATH, 10000000, true);
+
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<Person>, TINY_TEST_FILE_PATH, 10000);
             LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<Person>, TINY_TEST_FILE_PATH, 10000);
             LoopTest("ServiceStack", new JsonSerializer<Person>().DeserializeFromString, TINY_TEST_FILE_PATH, 10000);
