@@ -101,7 +101,9 @@ Note such figures (either the "burning monk's", or these below) can always - pot
 
 ***Other libraries, versions used***
 
-[JSON.NET](http://james.newtonking.com/json) **v5.0 r8** for .NET 4.0, and [ServiceStack](https://github.com/ServiceStack/ServiceStack) **v3.9.59**
+* Out-of-the-box .NET 4.0's [JavaScriptSerializer](http://msdn.microsoft.com/en-us/library/system.web.script.serialization.javascriptserializer(v=vs.100).aspx)
+* [JSON.NET](http://james.newtonking.com/json) **v5.0 r8**, and
+* [ServiceStack](https://github.com/ServiceStack/ServiceStack) **v3.9.59**
 
 ***Executable target, and H/W used***
 
