@@ -99,7 +99,9 @@ http://theburningmonk.com/2013/09/binary-and-json-serializer-benchmarks-updated/
 
 Note such figures (either the "burning monk's", or these below) can always - potentially - be much dependent on the test data at hand, and/or the way testing is performed. **YMMV**, so it's **always** a good idea to make *your own* benchmarks, using *your test data*, in the data "shape" you're interested in, and that you expect to encounter with *a good probability* in your domain.
 
-***Other libraries, versions used***
+So, please take all of the following with "a grain of salt" (or two :) - as it is the usual for that matter.
+
+***Other libraries, versions used ("the competition")***
 
 * Out-of-the-box .NET 4.0's [JavaScriptSerializer](http://msdn.microsoft.com/en-us/library/system.web.script.serialization.javascriptserializer%28v=vs.100%29.aspx)
 * [JSON.NET](http://james.newtonking.com/json) **v5.0 r8**, and
