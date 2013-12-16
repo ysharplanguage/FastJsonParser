@@ -86,9 +86,9 @@ In my opinion, it's the latter.
 Performances
 ------------
 
-Following below: a few figures, outcome averages of the tests provided here.
+Following below: a few figures, the outcome *average numbers* (only) that I obtain from the tests provided here, along with comments.
 
-Consistently enough, I also obtain quite similar performance ratios for the same 4 parsers/deserializers when compared one-to-one, after I adapt (for this JsonParser, which doesn't provide object-to-JSON text *serialization*) and run "the burning monk's" simple speed tester for JSON, which can be found at
+Consistently enough, I also obtain similar performance ratios for the same 4 parsers/deserializers when compared one-to-one, after I adapt (for this JsonParser, which doesn't provide object-to-JSON text *serialization*) and when I run "the burning monk's" simple speed tester for JSON, which has been around for a while and can be found at
 :
 
 http://theburningmonk.com/2013/09/binary-and-json-serializer-benchmarks-updated/
