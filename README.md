@@ -245,7 +245,7 @@ JSON.NET's deserialization performances are great, and so are ServiceStack's - r
 
 From an earlier experiment on that other project, I found out that I will *not* need a *generic* way to solve a *specific* deserialization sub-problem very efficiently (which nobody can really do - as there is "no silver bullet" / "one size fits all" for that matter), but instead I will only need a *specific* way to solve it, by extending this small parser's functionality only where and how that's exactly needed (while trying to maintain its good performances).
 
-Finally, this parser/deserializer is/was a nice learning opportunity for me to verify by myself what I had read many times before, that is, where exactly the parsing slowdowns and memory consumption costs most often come from.
+Finally, this parser/deserializer is/was a nice learning opportunity for me to verify by myself what I had read about, many times before - that is: never try to guess, but instead always do your best to measure and find out where exactly the parsing and deserialization slowdowns (and memory consumption costs) actually come from.
 
 Other questions?
 ----------------
