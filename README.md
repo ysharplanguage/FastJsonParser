@@ -90,7 +90,7 @@ In my opinion, *in that case*, it's the application.
 Performances
 ------------
 
-Following below: a few figures, the outcome *average numbers* (only) that I obtain from the tests provided here, along with comments.
+Following below: a few figures, the outcome *average numbers* (only) that I obtain from the tests provided here, along with a few remarks.
 
 Consistently enough, I also obtain similar performance ratios for the same 4 parsers/deserializers when compared one-to-one, after I adapt (for this JsonParser, which doesn't provide object-to-JSON text *serialization*) and when I run "the burning monk's" simple speed tester for JSON, which has been around for a while and can be found at
 :
