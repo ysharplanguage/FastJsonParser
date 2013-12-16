@@ -101,7 +101,7 @@ Note such figures (either the "burning monk's", or these below) can always - pot
 
 ***Other libraries, versions used***
 
-JSON.NET **v5.0 r8** for .NET 4.0, and ServiceStack **v3.9.59**
+[JSON.NET](http://james.newtonking.com/json) **v5.0 r8** for .NET 4.0, and [ServiceStack](https://servicestack.net/) **v3.9.59**
 
 ***Executable target, and H/W used***
 
