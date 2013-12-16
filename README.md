@@ -123,7 +123,7 @@ Rick's original test can be found at:
 
 http://rick-hightower.blogspot.com/2013/11/benchmark-for-json-parsing-boon-scores.html
 
-Note Rick is one of our fellows from the Java realm - and from his own comparative figures that I eventually noticed, I take it [Rick's "Boon"](https://github.com/RichardHightower/json-parsers-benchmark/blob/master/README.md) is **pretty darn fast** among them guys' Java toolboxes for JSON... That'd *almost* make a .NET / CLR dude like me jealous... ;)
+Note Rick is one of our fellows from the Java realm - and from his own comparative figures that I eventually noticed, I take it [Rick's "Boon"](https://github.com/RichardHightower/json-parsers-benchmark/blob/master/README.md) is **pretty darn fast** among them guys' Java toolboxes for JSON... That'd *almost* make a .NET / CLR dude like me jealous of Java... ;)
 
 As for that "vs. ServiceStack in... N / A":
 
