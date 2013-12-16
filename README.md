@@ -255,7 +255,7 @@ Another, quite obvious, item on the wish list is to provide some support for cus
 
 Again, the main implementation challenge will be not drifting too much from the current speed performance ballpark.
 
-In any case, I don't plan to make this small JSON deserializer as general-purpose and extensible as JSON.NET or ServiceStack's, I just want to keep it as simple, short and fast as possible for my future needs (read on).
+In any case, I don't plan to make this small JSON deserializer as general-purpose and extensible as JSON.NET or ServiceStack's, I just want to keep it as simple, short, and fast as possible for my present and future needs (read on).
 
 "But, why this ad-hoc parser, and 'need for speed', anyway?"
 ------------------------------------------------------------
@@ -264,7 +264,7 @@ In any case, I don't plan to make this small JSON deserializer as general-purpos
 
 Indeed, pure parsing + deserialization speed isn't in fact my *long term* goal, or not for any *arbitrary* JSON input, anyway. For another, and broader project - still in design stage - that I have, I plan to use JSON as a "malleable" IR (intermediary representation) for code and meta data transformations that I will need to make happen in-between a high level source language (e.g., C#, or F#,...) and the target CIL (or, even, some other low-level target).
 
-JSON.NET's deserialization performances are great, and so are ServiceStack's - really, they are already - but I would like to have something of my own in my toolbox much smaller/manageable (in terms of # of SLOC), and simpler to extend, for whatever unforeseen requirements of the deserialization process (from JSON text into CLR types and values) I may have to tackle.
+JSON.NET's deserialization performances are great, and so are ServiceStack's - really, they are already - but I would like to have something of my own in my toolbox much smaller/more manageable (in terms of # of SLOC), and simpler to extend, for whatever unforeseen requirements of the deserialization process (from JSON text into CLR types and values) I may have to tackle.
 
 From an earlier experiment on that other project, I found out that I will *not* need a *generic* way to solve a *specific* deserialization sub-problem very efficiently (which nobody can really do - as there is "no silver bullet" / "one size fits all" for that matter), but instead I will only need a *specific* way to solve it, by extending this small parser's functionality only where and how that's exactly needed (while trying to maintain its good performances).
 
