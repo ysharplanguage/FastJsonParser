@@ -101,20 +101,37 @@ Versions used: JSON.NET **v5.0 r8** and ServiceStack **v3.9.59**
 
 So, without further ado:
 
+***Rick's "Boon" small test***
+
 * Rick's "Boon" small test, slightly modified (deserializing x times the JSON contained in the [boon-small.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/boon-small.json.txt) file = 79 bytes) - with POCO target (1 class):
     * 10,000,000 iterations: in ~ 28.1 seconds
-        * vs. Microsoft's JavaScriptSerializer in 302.3 seconds (bad omen #1)
+        * vs. Microsoft's JavaScriptSerializer in ~ 302.3 seconds (bad omen #1)
         * vs. JSON.NET in ~ 56.5 seconds
         * vs. ServiceStack in ~ 40.7 seconds
         * (Which yields System.Text.Json.JsonParser's throughput : 28,090,886 bytes / second)
+
+* the same Rick's "Boon" small test, this time with "loosely typed" deserialization (no POCO target, just dictionaries and lists - read above):
+    * 10,000,000 iterations: in ~ 34.7 seconds
+        * vs. Microsoft's JavaScriptSerializer in ~ 232.2 seconds (bad omen #2)
+        * vs. JSON.NET in ~ 72.4 seconds
+        * vs. ServiceStack in... N / A
+        * (Which yields System.Text.Json.JsonParser's throughput : 22,739,702 bytes / second)
 
 Rick's original test can be found at:
 
 http://rick-hightower.blogspot.com/2013/11/benchmark-for-json-parsing-boon-scores.html
 
+Note Rick is one of our fellows from the Java realm - and from his own comparative figures that I eventually noticed, I take it [Rick's "Boon"](https://github.com/RichardHightower/json-parsers-benchmark/blob/master/README.md) is **pretty darn fast** among them guys' Java toolboxes for JSON... That'd *almost* make a .NET CLR user like me jealous... ;)
+
+As for that "vs. ServiceStack in... N / A":
+
+unfortunately, quite unfamiliar with it, I'm still trying to understand how, in absence of POCOs, to have ServiceStack willing to deserialize into trees of dictionaries and lists (just like we can do it easily with JSON.NET, the JavaScriptSerializer, or my parser here).
+
+***"Tiny JSON" test***
+
 * "Loop" Test of tiny JSON (deserializing x times the JSON contained in the [tiny.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/tiny.json.txt) file = 126 bytes) - with POCO target (1 class):
     * 10,000 iterations: in ~ 65 milliseconds (pretty good)
-        * vs. Microsoft's JavaScriptSerializer in ~ 550 milliseconds (bad omen #2)
+        * vs. Microsoft's JavaScriptSerializer in ~ 550 milliseconds (bad omen #3)
         * vs. JSON.NET in ~ 250 milliseconds
         * vs. ServiceStack in ~ 125 milliseconds
         * (Which yields System.Text.Json.JsonParser's throughput : 20,322,580 bytes / second)
@@ -130,6 +147,8 @@ http://rick-hightower.blogspot.com/2013/11/benchmark-for-json-parsing-boon-score
         * (Which yields System.Text.Json.JsonParser's throughput : 21,265,822 bytes / second)
     * [tiny.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/tiny.json.txt)
 
+***"Small JSON" test***
+
 * "Loop" Test of small JSON (deserializing x times the JSON contained in the [small.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/small.json.txt) file ~ 3.5 KB) - "loosely-typed" deserialization:
     * 10,000 iterations: in ~ 1.2 second (pretty good)
         * vs. Microsoft's JavaScriptSerializer in ~ 6.7 seconds
@@ -144,7 +163,7 @@ http://rick-hightower.blogspot.com/2013/11/benchmark-for-json-parsing-boon-score
     * [small.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/small.json.txt) being just a copy of the "{ "web-app": { "servlet": [ ... ] ... } }" sample, at:
         * http://www.json.org/example.html
 
-(unfortunately, quite unfamiliar with it, I'm still trying to understand how, in absence of POCOs, to have ServiceStack willing to deserialize into trees of dictionaries and lists, just like we can do it easily with JSON.NET, the JavaScriptSerializer, or my parser here.)
+***"Fathers JSON" test***
 
 * "Fathers" Test (12 MB JSON file) - with POCO targets (4 distinct classes):
     * Parsed in ~ 275 milliseconds (!)
@@ -156,6 +175,8 @@ http://rick-hightower.blogspot.com/2013/11/benchmark-for-json-parsing-boon-score
         * http://experiments.mennovanslooten.nl/2010/mockjson/tryit.html
 
 (The latter, "fathers" test, is the one with the results that intrigued me the most the very first few times I ran it - and it still does... but I haven't taken the time yet to do more serious profiling to explain these timing differences I didn't quite expect, which are also interesting if only between JSON.NET vs. ServiceStack, btw...)
+
+***"Huge JSON" test***
 
 * "Huge" Test (180 MB JSON file) - "loosely-typed" deserialization:
     * Parsed in ~ 8.7 seconds (not bad)
