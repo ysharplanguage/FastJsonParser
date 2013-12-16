@@ -24,7 +24,7 @@ I do *not* recommend it for any use in production, at this stage. This may evolv
 
 That being said, feel free to fork / bugfix / augment / improve it at your own will.
 
-(You only risk to have some fun doing so. :) 
+(You only risk to have some fun doing so, after all. :) 
 
 I do think there is still room for raw performance improvement. In fact, I am not quite done experimenting with my ideas in that respect, and will try to continue doing so in this repository.
 
