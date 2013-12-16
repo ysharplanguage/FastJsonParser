@@ -127,7 +127,7 @@ Note Rick is one of our fellows from the Java realm - and from his own comparati
 
 As for that "vs. ServiceStack in... N / A":
 
-unfortunately, quite unfamiliar with it, I'm still trying to understand how, in absence of POCOs, to have ServiceStack willing to deserialize into merely trees of dictionaries mixed with lists (just like we can do it easily with JSON.NET, the JavaScriptSerializer, or my parser here) - because, well, we've got to "compare apples to apples only" to be fair, I think. (So, any tips will be much welcome on that, anyone.)
+unfortunately, quite unfamiliar with it, I'm still trying to understand how, in absence of POCOs, to have ServiceStack willing to deserialize into merely trees of dictionaries mixed with lists (just like we can do it very easily with JSON.NET, the JavaScriptSerializer, or my parser here) - because, well, we've got to "compare apples to apples only" to be fair, I think. (So, any tips will be much welcome on that, anyone.)
 
 ***"Tiny JSON" test***
 
