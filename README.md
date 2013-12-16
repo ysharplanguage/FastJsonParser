@@ -121,11 +121,11 @@ Rick's original test can be found at:
 
 http://rick-hightower.blogspot.com/2013/11/benchmark-for-json-parsing-boon-scores.html
 
-Note Rick is one of our fellows from the Java realm - and from his own comparative figures that I eventually noticed, I take it [Rick's "Boon"](https://github.com/RichardHightower/json-parsers-benchmark/blob/master/README.md) is **pretty darn fast** among them guys' Java toolboxes for JSON... That'd *almost* make a .NET CLR user like me jealous... ;)
+Note Rick is one of our fellows from the Java realm - and from his own comparative figures that I eventually noticed, I take it [Rick's "Boon"](https://github.com/RichardHightower/json-parsers-benchmark/blob/master/README.md) is **pretty darn fast** among them guys' Java toolboxes for JSON... That'd *almost* make a .NET / CLR dude like me jealous... ;)
 
 As for that "vs. ServiceStack in... N / A":
 
-unfortunately, quite unfamiliar with it, I'm still trying to understand how, in absence of POCOs, to have ServiceStack willing to deserialize into trees of dictionaries and lists (just like we can do it easily with JSON.NET, the JavaScriptSerializer, or my parser here).
+unfortunately, quite unfamiliar with it, I'm still trying to understand how, in absence of POCOs, to have ServiceStack willing to deserialize into merely trees of dictionaries mixed with lists (just like we can do it easily with JSON.NET, the JavaScriptSerializer, or my parser here) - because, well, we've got to "compare apples to apples only" to be fair, I think.
 
 ***"Tiny JSON" test***
 
