@@ -112,18 +112,11 @@ So, without further ado:
 ***Rick's "Boon" small test***
 
 * Rick's "Boon" small test, slightly modified (deserializing x times the JSON contained in the [boon-small.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/boon-small.json.txt) file = 79 bytes) - with POCO target (1 class):
-    * 10,000,000 iterations: in ~ 28.1 seconds
+    * 10,000,000 iterations: in ~ 36.9 seconds
         * vs. Microsoft's JavaScriptSerializer in ~ 302.3 seconds (bad omen #1)
-        * vs. JSON.NET in ~ 56.5 seconds
-        * vs. ServiceStack in ~ 40.7 seconds
-        * (Which yields System.Text.Json.JsonParser's throughput : 28,090,886 bytes / second)
-
-* the same Rick's "Boon" small test, this time with "loosely typed" deserialization (no POCO target, just dictionaries and lists - read above):
-    * 10,000,000 iterations: in ~ 34.7 seconds
-        * vs. Microsoft's JavaScriptSerializer in ~ 232.2 seconds (bad omen #2)
-        * vs. JSON.NET in ~ 72.4 seconds
-        * vs. ServiceStack in... N / A
-        * (Which yields System.Text.Json.JsonParser's throughput : 22,739,702 bytes / second)
+        * vs. JSON.NET in ~ 69.8 seconds
+        * vs. ServiceStack in ~ 54.8 seconds
+        * (Which yields System.Text.Json.JsonParser's throughput : 21,379,664 bytes / second)
 
 Rick's original test can be found at:
 
