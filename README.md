@@ -6,7 +6,7 @@ System.Text.Json
 
 This is a minimalistic and fast JSON parser/deserializer, for full .NET.
 
-The complete source code of the parser is pretty short - single source file, less than 600 SLOC - and comes with a few tests, and test data, all in the "JsonTest" folder.
+The complete source code of the parser is pretty short (in a single source file &amp; less than 600 SLOC) and comes with a few tests and sample data, all in the "JsonTest" folder.
 
 Also available on the NuGet Gallery
 -----------------------------------
