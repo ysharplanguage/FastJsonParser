@@ -207,13 +207,13 @@ namespace Test
             Console.Clear();
             System.Threading.Thread.MemoryBarrier();
             var initialMemory = System.GC.GetTotalMemory(true);
-            using (var stream = new System.IO.StreamReader(FATHERS_TEST_FILE_PATH))
+            using (var reader = new System.IO.StreamReader(FATHERS_TEST_FILE_PATH))
             {
                 Console.WriteLine("\"Fathers\" Test... streamed (press a key)");
                 Console.WriteLine();
                 Console.ReadKey();
                 var st = DateTime.Now;
-                var o = new JsonParser().Parse<FathersData>(stream);
+                var o = new JsonParser().Parse<FathersData>(reader);
                 var tm = (int)DateTime.Now.Subtract(st).TotalMilliseconds;
 
                 System.Threading.Thread.MemoryBarrier();
