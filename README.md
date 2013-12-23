@@ -15,7 +15,14 @@ This aims at parsing textual JSON data, and to deserialize it into our (strongly
 
 The only tiers of interest for this parser are the desktop/server tiers. There are other JSON librairies with good performances, and already well tested/documented, which ***also*** support mobile devices that run more limited flavors of .NET ([JSON.NET](http://james.newtonking.com/json) and [ServiceStack](https://github.com/ServiceStack/ServiceStack) come to mind).
 
-This JSON parser/deserializer aims only at being "simple", short, fast, and for use by some desktop tooling or server-side code that would require the full .NET anyway, and unlikely to ever be usable on mobile devices (unless those can eventually run such tools on the full .NET themselves).
+This JSON parser/deserializer aims only at being "simple", short, fast, and for use by some desktop tooling or server-side code that would require the full .NET anyway, and unlikely to ever be usable on mobile devices (unless those can eventually run such tools on the full .NET).
+
+Available on the NuGet Gallery
+------------------------------
+
+For convenience:
+
+https://www.nuget.org/packages/System.Text.Json
 
 Early development status warning
 --------------------------------
