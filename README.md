@@ -1,8 +1,8 @@
 System.Text.Json
 ================
 
-"Small is beautiful... also." (Well, yes :)
--------------------------------------------
+"Small is beautiful."
+---------------------
 
 A minimalistic, and pretty fast JSON parser/deserializer.
 
