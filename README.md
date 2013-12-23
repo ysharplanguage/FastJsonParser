@@ -4,9 +4,16 @@ System.Text.Json
 "Small is beautiful."
 ---------------------
 
-A minimalistic, and pretty fast JSON parser/deserializer.
+This is a minimalistic and fast JSON parser/deserializer, for full .NET.
 
-The complete source code (with a Visual Studio 2010 solution) is pretty short, coming with a few tests, and test data, all in the "JsonTest" folder.
+The complete source code of the parser is pretty short - single source file, less than 600 SLOC - and comes with a few tests, and test data, all in the "JsonTest" folder.
+
+Also available on the NuGet Gallery
+-----------------------------------
+
+For convenience:
+
+https://www.nuget.org/packages/System.Text.Json
 
 Goal
 ----
@@ -16,13 +23,6 @@ This aims at parsing textual JSON data, and to deserialize it into our (strongly
 The only tiers of interest for this parser are the desktop/server tiers. There are other JSON librairies with good performances, and already well tested/documented, which ***also*** support mobile devices that run more limited flavors of .NET ([JSON.NET](http://james.newtonking.com/json) and [ServiceStack](https://github.com/ServiceStack/ServiceStack) come to mind).
 
 This JSON parser/deserializer aims only at being "simple", short, fast, and for use by some desktop tooling or server-side code that would require the full .NET anyway, and unlikely to ever be usable on mobile devices (unless those can eventually run such tools on the full .NET).
-
-Available on the NuGet Gallery
-------------------------------
-
-For convenience:
-
-https://www.nuget.org/packages/System.Text.Json
 
 Early development status warning
 --------------------------------
