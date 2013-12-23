@@ -205,28 +205,28 @@ namespace Test
         static void StreamTest()
         {
             Console.Clear();
-
             System.Threading.Thread.MemoryBarrier();
             var initialMemory = System.GC.GetTotalMemory(true);
+            using (var stream = new System.IO.StreamReader(FATHERS_TEST_FILE_PATH))
+            {
+                Console.WriteLine("\"Fathers\" Test... streamed (press a key)");
+                Console.WriteLine();
+                Console.ReadKey();
+                var st = DateTime.Now;
+                var o = new JsonParser().Parse<FathersData>(stream);
+                var tm = (int)DateTime.Now.Subtract(st).TotalMilliseconds;
 
-            var stream = new System.IO.StreamReader(FATHERS_TEST_FILE_PATH);
-            Console.WriteLine("\"Fathers\" Test... streamed (press a key)");
-            Console.WriteLine();
-            Console.ReadKey();
-            var st = DateTime.Now;
-            var o = new JsonParser().Parse<FathersData>(stream);
-            var tm = (int)DateTime.Now.Subtract(st).TotalMilliseconds;
+                System.Threading.Thread.MemoryBarrier();
+                var finalMemory = System.GC.GetTotalMemory(true);
+                var consumption = finalMemory - initialMemory;
 
-            System.Threading.Thread.MemoryBarrier();
-            var finalMemory = System.GC.GetTotalMemory(true);
-            var consumption = finalMemory - initialMemory;
-
-            System.Diagnostics.Debug.Assert(o.fathers.Length == 30000);
-            Console.WriteLine();
-            Console.WriteLine("... {0} ms", tm);
-            Console.WriteLine();
-            Console.WriteLine("\tMemory used : {0}", ((decimal)finalMemory).ToString("0,0"));
-            Console.WriteLine();
+                System.Diagnostics.Debug.Assert(o.fathers.Length == 30000);
+                Console.WriteLine();
+                Console.WriteLine("... {0} ms", tm);
+                Console.WriteLine();
+                Console.WriteLine("\tMemory used : {0}", ((decimal)finalMemory).ToString("0,0"));
+                Console.WriteLine();
+            }
             Console.ReadKey();
         }
 
