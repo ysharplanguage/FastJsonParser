@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 
 // For the JavaScriptSerializer
@@ -28,51 +29,12 @@ namespace Test
         const string FATHERS_TEST_FILE_PATH = @"..\..\TestData\fathers.json.txt";
         const string HUGE_TEST_FILE_PATH = @"..\..\TestData\huge.json.txt";
 
-        /* Note: "huge.json.txt" is in fact a copy of this file:
-         * 
-         * https://github.com/zeMirco/sf-city-lots-json
-         * 
-         * "City Lots San Francisco in .json
-         * I needed a really big .json file for testing various code.
-         * The CityLots spatial data layer is a representation of the City and County of San Francisco's Subdivision parcels. The initial file is in the .shp (shapefile) format and as the conversion process is quite cumbersome I uploaded the data as a .json file.
-         * Warning: size is 189,9 MB."
-         */
-
-        /*  System.Text.Json.JsonParser's figures vs. JSON.NET's, v5.0 r8:
-
-            (.NET 4.0 target, on Ideapad w/ Intel Core i5 CPU @ 2.50GHz, 6GB RAM, running Win7 64bit)
-
-            "Loop" Test of tiny JSON (deserializing x times the JSON contained in the tiny.json.txt file = 91 bytes):
-            10,000 iterations: in ~ 65 milliseconds vs. JSON.NET 5.0 r8 in ~ 250 milliseconds vs. ServiceStack in ~ 125 milliseconds
-            100,000 iterations: in ~ 600 milliseconds vs. JSON.NET 5.0 r8 in ~ 900 milliseconds vs. ServiceStack in ~ 650 milliseconds
-            1,000,000 iterations: in ~ 5.9 seconds vs. JSON.NET 5.0 r8 in ~ 8.3 seconds vs. ServiceStack in ~ 6.1 seconds
-
-            "Loop" Test of small JSON (deserializing x times the JSON contained in the small.json.txt file ~ 3.5 KB):
-            10,000 iterations: in ~ 1.2 second vs. JSON.NET 5.0 r8 in ~ 2.2 seconds vs. ServiceStack... N/A
-            100,000 iterations: in ~ 12.4 seconds vs. JSON.NET 5.0 r8... OutOfMemoryException vs. ServiceStack... N/A
-
-            Note: fathers.json.txt was generated using:
-            http://experiments.mennovanslooten.nl/2010/mockjson/tryit.html
-
-            "Fathers" Test (12 MB JSON file):
-            Parsed in ~ 275 milliseconds vs. JSON.NET 5.0 r8 in ~ 500 milliseconds vs. ServiceStack in ~ 575 milliseconds
-
-            "Huge" Test (180 MB JSON file):
-            Parsed in ~ 8.7 seconds vs. JSON.NET 5.0 r8... OutOfMemoryException vs. ServiceStack... N/A
-         */
-
         static void LoopTest(string parserName, Func<string, object> parseFunc, string testFile, int count)
-        {
-            LoopTest(parserName, parseFunc, testFile, count, false);
-        }
-
-        static void LoopTest(string parserName, Func<string, object> parseFunc, string testFile, int count, bool fireAndForget)
         {
             Console.Clear();
             Console.WriteLine("Parser: {0}", parserName);
             Console.WriteLine();
             Console.WriteLine("Loop Test File: {0}", testFile);
-            Console.WriteLine("Fire and forget ? {0}", fireAndForget);
             Console.WriteLine("Iterations: {0}", count.ToString("0,0"));
             Console.WriteLine();
             Console.WriteLine("Press ESC to skip this test or any other key to start...");
@@ -84,28 +46,17 @@ namespace Test
             var initialMemory = System.GC.GetTotalMemory(true);
 
             var json = System.IO.File.ReadAllText(testFile);
-            var n = 0;
             var st = DateTime.Now;
-            if (!fireAndForget)
-            {
-                var l = new List<object>();
-                for (var i = 0; i < count; i++)
-                    l.Add(parseFunc(json));
-                n = l.Count;
-            }
-            else
-            {
-                n = count;
-                for (var i = 0; i < count; i++)
-                    parseFunc(json);
-            }
+            var l = new List<object>();
+            for (var i = 0; i < count; i++)
+                l.Add(parseFunc(json));
             var tm = (int)DateTime.Now.Subtract(st).TotalMilliseconds;
 
             System.Threading.Thread.MemoryBarrier();
             var finalMemory = System.GC.GetTotalMemory(true);
             var consumption = finalMemory - initialMemory;
 
-            System.Diagnostics.Debug.Assert(n == count);
+            System.Diagnostics.Debug.Assert(l.Count == count);
 
             Console.WriteLine();
             Console.WriteLine("... Done, in {0} ms. Throughput: {1} characters / second.", tm.ToString("0,0"), (1000 * (decimal)(count * json.Length) / (tm > 0 ? tm : 1)).ToString("0,0.00"));
@@ -207,45 +158,25 @@ namespace Test
 
         static void SpeedTests()
         {
-            LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 10000000, true);
-            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 10000000, true);
-            LoopTest("ServiceStack", new JsonSerializer<BoonSmall>().DeserializeFromString, BOON_SMALL_TEST_FILE_PATH, 10000000, true);
-            LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 10000000, true);
-
-            LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().DeserializeObject, BOON_SMALL_TEST_FILE_PATH, 10000000, true);
-            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject, BOON_SMALL_TEST_FILE_PATH, 10000000, true);
-            //LoopTest("ServiceStack", new JsonSerializer<object>().DeserializeFromString, BOON_SMALL_TEST_FILE_PATH, 10000000, true);
-            LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<object>, BOON_SMALL_TEST_FILE_PATH, 10000000, true);
+            LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 10000000);
+            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 10000000);
+            LoopTest("ServiceStack", new JsonSerializer<BoonSmall>().DeserializeFromString, BOON_SMALL_TEST_FILE_PATH, 10000000);
+            LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 10000000);
 
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<Person>, TINY_TEST_FILE_PATH, 10000);
             LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<Person>, TINY_TEST_FILE_PATH, 10000);
             LoopTest("ServiceStack", new JsonSerializer<Person>().DeserializeFromString, TINY_TEST_FILE_PATH, 10000);
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<Person>, TINY_TEST_FILE_PATH, 10000);
 
-            LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<Person>, TINY_TEST_FILE_PATH, 10000, true);
-            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<Person>, TINY_TEST_FILE_PATH, 10000, true);
-            LoopTest("ServiceStack", new JsonSerializer<Person>().DeserializeFromString, TINY_TEST_FILE_PATH, 10000, true);
-            LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<Person>, TINY_TEST_FILE_PATH, 10000, true);
-
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<Person>, TINY_TEST_FILE_PATH, 100000);
             LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<Person>, TINY_TEST_FILE_PATH, 100000);
             LoopTest("ServiceStack", new JsonSerializer<Person>().DeserializeFromString, TINY_TEST_FILE_PATH, 100000);
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<Person>, TINY_TEST_FILE_PATH, 100000);
 
-            LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<Person>, TINY_TEST_FILE_PATH, 100000, true);
-            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<Person>, TINY_TEST_FILE_PATH, 100000, true);
-            LoopTest("ServiceStack", new JsonSerializer<Person>().DeserializeFromString, TINY_TEST_FILE_PATH, 100000, true);
-            LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<Person>, TINY_TEST_FILE_PATH, 100000, true);
-
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<Person>, TINY_TEST_FILE_PATH, 1000000);
             LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<Person>, TINY_TEST_FILE_PATH, 1000000);
             LoopTest("ServiceStack", new JsonSerializer<Person>().DeserializeFromString, TINY_TEST_FILE_PATH, 1000000);
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<Person>, TINY_TEST_FILE_PATH, 1000000);
-
-            LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<Person>, TINY_TEST_FILE_PATH, 1000000, true);
-            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<Person>, TINY_TEST_FILE_PATH, 1000000, true);
-            LoopTest("ServiceStack", new JsonSerializer<Person>().DeserializeFromString, TINY_TEST_FILE_PATH, 1000000, true);
-            LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<Person>, TINY_TEST_FILE_PATH, 1000000, true);
 
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().DeserializeObject, SMALL_TEST_FILE_PATH, 10000);
             LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject, SMALL_TEST_FILE_PATH, 10000);
