@@ -574,11 +574,9 @@ namespace System.Text.Json
 
         private T DoParse<T>(System.IO.TextReader input)
         {
+            str = input;
             Reset(StreamRead, StreamNext, StreamChar, StreamSpace);
-            using (str = input)
-            {
-                return (T)Val(Entry(typeof(T)));
-            }
+            return (T)Val(Entry(typeof(T)));
         }
 
         public JsonParser()
