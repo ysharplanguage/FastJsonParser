@@ -132,7 +132,7 @@ unfortunately, quite unfamiliar with it, I'm still trying to understand how, in 
 
 * "Loop" Test of tiny JSON (deserializing x times the JSON contained in the [tiny.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/tiny.json.txt) file = 126 bytes) - with POCO target (1 class):
     * 10,000 iterations: in ~ 56 milliseconds (pretty good)
-        * vs. Microsoft's JavaScriptSerializer in ~ 550 milliseconds (bad omen #3)
+        * vs. Microsoft's JavaScriptSerializer in ~ 550 milliseconds (bad omen #2)
         * vs. JSON.NET in ~ 250 milliseconds
         * vs. ServiceStack in ~ 125 milliseconds
         * (Which yields System.Text.Json.JsonParser's throughput : 22,321,428 bytes / second)
