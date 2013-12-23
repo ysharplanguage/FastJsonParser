@@ -133,7 +133,7 @@ namespace System.Text.Json
 
             private PropInfo GetPropInfo(Type type, string name, System.Reflection.MethodInfo set, System.Reflection.MethodInfo parse)
             {
-                var dyn = new System.Reflection.Emit.DynamicMethod("Set" + name, null, new Type[] { typeof(object), typeof(JsonParser), typeof(int) }, typeof(PropInfo));
+                var dyn = new System.Reflection.Emit.DynamicMethod("Set" + name, null, new Type[] { typeof(object), typeof(JsonParser), typeof(int) }, typeof(string), true);
                 var il = dyn.GetILGenerator();
                 il.Emit(System.Reflection.Emit.OpCodes.Ldarg_0);
                 il.Emit(System.Reflection.Emit.OpCodes.Ldarg_1);
