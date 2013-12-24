@@ -122,7 +122,7 @@ So, without further ado:
 <th>JavaScriptSerializer</th>
 <th>JSON.NET</th>
 <th>ServiceStack</th>
-<th>This JsonParser</th>
+<th>System.Text.Json</th>
 <th>POCO or<br/>loosely-typed?</th>
 </tr>
 <tr>
