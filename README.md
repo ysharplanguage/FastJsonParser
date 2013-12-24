@@ -332,10 +332,10 @@ They are also interesting to notice, if only when comparing JSON.NET vs. Service
 
 <a name="POCOs"></a>
 
-Target POCOs (those used by some of the above tests)
-----------------------------------------------------
+Target POCOs
+------------
 
-Here they are, for the curious and/or impatient:
+These are used by some of the above tests:
 
         // Used in the "boon-small.json" test
         public class BoonSmall
