@@ -116,7 +116,7 @@ Note such figures (either the "burning monk's", or these below) can always - pot
 
 So, without further ado:
 
-<table border="1" width="90%">
+<table border="1" width="100%">
 <tr>
 <th>Test /<br/>JSON size /<br/># Iterations</th>
 <th>JavaScriptSerializer</th>
