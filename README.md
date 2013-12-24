@@ -90,6 +90,8 @@ In my opinion, *in that case*, it's the application.
 
 (Also, one can read [this very informative post of Eric Lippert](http://ericlippert.com/2013/07/25/what-is-the-type-of-the-null-literal/) about the so-called "null type", btw.)
 
+<a name="Performances"></a>
+
 Performances
 ------------
 
