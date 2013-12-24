@@ -128,7 +128,7 @@ So, without further ado:
 <th>POCO or<br/>loosely-typed?</th>
 </tr>
 <tr>
-<td><strong>_oj-highly-nested.json</strong><br/>257 bytes<br/>10,000</td>
+<td><strong>_oj-highly-nested.json</strong><br/>257 bytes<br/>10,000 iter.</td>
 <td>11.4 K parses/sec</td>
 <td>12.4 K parses/sec</td>
 <td>N / A</td>
@@ -136,7 +136,7 @@ So, without further ado:
 <td>Loosely-typed</td>
 </tr>
 <tr>
-<td><strong>_oj-highly-nested.json</strong><br/>257 bytes<br/>100,000</td>
+<td><strong>_oj-highly-nested.json</strong><br/>257 bytes<br/>100,000 iter.</td>
 <td>11.0 K parses/sec</td>
 <td>12.6 K parses/sec</td>
 <td>N / A</td>
@@ -144,7 +144,7 @@ So, without further ado:
 <td>Loosely-typed</td>
 </tr>
 <tr>
-<td><strong>boon-small.json</strong><br/>79 bytes<br/>1,000,000</td>
+<td><strong>boon-small.json</strong><br/>79 bytes<br/>1,000,000 iter.</td>
 <td>31.7 K parses/sec</td>
 <td>139.9 K parses/sec</td>
 <td>180.2 K parses/sec</td>
@@ -152,7 +152,7 @@ So, without further ado:
 <td>POCO</td>
 </tr>
 <tr>
-<td><strong>boon-small.json</strong><br/>79 bytes<br/>10,000,000</td>
+<td><strong>boon-small.json</strong><br/>79 bytes<br/>10,000,000 iter.</td>
 <td>33.1 K parses/sec</td>
 <td>143.3 K parses/sec</td>
 <td>182.5 K parses/sec</td>
@@ -160,7 +160,7 @@ So, without further ado:
 <td>POCO</td>
 </tr>
 <tr>
-<td><strong>tiny.json</strong><br/>126 bytes<br/>10,000</td>
+<td><strong>tiny.json</strong><br/>126 bytes<br/>10,000 iter.</td>
 <td>18.2 K parses/sec</td>
 <td>40.0 K parses/sec</td>
 <td>80.0 K parses/sec</td>
@@ -168,7 +168,7 @@ So, without further ado:
 <td>POCO</td>
 </tr>
 <tr>
-<td><strong>tiny.json</strong><br/>126 bytes<br/>100,000</td>
+<td><strong>tiny.json</strong><br/>126 bytes<br/>100,000 iter.</td>
 <td>20.4 K parses/sec</td>
 <td>111.1 K parses/sec</td>
 <td>153.8 K parses/sec</td>
@@ -176,7 +176,7 @@ So, without further ado:
 <td>POCO</td>
 </tr>
 <tr>
-<td><strong>tiny.json</strong><br/>126 bytes<br/>1,000,000</td>
+<td><strong>tiny.json</strong><br/>126 bytes<br/>1,000,000 iter.</td>
 <td>20.1 K parses/sec</td>
 <td>120.5 K parses/sec</td>
 <td>163.9 K parses/sec</td>
@@ -184,7 +184,7 @@ So, without further ado:
 <td>POCO</td>
 </tr>
 <tr>
-<td><strong>small.json</strong><br/>3.5 KB<br/>10,000</td>
+<td><strong>small.json</strong><br/>3.5 KB<br/>10,000 iter.</td>
 <td>1.5 K parses/sec</td>
 <td>4.5 K parses/sec</td>
 <td>N / A</td>
@@ -192,7 +192,7 @@ So, without further ado:
 <td>Loosely-typed</td>
 </tr>
 <tr>
-<td><strong>small.json</strong><br/>3.5 KB<br/>100,000</td>
+<td><strong>small.json</strong><br/>3.5 KB<br/>100,000 iter.</td>
 <td>1.5 K parses/sec</td>
 <td>Exception</td>
 <td>N / A</td>
