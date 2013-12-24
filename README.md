@@ -146,7 +146,7 @@ So, without further ado... (larger figure means faster)
 <td><strong>76.6 K parses/sec</strong><br/>(on his machine)</td>
 </tr>
 <tr>
-<td><strong>boon-small.json</strong><br/>79 bytes<br/>1,000,000 iter.<br/><strong>POCO</strong></td>
+<td><strong>boon-small.json</strong><br/>79 bytes<br/>1,000,000 iter.<br/><strong>POCO</strong> (<a href="#POCOs">see below</a>)</td>
 <td>31.7 K parses/sec</td>
 <td>139.9 K parses/sec</td>
 <td>180.2 K parses/sec</td>
@@ -154,7 +154,7 @@ So, without further ado... (larger figure means faster)
 <td>N / A</td>
 </tr>
 <tr>
-<td><strong>boon-small.json</strong><br/>79 bytes<br/>10,000,000 iter.<br/><strong>POCO</strong></td>
+<td><strong>boon-small.json</strong><br/>79 bytes<br/>10,000,000 iter.<br/><strong>POCO</strong> (<a href="#POCOs">see below</a>)</td>
 <td>33.1 K parses/sec</td>
 <td>143.3 K parses/sec</td>
 <td>182.5 K parses/sec</td>
@@ -162,7 +162,7 @@ So, without further ado... (larger figure means faster)
 <td>N / A</td>
 </tr>
 <tr>
-<td><strong>tiny.json</strong><br/>126 bytes<br/>10,000 iter.<br/><strong>POCO</strong></td>
+<td><strong>tiny.json</strong><br/>126 bytes<br/>10,000 iter.<br/><strong>POCO</strong> (<a href="#POCOs">see below</a>)</td>
 <td>18.2 K parses/sec</td>
 <td>40.0 K parses/sec</td>
 <td>80.0 K parses/sec</td>
@@ -170,7 +170,7 @@ So, without further ado... (larger figure means faster)
 <td>N / A</td>
 </tr>
 <tr>
-<td><strong>tiny.json</strong><br/>126 bytes<br/>100,000 iter.<br/><strong>POCO</strong></td>
+<td><strong>tiny.json</strong><br/>126 bytes<br/>100,000 iter.<br/><strong>POCO</strong> (<a href="#POCOs">see below</a>)</td>
 <td>20.4 K parses/sec</td>
 <td>111.1 K parses/sec</td>
 <td>153.8 K parses/sec</td>
@@ -178,7 +178,7 @@ So, without further ado... (larger figure means faster)
 <td>N / A</td>
 </tr>
 <tr>
-<td><strong>tiny.json</strong><br/>126 bytes<br/>1,000,000 iter.<br/><strong>POCO</strong></td>
+<td><strong>tiny.json</strong><br/>126 bytes<br/>1,000,000 iter.<br/><strong>POCO</strong> (<a href="#POCOs">see below</a>)</td>
 <td>20.1 K parses/sec</td>
 <td>120.5 K parses/sec</td>
 <td>163.9 K parses/sec</td>
@@ -202,7 +202,7 @@ So, without further ado... (larger figure means faster)
 <td>N / A</td>
 </tr>
 <tr>
-<td><strong>fathers.json</strong><br/>12.4 MB<br/>(single parse)<br/><strong>POCO</strong></td>
+<td><strong>fathers.json</strong><br/>12.4 MB<br/>(single parse)<br/><strong>POCO</strong> (<a href="#POCOs">see below</a>)</td>
 <td>5.0 MB/sec</td>
 <td>26.0 MB/sec</td>
 <td>22.6 MB/sec</td>
@@ -326,6 +326,8 @@ The latter, "fathers" test, is the one with the results that intrigued me the mo
         * (Which yields System.Text.Json.JsonParser's throughput : 22,798,921 bytes / second)
     * As for huge.json.txt, it is just a copy of this file:
         * https://github.com/zeMirco/sf-city-lots-json
+
+<a name="POCOs"></a>
 
 Target POCOs (those used by some of the above tests)
 ----------------------------------------------------
