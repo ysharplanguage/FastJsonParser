@@ -122,7 +122,7 @@ So, without further ado:
 <th>JavaScriptSerializer</th>
 <th>JSON.NET</th>
 <th>ServiceStack</th>
-<th>[JsonParser](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs)</th>
+<th><a href="https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs">JsonParser</a></th>
 <th>POCO or<br/>loosely-typed?</th>
 </tr>
 <tr>
