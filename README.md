@@ -116,6 +116,23 @@ Note such figures (either the "burning monk's", or these below) can always - pot
 
 So, without further ado:
 
+<table border="1" width="100%">
+<tr>
+<td><strong>Test name</strong> /<br/>JSON size /<br/># Iterations</td>
+<td>JavaScriptSerializer</td>
+<td>JSON.NET</td>
+<td>ServiceStack</td>
+<td>System.Text.Json</td>
+</tr>
+<tr>
+<td><strong>_oj-highly-nested</strong><br/>257 bytes<br/>10,000</td>
+<td>11.4 K parses/sec</td>
+<td>12.4 K parses/sec</td>
+<td>N / A</td>
+<td>42.5 K parses/sec</td>
+</tr>
+</table>
+
 ***Peter's "Oj Strict Mode Performance" test***
 
 * "Loop" Test of Peter's "Oj Strict Mode Performance" sample (deserializing x times the JSON contained in the [_oj-highly-nested.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/_oj-highly-nested.json.txt) file = 257 bytes) - "loosely-typed" deserialization:
