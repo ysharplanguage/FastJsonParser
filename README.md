@@ -116,6 +116,25 @@ Note such figures (either the "burning monk's", or these below) can always - pot
 
 So, without further ado:
 
+***Peter's "Oj Strict Mode Performance" test***
+
+* "Loop" Test of Peter's "Oj Strict Mode Performance" sample (deserializing x times the JSON contained in the [_oj-highly-nested.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/_oj-highly-nested.json.txt) file = 257 bytes) - "loosely-typed" deserialization:
+    * 100,000 iterations: in ~ 2.71 seconds
+        * vs. Microsoft's JavaScriptSerializer in ~ 9.05 seconds
+        * vs. JSON.NET in ~ 7.95 seconds
+        * vs. ServiceStack... N / A
+        * (Which yields System.Text.Json.JsonParser's throughput : 9,486,895 bytes / second)
+    * [_oj-highly-nested.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/_oj-highly-nested.json.txt) borrowed from Peter's sample, at:
+        * http://www.ohler.com/dev/oj_misc/performance_strict.html
+
+I find Peter's JSON sample interesting for its "highly nested" arrays (at end of the payload):
+
+    {"a":"Alpha","b":true,"c":12345,"d":[true,[false,[-123456789,null],3.9676,["Something else.",false],null]],"e":{"zero":null,"one":1,"two":2,"three":[3],"four":[0,1,2,3,4]},"f":null,"h":{"a":{"b":{"c":{"d":{"e":{"f":{"g":null}}}}}}},"i":[[[[[[[null]]]]]]]}
+
+As for that "vs. ServiceStack in... N / A":
+
+unfortunately, quite unfamiliar with it, I'm still trying to understand how, in absence of POCOs, to have ServiceStack deserialize into merely trees of dictionaries mixed with lists or arrays (just as we can do very easily with JSON.NET, the JavaScriptSerializer, or my parser here).
+
 ***Rick's "Boon" small test***
 
 * Rick's "Boon" small test, slightly modified (deserializing x times the JSON contained in the [boon-small.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/boon-small.json.txt) file = 79 bytes) - with POCO target (1 class):
@@ -130,10 +149,6 @@ Rick's original test can be found at:
 http://rick-hightower.blogspot.com/2013/11/benchmark-for-json-parsing-boon-scores.html
 
 Note Rick is one of our fellows from the Java realm - and from his own comparative figures that I eventually noticed, it does seem that [Rick's "Boon"](https://github.com/RichardHightower/json-parsers-benchmark/blob/master/README.md) is indeed **pretty darn fast** among the Java toolboxes for JSON.
-
-As for that "vs. ServiceStack in... N / A":
-
-unfortunately, quite unfamiliar with it, I'm still trying to understand how, in absence of POCOs, to have ServiceStack deserialize into merely trees of dictionaries mixed with lists or arrays (just as we can do very easily with JSON.NET, the JavaScriptSerializer, or my parser here).
 
 ***"Tiny JSON" test***
 
