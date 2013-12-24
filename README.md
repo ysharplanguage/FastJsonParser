@@ -112,108 +112,108 @@ Note such figures (either the "burning monk's", or these below) can always - pot
 
 ***Executable target, and H/W used***
 
-.NET 4.0 target, on a humble Ideapad Intel Core i5 CPU @ 2.50GHz, 6 GB RAM, running Win7 64bit, with a ~ 98%..99% idle CPU (a nice enough personal laptop, but not exactly among the beasts of speed nowadays...)
+.NET 4.0 target, on a humble Ideapad Intel Core i5 CPU @ 2.50GHz, 6 GB RAM, running Win7 64bit, with a ~ 98%..99% idle CPU (a nice enough personal laptop, but not exactly among the beasts of speed nowadays).
 
-So, without further ado:
+Just for comparison with the native world, on the third row of the table below I also give the throughput achieved by Peter's <a href="http://www.ohler.com/dev/oj_misc/performance_strict.html">"Oj"</a> (a C extension to Ruby) for 100,000 parses over his own sample JSON ([_oj-highly-nested.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/_oj-highly-nested.json.txt)) that I've borrowed for this benchmark.
 
-(larger figure means faster)
+So, without further ado... (larger figure means faster)
 
 <table border="1" width="100%">
 <tr>
-<th>Test /<br/>JSON size /<br/># Iterations</th>
+<th>Test /<br/>JSON size /<br/># Iterations /<br/>POCO or<br/>loosely-typed?</th>
 <th>JavaScript<br/>Serializer</th>
 <th>JSON.NET</th>
 <th>ServiceStack</th>
 <th><a href="https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs">JsonParser</a></th>
-<th>POCO or<br/>loosely-typed?</th>
+<th>Peter's <a href="http://www.ohler.com/dev/oj_misc/performance_strict.html">"Oj"</a><br/>(C extension to Ruby)</th>
 </tr>
 <tr>
-<td><strong>_oj-highly-nested.json</strong><br/>257 bytes<br/>10,000 iter.</td>
+<td><strong>_oj-highly-nested.json</strong><br/>257 bytes<br/>10,000 iter.<br/>Loosely-typed</td>
 <td>11.4 K parses/sec</td>
 <td>12.4 K parses/sec</td>
 <td>N / A</td>
 <td>42.5 K parses/sec</td>
-<td>Loosely-typed</td>
+<td>N / A</td>
 </tr>
 <tr>
-<td><strong>_oj-highly-nested.json</strong><br/>257 bytes<br/>100,000 iter.</td>
+<td><strong>_oj-highly-nested.json</strong><br/>257 bytes<br/>100,000 iter.<br/>Loosely-typed</td>
 <td>11.0 K parses/sec</td>
 <td>12.6 K parses/sec</td>
 <td>N / A</td>
 <td>36.9 K parses/sec</td>
-<td>Loosely-typed</td>
+<td><strong>76.6 K parses/sec</strong></td>
 </tr>
 <tr>
-<td><strong>boon-small.json</strong><br/>79 bytes<br/>1,000,000 iter.</td>
+<td><strong>boon-small.json</strong><br/>79 bytes<br/>1,000,000 iter.<br/>POCO</td>
 <td>31.7 K parses/sec</td>
 <td>139.9 K parses/sec</td>
 <td>180.2 K parses/sec</td>
 <td>261.1 K parses/sec</td>
-<td>POCO</td>
+<td>N / A</td>
 </tr>
 <tr>
-<td><strong>boon-small.json</strong><br/>79 bytes<br/>10,000,000 iter.</td>
+<td><strong>boon-small.json</strong><br/>79 bytes<br/>10,000,000 iter.<br/>POCO</td>
 <td>33.1 K parses/sec</td>
 <td>143.3 K parses/sec</td>
 <td>182.5 K parses/sec</td>
 <td>271.0 K parses/sec</td>
-<td>POCO</td>
+<td>N / A</td>
 </tr>
 <tr>
-<td><strong>tiny.json</strong><br/>126 bytes<br/>10,000 iter.</td>
+<td><strong>tiny.json</strong><br/>126 bytes<br/>10,000 iter.<br/>POCO</td>
 <td>18.2 K parses/sec</td>
 <td>40.0 K parses/sec</td>
 <td>80.0 K parses/sec</td>
 <td>178.6 K parses/sec</td>
-<td>POCO</td>
+<td>N / A</td>
 </tr>
 <tr>
-<td><strong>tiny.json</strong><br/>126 bytes<br/>100,000 iter.</td>
+<td><strong>tiny.json</strong><br/>126 bytes<br/>100,000 iter.<br/>POCO</td>
 <td>20.4 K parses/sec</td>
 <td>111.1 K parses/sec</td>
 <td>153.8 K parses/sec</td>
 <td>181.8 K parses/sec</td>
-<td>POCO</td>
+<td>N / A</td>
 </tr>
 <tr>
-<td><strong>tiny.json</strong><br/>126 bytes<br/>1,000,000 iter.</td>
+<td><strong>tiny.json</strong><br/>126 bytes<br/>1,000,000 iter.<br/>POCO</td>
 <td>20.1 K parses/sec</td>
 <td>120.5 K parses/sec</td>
 <td>163.9 K parses/sec</td>
 <td>178.5 K parses/sec</td>
-<td>POCO</td>
+<td>N / A</td>
 </tr>
 <tr>
-<td><strong>small.json</strong><br/>3.5 KB<br/>10,000 iter.</td>
+<td><strong>small.json</strong><br/>3.5 KB<br/>10,000 iter.<br/>Loosely-typed</td>
 <td>1.5 K parses/sec</td>
 <td>4.5 K parses/sec</td>
 <td>N / A</td>
 <td>8.8 K parses/sec</td>
-<td>Loosely-typed</td>
+<td>N / A</td>
 </tr>
 <tr>
-<td><strong>small.json</strong><br/>3.5 KB<br/>100,000 iter.</td>
+<td><strong>small.json</strong><br/>3.5 KB<br/>100,000 iter.<br/>Loosely-typed</td>
 <td>1.5 K parses/sec</td>
 <td>Exception</td>
 <td>N / A</td>
 <td>8.6 K parses/sec</td>
-<td>Loosely-typed</td>
+<td>N / A</td>
 </tr>
 <tr>
-<td><strong>fathers.json</strong><br/>12.4 MB<br/>(single parse)</td>
+<td><strong>fathers.json</strong><br/>12.4 MB<br/>(single parse)<br/>Loosely-typed</td>
 <td>5.0 MB/sec</td>
 <td>26.0 MB/sec</td>
 <td>22.6 MB/sec</td>
 <td>45.5 MB/sec</td>
-<td>POCO</td>
+<td>N / A</td>
 </tr>
 <tr>
-<td><strong>huge.json</strong><br/>180 MB<br/>(single parse)</td>
+<td><strong>huge.json</strong><br/>180 MB<br/>(single parse)<br/>Loosely-typed</td>
 <td>3.0 MB/sec</td>
 <td>Exception</td>
 <td>N / A</td>
 <td>22.7 MB/sec</td>
-<td>Loosely-typed</td>
+<td>N / A</td>
 </tr>
 </table>
 
