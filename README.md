@@ -22,12 +22,12 @@ This aims at parsing textual JSON data, and to deserialize it into our (strongly
 
 The only tiers of interest for this parser are the desktop/server tiers. There are other JSON librairies with good performances, and already well tested/documented, which ***also*** support mobile devices that run more limited flavors of .NET ([JSON.NET](http://james.newtonking.com/json) and [ServiceStack](https://github.com/ServiceStack/ServiceStack) come to mind).
 
-This JSON parser/deserializer aims only at being "simple", short, fast, and for use by some desktop tooling or server-side code that would require the full .NET anyway, and unlikely to ever be usable on mobile devices (unless those can eventually run such tools on the full .NET).
+This JSON parser/deserializer aims only at being "simple", short, fast, and for use by some desktop tooling or server-side code that would require the full .NET anyway, and unlikely to ever be usable on mobile devices (unless those can eventually run the full .NET).
 
 Early development status warning
 --------------------------------
 
-Although it is promisingly fast, please note this parser/deserializer is still experimental, also.
+Although it is promisingly fast, please note this parser/deserializer is still experimental.
 
 I do *not* recommend it for any use in production, at this stage. This may or may not evolve soon, but for one thing to begin with, it's in need of more extensive JSON conformance tests.
 
@@ -54,7 +54,7 @@ and
     
 (The capability to parse JSON text coming thru a reader (or stream) being clearly a must-have, past a certain size of payload - "*have mercy for your CLR's large object heap*", [if you see what I mean...](http://msdn.microsoft.com/en-us/magazine/cc534993.aspx))
 
-Note if you don't care about deserializing whatever input JSON into POCOs, you can just call these methods with
+Note that if you don't care (or don't want to bother) about deserializing whatever input JSON into POCOs, you can then just call these methods with
 
     object
 
@@ -78,9 +78,9 @@ The leaves will be from any of these types:
     bool
     string
 
-In this case of, say, "loosely typed" deserialization, you may ask: "But what about the JSON number literals in the input - why deserializing them as *strings*?"
+In this case of, say, "loosely typed" deserialization, one may ask: "But what about the JSON number literals in the input - why deserializing them as *strings*?"
 
-I would then ask my turn: "In absence of more specific type information about the deserialization target, who is likely best placed to decide whether the number after the colon, in
+I would then ask - ".... in absence of more specific type information about the deserialization target, who is likely best placed to decide whether the number after the colon, in
 
     "SomeNumber": 123.456
 
@@ -88,7 +88,7 @@ should be deserialized into a *System.Single*, a *System.Double*, or a *System.D
 
 In my opinion, *in that case*, it's the application.
 
-(Also, one can read [this very informative post of Eric Lippert](http://ericlippert.com/2013/07/25/what-is-the-type-of-the-null-literal/) about the so-called "null type", btw.)
+(Also, one can read [this very informative post of Eric Lippert](http://ericlippert.com/2013/07/25/what-is-the-type-of-the-null-literal/) about the so-called "null type".)
 
 <a name="Performances"></a>
 
@@ -97,14 +97,16 @@ Performances
 
 Following below: a few figures, the outcome *average numbers* (only) that I obtain from the tests provided here, along with a few remarks.
 
-Consistently enough, I also obtain similar performance ratios for the same 4 parsers/deserializers when compared one-to-one, after I adapt (for this JsonParser, which doesn't provide object-to-JSON text *serialization*) and when I run "the burning monk's" simple speed tester for JSON, which has been around for a while and can be found at
+Consistently enough, I also obtain similar performance ratios for the same 4 parsers/deserializers when compared one-to-one, after I adapt (for this JsonParser doesn't provide object-to-JSON text *serialization*) and I run "the burning monk's" simple speed tester for JSON, which has been around for a while and can be found at
 :
 
 http://theburningmonk.com/2013/09/binary-and-json-serializer-benchmarks-updated/
 
 ***Disclaimer***
 
-Note such figures (either the "burning monk's", or these below) can always - potentially - be much dependent on the test data at hand, and/or the way testing is performed. **YMMV**, so it's **always** a good idea to make *your own* benchmarks, using *your test data*, in the data "shape" you're interested in, and that you expect to encounter with *a good probability* in your domain.
+Note such figures (either the "burning monk's", or these below) can always - potentially - be much dependent on the test data at hand, and/or the way testing is performed.
+
+Of course, YMMV, so it's always a good idea to make *your own* benchmarks, using *your test data*, in the data "shape" you're interested in, and that you expect to encounter with *a good probability* in your domain.
 
 ***Other libraries, versions used ("the competition")***
 
@@ -114,9 +116,9 @@ Note such figures (either the "burning monk's", or these below) can always - pot
 
 ***Executable target, and H/W used***
 
-.NET 4.0 target, on a humble Ideapad Intel Core i5 CPU @ 2.50GHz, 6 GB RAM, running Win7 64bit, with a ~ 98%..99% idle CPU (a nice enough personal laptop, but not exactly among the beasts of speed nowadays).
+.NET 4.0 target, on a humble Ideapad Intel Core i5 CPU @ 2.50GHz, 6 GB RAM, running Win7 64bit, with a ~ 98%..99% idle CPU (a nice enough personal laptop, but not exactly a beast of speed nowadays).
 
-Just for comparison with the native world, on the third row of the table below I also give the throughput achieved by <a href="http://www.ohler.com/oj/">Peter's "Oj"</a> ("Oj" is a C extension to Ruby) for 100,000 parses over his own sample JSON ([_oj-highly-nested.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/_oj-highly-nested.json.txt)) that I've reused to prepare this benchmark ( cf. http://www.ohler.com/dev/oj_misc/performance_strict.html )
+Just for comparison with the native code world, on the third row of the table below I also give (in one measure only, for an idea) the throughput achieved by <a href="http://www.ohler.com/oj/">Peter's "Oj"</a> ("Oj" is a C extension to Ruby of his) for 100,000 parses over his own sample JSON ([_oj-highly-nested.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/_oj-highly-nested.json.txt)) that I've reused to prepare this benchmark ( cf. http://www.ohler.com/dev/oj_misc/performance_strict.html )
 
 So, without further ado... (larger figure means faster)
 
@@ -236,16 +238,16 @@ The same, with the test files and timings details:
         * vs. JSON.NET in ~ 7.95 seconds
         * vs. ServiceStack... N / A
         * (Which yields System.Text.Json.JsonParser's throughput : 9,486,895 bytes / second)
-    * [_oj-highly-nested.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/_oj-highly-nested.json.txt) borrowed from Peter's sample, at:
+    * [_oj-highly-nested.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/_oj-highly-nested.json.txt) comes from Peter's sample and tests, at:
         * http://www.ohler.com/dev/oj_misc/performance_strict.html
 
-I find Peter's JSON sample interesting for its non-trivial "shape", and the "highly nested" arrays at end of the payload:
+I find JSON data sample from Peter interesting for its non-trivial "shape", and the presence of these "highly nested" arrays (so to speak) at end of the payload:
 
     {"a":"Alpha","b":true,"c":12345,"d":[true,[false,[-123456789,null],3.9676,["Something else.",false],null]],"e":{"zero":null,"one":1,"two":2,"three":[3],"four":[0,1,2,3,4]},"f":null,"h":{"a":{"b":{"c":{"d":{"e":{"f":{"g":null}}}}}}},"i":[[[[[[[null]]]]]]]}
 
 As for that "vs. ServiceStack in... N / A":
 
-unfortunately, quite unfamiliar with it, I'm still trying to understand how, in absence of POCOs, to have ServiceStack deserialize into merely trees of dictionaries mixed with lists or arrays (just as we can do very easily with JSON.NET, the JavaScriptSerializer, or my parser here).
+unfortunately, quite unfamiliar with ServiceStack, I'm still trying to understand how, in absence of POCOs, to have it deserialize into merely trees of dictionaries + lists or arrays (just as we can do very easily with JSON.NET, the JavaScriptSerializer, or my parser here).
 
 ***Rick's "Boon" small test***
 
@@ -265,7 +267,7 @@ Rick's original test can be found at:
 
 http://rick-hightower.blogspot.com/2013/11/benchmark-for-json-parsing-boon-scores.html
 
-Note Rick is one of our fellows from the Java realm - and from his own comparative figures that I eventually noticed, it does seem that [Rick's "Boon"](https://github.com/RichardHightower/json-parsers-benchmark/blob/master/README.md) is indeed **pretty darn fast** among the Java toolboxes for JSON.
+Note Rick is one of our fellows from the Java realm - and from his own comparative figures that I eventually noticed, it does seem that [Rick's "Boon"](https://github.com/RichardHightower/json-parsers-benchmark/blob/master/README.md) is also, indeed, *pretty fast*, among the number of Java toolboxes for JSON.
 
 ***"Tiny JSON" test***
 
@@ -314,7 +316,9 @@ Note Rick is one of our fellows from the Java realm - and from his own comparati
     * Note: [fathers.json.txt](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/TestData/fathers.json.txt) was generated using this nifty online helper:
         * http://experiments.mennovanslooten.nl/2010/mockjson/tryit.html
 
-The latter, "fathers" test, is the one with the results that intrigued me the most the very first few times I ran it - and it still does. However, I haven't taken the time yet to do more serious profiling to fully explain these timing differences that I didn't expect to be ***that significant***. They are also interesting to notice, when comparing JSON.NET vs. ServiceStack.
+The latter, "fathers" test, is the one with the results that intrigued me the most the very first few times I ran it - and it still does. However, I haven't taken the time yet to do more serious profiling to fully explain these timing differences that I didn't expect to be *that significant*.
+
+They are also interesting to notice, if only when comparing JSON.NET vs. ServiceStack.
 
 ***"Huge JSON" test***
 
@@ -395,7 +399,7 @@ Roadmap
 
 None really worth of the name for now.
 
-But... One thing I'm craving (so to speak) to support as soon as possible, is the ability to deserialize into [C#'s anonymous types](http://en.wikipedia.org/wiki/Anonymous_type). I've done it before, but I need to put more thinking into it (vs. [my first, other attempt at it](https://code.google.com/p/ysharp/source/browse/trunk/TestJSONParser/%28System.Text.Json%29Parser.cs)), in order to avoid the potential significant loss in performances I'm aware of.
+However, one thing I would like to support as soon as I can, is the ability to deserialize into [C#'s anonymous types](http://en.wikipedia.org/wiki/Anonymous_type). I've done it before, but I need to put more thinking into it (vs. [my first, other attempt at it](https://code.google.com/p/ysharp/source/browse/trunk/TestJSONParser/%28System.Text.Json%29Parser.cs)), in order to avoid the potential significant loss in performances I'm aware of.
 
 Another, quite obvious, item on the wish list is to provide some support for custom deserialization. Design-wise, I do have a preference for a [functional approach](http://en.wikipedia.org/wiki/First-class_function#Language_support) which would be based on (more or less) arbitrary "reviver" [delegate types](http://en.wikipedia.org/wiki/Delegate_%28CLI%29#Technical_Implementation_Details), for use by the parser's methods (for typical IoC/callback use cases).
 
