@@ -118,6 +118,14 @@ So, without further ado:
 
 <table border="1" width="100%">
 <tr>
+<th>Parser:</th>
+<th>JavaScriptSerializer</th>
+<th>JSON.NET</th>
+<th>ServiceStack</th>
+<th>System.Text.Json</th>
+<th>POCO or<br/>loosely-typed?</th>
+</tr>
+<tr>
 <td><strong>Test</strong> /<br/>JSON size /<br/># Iterations</td>
 <td>JavaScriptSerializer</td>
 <td>JSON.NET</td>
