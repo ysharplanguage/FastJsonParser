@@ -168,7 +168,7 @@ namespace System.Text.Json
         {
             internal Func<JsonParser, T> Parse;
 
-            private Func<JsonParser, T> GetParseFunc<T>()
+            private Func<JsonParser, T> GetParseFunc()
             {
                 var parse = GetParserParse(GetParseName(typeof(T)));
                 if (parse != null)
@@ -187,7 +187,7 @@ namespace System.Text.Json
             internal TypeInfo(int outer, Type elem)
                 : base(typeof(T), outer, elem)
             {
-                Parse = GetParseFunc<T>();
+                Parse = GetParseFunc();
             }
         }
 
