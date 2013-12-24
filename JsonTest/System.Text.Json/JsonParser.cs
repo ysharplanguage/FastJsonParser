@@ -87,7 +87,7 @@ namespace System.Text.Json
             internal Func<object> Ctor;
             internal PropInfo[] Prop;
             internal PropInfo Item;
-            internal Type ElementType;
+            internal Type EType;
             internal Type Type;
             internal int Outer;
             internal int Inner;
@@ -121,16 +121,6 @@ namespace System.Text.Json
                 return null;
             }
 
-            private string GetParseName(Type type)
-            {
-                return (!WellKnown.Contains(type) ? ((type.IsEnum && WellKnown.Contains(type.GetEnumUnderlyingType())) ? type.GetEnumUnderlyingType().Name : null) : type.Name);
-            }
-
-            private System.Reflection.MethodInfo GetParseMethod(string parseName)
-            {
-                return typeof(JsonParser).GetMethod((parseName ?? "Val"), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-            }
-
             private PropInfo GetPropInfo(Type type, string name, System.Reflection.MethodInfo set, System.Reflection.MethodInfo parse)
             {
                 var dyn = new System.Reflection.Emit.DynamicMethod("Set" + name, null, new Type[] { typeof(object), typeof(JsonParser), typeof(int) }, typeof(string), true);
@@ -139,24 +129,65 @@ namespace System.Text.Json
                 il.Emit(System.Reflection.Emit.OpCodes.Ldarg_1);
                 il.Emit(System.Reflection.Emit.OpCodes.Ldarg_2);
                 il.Emit(System.Reflection.Emit.OpCodes.Callvirt, parse);
+                if (type.IsValueType && (parse.ReturnType == typeof(object)))
+                    il.Emit(System.Reflection.Emit.OpCodes.Unbox_Any, type);
+                if (parse.ReturnType.IsValueType && (type == typeof(object)))
+                    il.Emit(System.Reflection.Emit.OpCodes.Box, type);
                 il.Emit(System.Reflection.Emit.OpCodes.Callvirt, set);
                 il.Emit(System.Reflection.Emit.OpCodes.Ret);
                 return new PropInfo { Type = type, Name = name, Set = (Action<object, JsonParser, int>)dyn.CreateDelegate(typeof(Action<object, JsonParser, int>)) };
             }
 
-            internal TypeInfo(Type type, int outer, Type elem)
+            protected string GetParseName(Type type)
+            {
+                return (!WellKnown.Contains(type) ? ((type.IsEnum && WellKnown.Contains(type.GetEnumUnderlyingType())) ? type.GetEnumUnderlyingType().Name : null) : type.Name);
+            }
+
+            protected System.Reflection.MethodInfo GetParserParse(string parseName)
+            {
+                return typeof(JsonParser).GetMethod((parseName ?? "Val"), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            }
+
+            protected TypeInfo(Type type, int outer, Type elem)
             {
                 var info = type.GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
                 var prop = new SortedList<string, PropInfo>();
                 Type = type;
                 Outer = outer;
-                ElementType = elem;
-                Ctor = GetCtor((ElementType ?? Type), (ElementType != null));
+                EType = elem;
+                Ctor = GetCtor((EType ?? Type), (EType != null));
                 for (var i = 0; i < info.Length; i++)
                     if (info[i].CanWrite)
-                        prop.Add(info[i].Name, GetPropInfo(info[i].PropertyType, info[i].Name, info[i].GetSetMethod(), GetParseMethod(GetParseName(info[i].PropertyType))));
+                        prop.Add(info[i].Name, GetPropInfo(info[i].PropertyType, info[i].Name, info[i].GetSetMethod(), GetParserParse(GetParseName(info[i].PropertyType))));
                 Prop = prop.Values.ToArray();
-                Item = ((ElementType != null) ? GetPropInfo(ElementType, "", typeof(List<>).MakeGenericType(ElementType).GetMethod("Add", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public), GetParseMethod(GetParseName(ElementType))) : null);
+                Item = ((EType != null) ? GetPropInfo(EType, "", typeof(List<>).MakeGenericType(EType).GetMethod("Add", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public), GetParserParse(GetParseName(EType))) : null);
+            }
+        }
+
+        internal class TypeInfo<T> : TypeInfo
+        {
+            internal Func<JsonParser, T> Parse;
+
+            private Func<JsonParser, T> GetParseFunc<T>()
+            {
+                var parse = GetParserParse(GetParseName(typeof(T)));
+                if (parse != null)
+                {
+                    var dyn = new System.Reflection.Emit.DynamicMethod("Parse" + typeof(T).Name, typeof(T), new Type[] { typeof(JsonParser) }, typeof(string), true);
+                    var il = dyn.GetILGenerator();
+                    il.Emit(System.Reflection.Emit.OpCodes.Ldarg_0);
+                    il.Emit(System.Reflection.Emit.OpCodes.Ldc_I4_0);
+                    il.Emit(System.Reflection.Emit.OpCodes.Callvirt, parse);
+                    il.Emit(System.Reflection.Emit.OpCodes.Ret);
+                    return (Func<JsonParser, T>)dyn.CreateDelegate(typeof(Func<JsonParser, T>));
+                }
+                return null;
+            }
+
+            internal TypeInfo(int outer, Type elem)
+                : base(typeof(T), outer, elem)
+            {
+                Parse = GetParseFunc<T>();
             }
         }
 
@@ -367,7 +398,7 @@ namespace System.Text.Json
                     if (ch < EOF) { if (!ec || (ch >= 128)) Char(ch); else { Esc(ch); ec = false; } } else break;
                 }
             }
-            throw Error((outer > 0) ? "Bad string" : "Bad key");
+            throw Error((outer >= 0) ? "Bad string" : "Bad key");
         }
 
         private DateTime DateTime(int outer)
@@ -455,7 +486,7 @@ namespace System.Text.Json
                 while (ch < EOF)
                 {
                     var prop = ((outer > 0) ? Key(outer) : null);
-                    var hash = ((outer == 0) ? String(0) : null);
+                    var hash = ((outer == 0) ? String(-1) : null);
                     Space();
                     Next(':');
                     if (prop != null)
@@ -491,9 +522,9 @@ namespace System.Text.Json
                 if (ch == ']')
                 {
                     Read();
-                    if ((outer > 0) && cached.Type.IsArray)
+                    if (cached.Type.IsArray)
                     {
-                        var array = Array.CreateInstance(cached.ElementType, list.Count);
+                        var array = Array.CreateInstance(cached.EType, list.Count);
                         list.CopyTo(array, 0);
                         return array;
                     }
@@ -506,9 +537,9 @@ namespace System.Text.Json
                     if (ch == ']')
                     {
                         Read();
-                        if ((outer > 0) && cached.Type.IsArray)
+                        if (cached.Type.IsArray)
                         {
-                            var array = Array.CreateInstance(cached.ElementType, list.Count);
+                            var array = Array.CreateInstance(cached.EType, list.Count);
                             list.CopyTo(array, 0);
                             return array;
                         }
@@ -556,7 +587,7 @@ namespace System.Text.Json
                 bool b = (etype != null);
                 outer = thash.Count;
                 etype = (etype ?? GetElementType(type));
-                types[outer] = new TypeInfo(type, outer, etype);
+                types[outer] = (TypeInfo)Activator.CreateInstance(typeof(TypeInfo<>).MakeGenericType(type), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, new object[] { outer, etype }, null);
                 types[outer].Ctor = types[outer].Ctor;
                 thash.Add(type, outer);
                 if ((etype != null) && !b) types[outer].Inner = Entry(etype);
@@ -569,14 +600,14 @@ namespace System.Text.Json
             len = input.Length;
             txt = input;
             Reset(StringRead, StringNext, StringChar, StringSpace);
-            return (T)Val(Entry(typeof(T)));
+            return (typeof(T).IsValueType ? ((TypeInfo<T>)types[Entry(typeof(T))]).Parse(this) : (T)Val(Entry(typeof(T))));
         }
 
         private T DoParse<T>(System.IO.TextReader input)
         {
             str = input;
             Reset(StreamRead, StreamNext, StreamChar, StreamSpace);
-            return (T)Val(Entry(typeof(T)));
+            return (typeof(T).IsValueType ? ((TypeInfo<T>)types[Entry(typeof(T))]).Parse(this) : (T)Val(Entry(typeof(T))));
         }
 
         public JsonParser()
@@ -587,7 +618,7 @@ namespace System.Text.Json
             parse['-'] = Num; parse['"'] = Str; parse['{'] = Obj; parse['['] = Arr;
             for (var input = 0; input < 128; input++) parse[input] = (parse[input] ?? Error);
             Entry(typeof(object));
-            Entry(typeof(object[]));
+            Entry(typeof(List<object>));
         }
 
         public T Parse<T>(string input)
