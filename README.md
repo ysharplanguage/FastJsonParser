@@ -116,13 +116,13 @@ Note such figures (either the "burning monk's", or these below) can always - pot
 
 So, without further ado:
 
-<table border="1" width="100%">
+<table border="1" width="90%">
 <tr>
 <th>Test /<br/>JSON size /<br/># Iterations</th>
 <th>JavaScriptSerializer</th>
 <th>JSON.NET</th>
 <th>ServiceStack</th>
-<th>System.Text.Json</th>
+<th>This JsonParser</th>
 <th>POCO or<br/>loosely-typed?</th>
 </tr>
 <tr>
