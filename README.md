@@ -8,8 +8,8 @@ This is a minimalistic and fast JSON parser/deserializer, for full .NET.
 
 The complete source code of the parser is pretty short (in a [single source file less than 600 SLOC-long](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs)) and comes with a few tests and sample data, all in the "JsonTest" folder.
 
-Also available on the NuGet Gallery
------------------------------------
+Also available on NuGet
+-----------------------
 
 For convenience:
 
@@ -22,7 +22,7 @@ This aims at parsing textual JSON data, and to deserialize it into our (strongly
 
 The only tiers of interest for this parser are the desktop/server tiers. There are other JSON librairies with good performances, and already well tested/documented, which ***also*** support mobile devices that run more limited flavors of .NET ([JSON.NET](http://james.newtonking.com/json) and [ServiceStack](https://github.com/ServiceStack/ServiceStack) come to mind).
 
-This JSON parser/deserializer aims only at being "simple", short, fast, and for use by some desktop tooling or server-side code that would require the full .NET anyway, and unlikely to ever be usable on mobile devices (unless those can eventually run the full .NET).
+This JSON parser/deserializer aims only at staying "simple", short, fast, and for use by some desktop tooling or server-side code that would require the full .NET anyway, and unlikely to ever be usable on mobile devices (unless those can eventually run the full .NET).
 
 Early development status warning
 --------------------------------
@@ -52,9 +52,9 @@ and
 
     T Parse<T>(System.IO.Stream input)
     
-(The capability to parse JSON text coming thru a reader (or stream) being clearly a must-have, past a certain size of payload - "*have mercy for your CLR's large object heap*", [if you see what I mean...](http://msdn.microsoft.com/en-us/magazine/cc534993.aspx))
+(IMO, the capability to parse JSON text coming thru a reader (or stream) is clearly a must-have, past a certain size of payload - "*have mercy for your CLR's large object heap*", [if you see what I mean](http://msdn.microsoft.com/en-us/magazine/cc534993.aspx).)
 
-Note that if you don't care (or don't want to bother) about deserializing whatever input JSON into POCOs, you can then just call these methods with
+Note that if you don't care (i.e., don't need / don't want to bother) deserializing whatever input JSON into POCOs, you can then just call these methods with
 
     object
 
@@ -80,7 +80,7 @@ The leaves will be from any of these types:
 
 In this case of, say, "loosely typed" deserialization, one may ask: "But what about the JSON number literals in the input - why deserializing them as *strings*?"
 
-I would then ask - ".... in absence of more specific type information about the deserialization target, who is likely best placed to decide whether the number after the colon, in
+I would then ask - ".... in absence of more specific type information about the deserialization target, *"who"* is likely best placed to decide whether the number after the colon, in
 
     "SomeNumber": 123.456
 
