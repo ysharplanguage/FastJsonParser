@@ -119,7 +119,7 @@ So, without further ado:
 <table border="1" width="100%">
 <tr>
 <th>Test /<br/>JSON size /<br/># Iterations</th>
-<th>JavaScriptSerializer</th>
+<th>JavaScript<br/>Serializer</th>
 <th>JSON.NET</th>
 <th>ServiceStack</th>
 <th><a href="https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs">JsonParser</a></th>
