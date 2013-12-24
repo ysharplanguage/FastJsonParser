@@ -246,7 +246,7 @@ I find JSON data sample from Peter interesting for its non-trivial "shape", and 
 
 As for that "vs. ServiceStack in... N / A":
 
-unfortunately, quite unfamiliar with ServiceStack, I'm still trying to understand how, in absence of POCOs, to have it deserialize into merely trees of dictionaries + lists or arrays (just as we can do very easily with JSON.NET, the JavaScriptSerializer, or my parser here).
+unfortunately, quite unfamiliar with ServiceStack, I'm still trying to understand how, in absence of POCOs, to have it deserialize into merely trees of dictionaries + lists or arrays (just as we can do very easily using JSON.NET, or Microsoft's JavaScriptSerializer, or this parser here).
 
 ***Rick's "Boon" small test***
 
