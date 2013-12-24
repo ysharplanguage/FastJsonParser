@@ -192,7 +192,7 @@ So, without further ado:
 <tr>
 <td><strong>small.json</strong><br/>3.5 KB<br/>100,000</td>
 <td>1.5 K parses/sec</td>
-<td>OutOfMemoryException</td>
+<td>Exception</td>
 <td>N / A</td>
 <td>8.6 K parses/sec</td>
 <td>Loosely-typed</td>
@@ -208,7 +208,7 @@ So, without further ado:
 <tr>
 <td><strong>huge.json</strong><br/>180 MB<br/>(single parse)</td>
 <td>3.0 MB/sec</td>
-<td>OutOfMemoryException</td>
+<td>Exception</td>
 <td>N / A</td>
 <td>22.7 MB/sec</td>
 <td>Loosely-typed</td>
