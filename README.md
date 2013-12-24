@@ -143,7 +143,7 @@ So, without further ado... (larger figure means faster)
 <td>12.6 K parses/sec</td>
 <td>N / A</td>
 <td>36.9 K parses/sec</td>
-<td><strong>76.6 K parses/sec</strong></td>
+<td><strong>76.6 K parses/sec</strong><br/>(on his machine)</td>
 </tr>
 <tr>
 <td><strong>boon-small.json</strong><br/>79 bytes<br/>1,000,000 iter.<br/>POCO</td>
