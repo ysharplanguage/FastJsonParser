@@ -23,6 +23,7 @@ namespace Test
 {
     class Program
     {
+        const string OJ_TEST_FILE_PATH = @"..\..\TestData\_oj-highly-nested.json.txt";
         const string BOON_SMALL_TEST_FILE_PATH = @"..\..\TestData\boon-small.json.txt";
         const string TINY_TEST_FILE_PATH = @"..\..\TestData\tiny.json.txt";
         const string SMALL_TEST_FILE_PATH = @"..\..\TestData\small.json.txt";
@@ -158,6 +159,21 @@ namespace Test
 
         static void SpeedTests()
         {
+            LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().DeserializeObject, OJ_TEST_FILE_PATH, 10000);
+            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject, OJ_TEST_FILE_PATH, 10000);
+            //LoopTest("ServiceStack", new JsonSerializer<object>().DeserializeFromString, OJ_TEST_FILE_PATH, 10000);
+            LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<object>, OJ_TEST_FILE_PATH, 10000);
+
+            LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().DeserializeObject, OJ_TEST_FILE_PATH, 100000);
+            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject, OJ_TEST_FILE_PATH, 100000);
+            //LoopTest("ServiceStack", new JsonSerializer<object>().DeserializeFromString, OJ_TEST_FILE_PATH, 100000);
+            LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<object>, OJ_TEST_FILE_PATH, 100000);
+
+            LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 1000000);
+            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 1000000);
+            LoopTest("ServiceStack", new JsonSerializer<BoonSmall>().DeserializeFromString, BOON_SMALL_TEST_FILE_PATH, 1000000);
+            LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 1000000);
+
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 10000000);
             LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 10000000);
             LoopTest("ServiceStack", new JsonSerializer<BoonSmall>().DeserializeFromString, BOON_SMALL_TEST_FILE_PATH, 10000000);
