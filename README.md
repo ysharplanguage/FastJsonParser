@@ -118,20 +118,12 @@ So, without further ado:
 
 <table border="1" width="100%">
 <tr>
-<th>Parser:</th>
+<th>Test /<br/>JSON size /<br/># Iterations</th>
 <th>JavaScriptSerializer</th>
 <th>JSON.NET</th>
 <th>ServiceStack</th>
 <th>System.Text.Json</th>
 <th>POCO or<br/>loosely-typed?</th>
-</tr>
-<tr>
-<td><strong>Test</strong> /<br/>JSON size /<br/># Iterations</td>
-<td>JavaScriptSerializer</td>
-<td>JSON.NET</td>
-<td>ServiceStack</td>
-<td>System.Text.Json</td>
-<td>POCO or loosely-typed?</td>
 </tr>
 <tr>
 <td><strong>_oj-highly-nested.json</strong><br/>257 bytes<br/>10,000</td>
