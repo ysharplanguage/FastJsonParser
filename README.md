@@ -114,7 +114,7 @@ Note such figures (either the "burning monk's", or these below) can always - pot
 
 .NET 4.0 target, on a humble Ideapad Intel Core i5 CPU @ 2.50GHz, 6 GB RAM, running Win7 64bit, with a ~ 98%..99% idle CPU (a nice enough personal laptop, but not exactly among the beasts of speed nowadays).
 
-Just for comparison with the native world, on the third row of the table below I also give the throughput achieved by Peter's <a href="http://www.ohler.com/oj/">" Oj "</a> (a C extension to Ruby) for 100,000 parses over his own sample JSON ([_oj-highly-nested.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/_oj-highly-nested.json.txt)) that I've reused to prepare this benchmark.
+Just for comparison with the native world, on the third row of the table below I also give the throughput achieved by <a href="http://www.ohler.com/oj/">Peter's "Oj"</a> ("Oj" is a C extension to Ruby) for 100,000 parses over his own sample JSON ([_oj-highly-nested.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/_oj-highly-nested.json.txt)) that I've reused to prepare this benchmark ( cf. http://www.ohler.com/dev/oj_misc/performance_strict.html )
 
 So, without further ado... (larger figure means faster)
 
@@ -125,7 +125,7 @@ So, without further ado... (larger figure means faster)
 <th>JSON.NET</th>
 <th>ServiceStack</th>
 <th><a href="https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs">JsonParser</a></th>
-<th>Peter's <a href="http://www.ohler.com/oj/">" Oj "</a><br/>(C extension to Ruby)</th>
+<th><a href="http://www.ohler.com/oj/">Peter's  "Oj"</a><br/>(C extension to Ruby)</th>
 </tr>
 <tr>
 <td><strong>_oj-highly-nested.json</strong><br/>257 bytes<br/>10,000 iter.<br/>Loosely-typed</td>
