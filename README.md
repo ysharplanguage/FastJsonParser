@@ -332,6 +332,7 @@ Target POCOs (those used by some of the above tests)
 
 Here they are, for the curious and/or impatient:
 
+        // Used in the "boon-small.json" test
         public class BoonSmall
         {
             public string debug { get; set; }
@@ -339,6 +340,7 @@ Here they are, for the curious and/or impatient:
         }
 
 
+        // Used in the "tiny.json" test
         public class Person
         {
             public int Id { get; set; }
@@ -351,12 +353,14 @@ Here they are, for the curious and/or impatient:
         }
 
 
+        // Used in the "fathers.json" test
         public class FathersData
         {
             public Father[] fathers { get; set; }
         }
 
 
+        // Used in the "fathers.json" test
         public class Father
         {
             public int id { get; set; }
@@ -369,6 +373,7 @@ Here they are, for the curious and/or impatient:
         }
 
 
+        // Used in the "fathers.json" test
         public class Son
         {
             public int age { get; set; }
@@ -376,6 +381,7 @@ Here they are, for the curious and/or impatient:
         }
 
 
+        // Used in the "fathers.json" test
         public class Daughter
         {
             public int age { get; set; }
