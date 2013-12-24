@@ -198,7 +198,7 @@ So, without further ado:
 <td>Loosely-typed</td>
 </tr>
 <tr>
-<td><strong>fathers.json</strong><br/>12.4 MB<br/>1</td>
+<td><strong>fathers.json</strong><br/>12.4 MB<br/>(single parse)</td>
 <td>5.0 MB/sec</td>
 <td>26.0 MB/sec</td>
 <td>22.6 MB/sec</td>
@@ -206,7 +206,7 @@ So, without further ado:
 <td>POCO</td>
 </tr>
 <tr>
-<td><strong>huge.json</strong><br/>180 MB<br/>1</td>
+<td><strong>huge.json</strong><br/>180 MB<br/>(single parse)</td>
 <td>3.0 MB/sec</td>
 <td>OutOfMemoryException</td>
 <td>N / A</td>
@@ -214,6 +214,8 @@ So, without further ado:
 <td>Loosely-typed</td>
 </tr>
 </table>
+
+The same, with the test files and timings details: 
 
 ***Peter's "Oj Strict Mode Performance" test***
 
