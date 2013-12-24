@@ -116,6 +116,8 @@ Note such figures (either the "burning monk's", or these below) can always - pot
 
 So, without further ado:
 
+(larger figure means faster)
+
 <table border="1" width="100%">
 <tr>
 <th>Test /<br/>JSON size /<br/># Iterations</th>
@@ -216,6 +218,8 @@ So, without further ado:
 </table>
 
 The same, with the test files and timings details: 
+
+(smaller time means faster)
 
 ***Peter's "Oj Strict Mode Performance" test***
 
