@@ -270,7 +270,7 @@ Note Rick is one of our fellows from the Java realm - and from his own comparati
 
 ***"Tiny JSON" test***
 
-* "Loop" Test of tiny JSON (deserializing x times the JSON contained in the [tiny.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/tiny.json.txt) file = 126 bytes) - with POCO target (1 class):
+* "Loop" Test over tiny JSON (deserializing x times the JSON contained in the [tiny.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/tiny.json.txt) file = 126 bytes) - with POCO target (1 class):
     * Performed 10,000 iterations: in ~ 56 milliseconds (pretty good)
         * vs. JavaScriptSerializer in ~ 550 milliseconds (bad omen #3)
         * vs. JSON.NET in ~ 250 milliseconds
@@ -290,7 +290,7 @@ Note Rick is one of our fellows from the Java realm - and from his own comparati
 
 ***"Small JSON" test***
 
-* "Loop" Test of small JSON (deserializing x times the JSON contained in the [small.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/small.json.txt) file ~ 3.5 KB) - "loosely-typed" deserialization:
+* "Loop" Test over small JSON (deserializing x times the JSON contained in the [small.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/small.json.txt) file ~ 3.5 KB) - "loosely-typed" deserialization:
     * Performed 10,000 iterations: in ~ 1.14 second (pretty good)
         * vs. JavaScriptSerializer in ~ 6.7 seconds
         * vs. JSON.NET in ~ 2.2 seconds
