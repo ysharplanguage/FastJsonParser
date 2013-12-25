@@ -22,7 +22,7 @@ This aims at parsing textual JSON data, and to deserialize it into our (strongly
 
 The only tiers of interest for this parser are the desktop/server tiers. There are other JSON librairies with good performances, and already well tested/documented, which *also* support mobile devices that run more limited flavors of .NET ([JSON.NET](http://james.newtonking.com/json) and [ServiceStack](https://github.com/ServiceStack/ServiceStack) come to mind).
 
-This JSON parser/deserializer aims only at staying "simple", short, fast, and for use by some desktop tooling or server-side code that would require the full .NET anyway, and unlikely to ever be usable on mobile devices (unless those can eventually run the full .NET).
+This JSON parser/deserializer also aims at staying "simple", short, fast, and for use by some desktop tooling or server-side code that would require the full .NET anyway, and unlikely to ever be usable on mobile devices (unless those can eventually run the full .NET).
 
 Early development status warning
 --------------------------------
@@ -240,7 +240,7 @@ The same, with the test files and timings details:
     * [_oj-highly-nested.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/_oj-highly-nested.json.txt) comes from Peter's sample and tests, at:
         * http://www.ohler.com/dev/oj_misc/performance_strict.html
 
-I find JSON data sample from Peter interesting for its non-trivial "shape", and the presence of these "highly nested" arrays (so to speak) at end of the payload:
+I find the JSON data sample from Peter interesting for its non-trivial "shape", and the presence of these "highly nested" arrays (so to speak) at end of the payload:
 
     {"a":"Alpha","b":true,"c":12345,"d":[true,[false,[-123456789,null],3.9676,["Something else.",false],null]],"e":{"zero":null,"one":1,"two":2,"three":[3],"four":[0,1,2,3,4]},"f":null,"h":{"a":{"b":{"c":{"d":{"e":{"f":{"g":null}}}}}}},"i":[[[[[[[null]]]]]]]}
 
