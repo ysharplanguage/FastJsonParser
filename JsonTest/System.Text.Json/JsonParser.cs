@@ -576,21 +576,15 @@ namespace System.Text.Json
 
         private int Entry(Type type)
         {
-            return Entry(type, null);
-        }
-
-        private int Entry(Type type, Type etype)
-        {
             int outer;
             if (!thash.TryGetValue(type, out outer))
             {
-                bool b = (etype != null);
+                var etype = GetElementType(type);
                 outer = thash.Count;
-                etype = (etype ?? GetElementType(type));
                 types[outer] = (TypeInfo)Activator.CreateInstance(typeof(TypeInfo<>).MakeGenericType(type), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, new object[] { outer, etype }, null);
                 types[outer].Ctor = types[outer].Ctor;
                 thash.Add(type, outer);
-                if ((etype != null) && !b) types[outer].Inner = Entry(etype);
+                if (etype != null) types[outer].Inner = Entry(etype);
             }
             return Closure(outer);
         }
