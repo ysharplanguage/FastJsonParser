@@ -242,9 +242,8 @@ The same, with the test files and timings details:
 
 I find the JSON data sample from Peter interesting for its non-trivial "shape", and the presence of these "highly nested" arrays (so to speak) at end of the payload:
 
-    {"a":"Alpha","b":true,"c":12345,"d":[true,[false,[-123456789,null],
-    3.9676,["Something else.",false],null]],"e":{"zero":null,"one":1,"two":2,"three":[3],
-    "four":[0,1,2,3,4]},"f":null,"h":{"a":{"b":{"c":{"d":{"e":{"f":{"g":null}}}}}}},
+    {"a":"Alpha","b":true,"c":12345,"d":[true,[false,[-123456789,null],3.9676,["Something else.",false],null]],
+    "e":{"zero":null,"one":1,"two":2,"three":[3],"four":[0,1,2,3,4]},"f":null,"h":{"a":{"b":{"c":{"d":{"e":{"f":{"g":null}}}}}}},
     "i":[[[[[[[null]]]]]]]}
 
 As for that "vs. ServiceStack in... N / A":
