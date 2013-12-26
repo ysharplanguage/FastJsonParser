@@ -280,12 +280,12 @@ Note Rick is one of our fellows from the Java realm - and from his own comparati
         * vs. ServiceStack in ~ 125 milliseconds
         * (Which yields System.Text.Json.JsonParser's throughput : 22,321,428 bytes / second)
     * Performed 100,000 iterations: in ~ 550 milliseconds (not bad)
-        * vs. JavaScriptSerializer in ~ 4.9 seconds (ahem!)
+        * vs. JavaScriptSerializer in ~ 4.9 seconds
         * vs. JSON.NET in ~ 900 milliseconds
         * vs. ServiceStack in ~ 650 milliseconds
         * (Which yields System.Text.Json.JsonParser's throughput : 22,727,272 bytes / second)
     * Performed 1,000,000 iterations: in ~ 5.6 seconds (not bad either)
-        * vs. JavaScriptSerializer in 49.8 seconds (cough!)
+        * vs. JavaScriptSerializer in 49.8 seconds
         * vs. JSON.NET in ~ 8.3 seconds
         * vs. ServiceStack in ~ 6.1 seconds
         * (Which yields System.Text.Json.JsonParser's throughput : 22,301,516 bytes / second)
@@ -310,11 +310,11 @@ Note Rick is one of our fellows from the Java realm - and from his own comparati
 ***"Fathers JSON" test***
 
 * "Fathers" Test (12 MB JSON file) - with POCO targets (4 distinct classes):
-    * Parsed in ~ 285 milliseconds (!)
+    * Parsed in ~ 285 milliseconds
         * vs. JavaScriptSerializer in ~ 2.6 seconds
         * vs. JSON.NET in ~ 500 milliseconds
         * vs. ServiceStack in ~ 575 milliseconds
-        * (Which yields System.Text.Json.JsonParser's throughput : 45,494,340 bytes / second) (!)
+        * (Which yields System.Text.Json.JsonParser's throughput : 45,494,340 bytes / second)
     * Note: [fathers.json.txt](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/TestData/fathers.json.txt) was generated using this nifty online helper:
         * http://experiments.mennovanslooten.nl/2010/mockjson/tryit.html
 
