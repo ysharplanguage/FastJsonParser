@@ -193,7 +193,7 @@ So, without further ado... (larger figure - # parses per second - means faster)
 <td>18.5 K parses/sec</td>
 <td>90.9 K parses/sec</td>
 <td>133.3 K parses/sec</td>
-<td>160.0 K parses/sec</td>
+<td>173.9 K parses/sec</td>
 <td>N / A</td>
 </tr>
 <tr>
@@ -297,11 +297,11 @@ Note Rick is one of our fellows from the Java realm - and from his own comparati
         * vs. JSON.NET in ~ 250 milliseconds
         * vs. ServiceStack in ~ 125 milliseconds
         * ( * Which yields System.Text.Json.JsonParser's throughput : 22,321,428 bytes / second)
-    * Performed 100,000 iterations: in ~ 625 milliseconds (not bad) ( * )
+    * Performed 100,000 iterations: in ~ 575 milliseconds (not bad) ( * )
         * vs. JavaScriptSerializer in ~ 5.4 seconds
         * vs. JSON.NET in ~ 1.1 seconds
         * vs. ServiceStack in ~ 750 milliseconds
-        * ( * Which yields System.Text.Json.JsonParser's throughput : 20,352,564 bytes / second)
+        * ( * Which yields System.Text.Json.JsonParser's throughput : 21,865,184 bytes / second)
     * Performed 1,000,000 iterations: in ~ 5.9 seconds (not bad either) ( * )
         * vs. JavaScriptSerializer in 54.5 seconds
         * vs. JSON.NET in ~ 9.9 seconds
