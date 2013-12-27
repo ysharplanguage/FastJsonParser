@@ -3,8 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 
 // For the JavaScriptSerializer
@@ -118,11 +116,19 @@ namespace Test
             public IList<int> nums { get; set; }
         }
 
+        public enum Status
+        {
+            Single,
+            Married,
+            Divorced
+        }
+
         public class Person
         {
             public int Id { get; set; }
             public string Name { get; set; }
-            public bool Married { get; set; }
+            // Both string and integral enum value representations can be parsed:
+            public Status Status { get; set; }
             public string Address { get; set; }
             // Just to be sure we support that one, too:
             public IEnumerable<int> Scores { get; set; }
