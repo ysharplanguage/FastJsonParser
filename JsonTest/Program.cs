@@ -1,3 +1,5 @@
+#define RUN_UNIT_TESTS
+
 // On GitHub:
 // https://github.com/ysharplanguage/FastJsonParser
 
@@ -27,6 +29,98 @@ namespace Test
         const string SMALL_TEST_FILE_PATH = @"..\..\TestData\small.json.txt";
         const string FATHERS_TEST_FILE_PATH = @"..\..\TestData\fathers.json.txt";
         const string HUGE_TEST_FILE_PATH = @"..\..\TestData\huge.json.txt";
+
+        static object UnitTest<T>(string input, Func<string, T> parse) { return UnitTest(input, parse, false); }
+
+        static object UnitTest<T>(string input, Func<string, T> parse, bool errorCase)
+        {
+            object obj;
+            Console.WriteLine();
+            Console.WriteLine(errorCase ? "(Error case)" : "(Nominal case)");
+            Console.WriteLine("\tTry parse: {0} ... as: {1} ...", input, typeof(T).FullName);
+            try { obj = parse(input); } catch (Exception ex) { obj = ex; }
+            Console.WriteLine("\t... result: {0}{1}", (obj != null) ? obj.GetType().FullName : "(null)", (obj is Exception) ? " (" + ((Exception)obj).Message + ")" : String.Empty);
+            Console.WriteLine();
+            Console.WriteLine("Press a key...");
+            Console.WriteLine();
+            Console.ReadKey();
+            return obj;
+        }
+
+        static void UnitTests()
+        {
+            object obj;
+            Console.Clear();
+            Console.WriteLine("Press ESC to skip the unit tests or any other key to start...");
+            Console.WriteLine();
+            if (Console.ReadKey().KeyChar == 27)
+                return;
+
+            // A few nominal cases
+            obj = UnitTest("null", s => new JsonParser().Parse<object>(s));
+            System.Diagnostics.Debug.Assert(obj == null);
+
+            obj = UnitTest("true", s => new JsonParser().Parse<object>(s));
+            System.Diagnostics.Debug.Assert(obj is bool && (bool)obj);
+
+            obj = UnitTest("123", s => new JsonParser().Parse<int>(s));
+            System.Diagnostics.Debug.Assert(obj is int && (int)obj == 123);
+
+            obj = UnitTest("\"\"", s => new JsonParser().Parse<string>(s));
+            System.Diagnostics.Debug.Assert(obj is string && (string)obj == String.Empty);
+
+            obj = UnitTest("\"Abc\\tdef\"", s => new JsonParser().Parse<string>(s));
+            System.Diagnostics.Debug.Assert(obj is string && (string)obj == "Abc\tdef");
+
+            obj = UnitTest("[null]", s => new JsonParser().Parse<object[]>(s));
+            System.Diagnostics.Debug.Assert(obj is object[] && ((object[])obj).Length == 1 && ((object[])obj)[0] == null);
+
+            obj = UnitTest("[true]", s => new JsonParser().Parse<IList<bool>>(s));
+            System.Diagnostics.Debug.Assert(obj is IList<bool> && ((IList<bool>)obj).Count == 1 && ((IList<bool>)obj)[0]);
+
+            obj = UnitTest("[1,2,3,4,5]", s => new JsonParser().Parse<int[]>(s));
+            System.Diagnostics.Debug.Assert(obj is int[] && ((int[])obj).Length == 5 && ((int[])obj)[4] == 5);
+
+            obj = UnitTest("123.456", s => new JsonParser().Parse<decimal>(s));
+            System.Diagnostics.Debug.Assert(obj is decimal && (decimal)obj == 123.456m);
+
+            obj = UnitTest("{\"a\":123,\"b\":true}", s => new JsonParser().Parse<object>(s));
+            System.Diagnostics.Debug.Assert(obj is IDictionary<string, object> && (((IDictionary<string, object>)obj)["a"] as string) == "123" && ((obj = ((IDictionary<string, object>)obj)["b"]) is bool) && (bool)obj);
+
+            obj = UnitTest("1", s => new JsonParser().Parse<Status>(s));
+            System.Diagnostics.Debug.Assert(obj is Status && (Status)obj == Status.Married);
+
+            obj = UnitTest("\"Divorced\"", s => new JsonParser().Parse<Status>(s));
+            System.Diagnostics.Debug.Assert(obj is Status && (Status)obj == Status.Divorced);
+
+            obj = UnitTest("{\"Name\":\"Peter\",\"Status\":0}", s => new JsonParser().Parse<Person>(s));
+            System.Diagnostics.Debug.Assert(obj is Person && ((Person)obj).Name == "Peter" && ((Person)obj).Status == Status.Single);
+
+            obj = UnitTest("{\"Name\":\"Paul\",\"Status\":\"Married\"}", s => new JsonParser().Parse<Person>(s));
+            System.Diagnostics.Debug.Assert(obj is Person && ((Person)obj).Name == "Paul" && ((Person)obj).Status == Status.Married);
+
+            // A few error cases
+            obj = UnitTest("\"unfinished", s => new JsonParser().Parse<string>(s), true);
+            System.Diagnostics.Debug.Assert(obj is Exception && ((Exception)obj).Message.StartsWith("Bad string"));
+
+            obj = UnitTest("[123]", s => new JsonParser().Parse<string[]>(s), true);
+            System.Diagnostics.Debug.Assert(obj is Exception && ((Exception)obj).Message.StartsWith("Bad string"));
+
+            obj = UnitTest("[null]", s => new JsonParser().Parse<short[]>(s), true);
+            System.Diagnostics.Debug.Assert(obj is Exception && ((Exception)obj).Message.StartsWith("Bad number (short)"));
+
+            obj = UnitTest("[123.456]", s => new JsonParser().Parse<int[]>(s), true);
+            System.Diagnostics.Debug.Assert(obj is Exception && ((Exception)obj).Message.StartsWith("Unexpected character at 4"));
+
+            obj = UnitTest("\"Unknown\"", s => new JsonParser().Parse<Status>(s), true);
+            System.Diagnostics.Debug.Assert(obj is Exception && ((Exception)obj).Message.StartsWith("Bad enum value"));
+
+            Console.Clear();
+            Console.WriteLine("... Unit tests done.");
+            Console.WriteLine();
+            Console.WriteLine("Press a key to start the speed tests...");
+            Console.ReadKey();
+        }
 
         static void LoopTest(string parserName, Func<string, object> parseFunc, string testFile, int count)
         {
@@ -254,6 +348,9 @@ namespace Test
 
         static void Main(string[] args)
         {
+#if RUN_UNIT_TESTS
+            UnitTests();
+#endif
             SpeedTests();
         }
     }
