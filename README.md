@@ -163,7 +163,7 @@ So, without further ado... (larger figure - # parses per second - means faster)
 <td>N / A</td>
 </tr>
 <tr>
-<td><strong>tiny.json</strong><br/>126 bytes<br/>10,000 iter.<br/><strong>POCO</strong><br/>(<a href="#POCOs">see below</a>)</td>
+<td><strong>tiny.json</strong><br/>127 bytes<br/>10,000 iter.<br/><strong>POCO</strong><br/>(<a href="#POCOs">see below</a>)</td>
 <td>18.2 K parses/sec</td>
 <td>40.0 K parses/sec</td>
 <td>80.0 K parses/sec</td>
@@ -171,7 +171,7 @@ So, without further ado... (larger figure - # parses per second - means faster)
 <td>N / A</td>
 </tr>
 <tr>
-<td><strong>tiny.json</strong><br/>126 bytes<br/>100,000 iter.<br/><strong>POCO</strong><br/>(<a href="#POCOs">see below</a>)</td>
+<td><strong>tiny.json</strong><br/>127 bytes<br/>100,000 iter.<br/><strong>POCO</strong><br/>(<a href="#POCOs">see below</a>)</td>
 <td>20.4 K parses/sec</td>
 <td>111.1 K parses/sec</td>
 <td>153.8 K parses/sec</td>
@@ -179,7 +179,7 @@ So, without further ado... (larger figure - # parses per second - means faster)
 <td>N / A</td>
 </tr>
 <tr>
-<td><strong>tiny.json</strong><br/>126 bytes<br/>1,000,000 iter.<br/><strong>POCO</strong><br/>(<a href="#POCOs">see below</a>)</td>
+<td><strong>tiny.json</strong><br/>127 bytes<br/>1,000,000 iter.<br/><strong>POCO</strong><br/>(<a href="#POCOs">see below</a>)</td>
 <td>20.1 K parses/sec</td>
 <td>120.5 K parses/sec</td>
 <td>163.9 K parses/sec</td>
@@ -349,11 +349,15 @@ These are used by some of the above tests:
 
 
         // Used in the "tiny.json" test
+        public enum Status { Single, Married, Divorced }
+        
+        // Used in the "tiny.json" test
         public class Person
         {
             public int Id { get; set; }
             public string Name { get; set; }
-            public bool Married { get; set; }
+            // Both string and integral enum value representations can be parsed:
+            public Status Status { get; set; }
             public string Address { get; set; }
             // Just to be sure we support that one, too:
             public IEnumerable<int> Scores { get; set; }
