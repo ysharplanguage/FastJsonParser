@@ -1,6 +1,16 @@
 System.Text.Json
 ================
 
+* <a href="#Overview">Overview</a>
+* <a href="#Goal">Goal</a>
+* <a href="#Interface">Public interface</a>
+* <a href="#Performances">Performances</a>
+* <a href="#POCOs">Test target POCOs</a>
+* <a href="#Roadmap">Roadmap</a>
+* <a href="#Background">Background</a>
+
+<a name="Overview"></a>
+
 "Small is beautiful."
 ---------------------
 
@@ -18,6 +28,8 @@ Also available on NuGet
 For convenience:
 
 https://www.nuget.org/packages/System.Text.Json
+
+<a name="Goal"></a>
 
 Goal
 ----
@@ -40,6 +52,8 @@ That being said, you can feel free to fork / bugfix / augment / improve it at yo
 Of course, I welcome your informed input and feedback.
 
 Please read the [LICENSE](https://github.com/ysharplanguage/FastJsonParser/blob/master/LICENSE.md).
+
+<a name="Interface"></a>
 
 Public interface
 ----------------
@@ -339,8 +353,8 @@ They are also interesting to notice, if only when comparing JSON.NET vs. Service
 
 <a name="POCOs"></a>
 
-Target POCOs
-------------
+Test target POCOs
+-----------------
 
 These are used by some of the above tests:
 
@@ -404,6 +418,8 @@ These are used by some of the above tests:
             public string name { get; set; }
         }
 
+<a name="Roadmap"></a>
+
 Roadmap
 -------
 
@@ -416,6 +432,8 @@ Another, quite obvious, item on the wish list is to provide some support for cus
 Again, the main implementation challenge will be not drifting too much from the current speed performance ballpark.
 
 In any case, I don't plan to make this small JSON deserializer as general-purpose and extensible as JSON.NET or ServiceStack's, I just want to keep it as simple, short, and fast as possible for my present and future needs (read on).
+
+<a name="Background"></a>
 
 "But, why this ad-hoc parser, and 'need for speed', anyway?"
 ------------------------------------------------------------
