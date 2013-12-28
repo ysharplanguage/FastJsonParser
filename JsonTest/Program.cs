@@ -27,6 +27,7 @@ namespace Test
         const string OJ_TEST_FILE_PATH = @"..\..\TestData\_oj-highly-nested.json.txt";
         const string BOON_SMALL_TEST_FILE_PATH = @"..\..\TestData\boon-small.json.txt";
         const string TINY_TEST_FILE_PATH = @"..\..\TestData\tiny.json.txt";
+        const string DICOS_TEST_FILE_PATH = @"..\..\TestData\dicos.json.txt";
         const string SMALL_TEST_FILE_PATH = @"..\..\TestData\small.json.txt";
         const string FATHERS_TEST_FILE_PATH = @"..\..\TestData\fathers.json.txt";
         const string HUGE_TEST_FILE_PATH = @"..\..\TestData\huge.json.txt";
@@ -228,17 +229,12 @@ namespace Test
         {
             public int Id { get; set; }
             public string Name { get; set; }
-
             // Both string and integral enum value representations can be parsed:
             public Status Status { get; set; }
-
             public string Address { get; set; }
-
             // Just to be sure we support that one, too:
             public IEnumerable<int> Scores { get; set; }
-
             public object Data { get; set; }
-
             // Generic dictionaries are also supported; e.g.:
             // '{
             //    "Name": "F. Bastiat", ...
@@ -247,6 +243,24 @@ namespace Test
             //    ]
             //  }'
             public IDictionary<DateTime, string> History { get; set; }
+        }
+
+        public enum SomeKey
+        {
+            Key0, Key1, Key2, Key3, Key4,
+            Key5, Key6, Key7, Key8, Key9
+        }
+
+        public class DictionaryData
+        {
+            public IList<IDictionary<SomeKey, string>> Dictionaries { get; set; }
+        }
+
+        public class DictionaryDataAdaptJsonNetServiceStack
+        {
+            public IList<
+                IList<KeyValuePair<SomeKey, string>>
+            > Dictionaries { get; set; }
         }
 
         public class FathersData
@@ -327,6 +341,27 @@ namespace Test
             LoopTest("ServiceStack", new JsonSerializer<Person>().DeserializeFromString, TINY_TEST_FILE_PATH, 1000000);
 #endif
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<Person>, TINY_TEST_FILE_PATH, 1000000);
+
+#if !JSON_PARSER_ONLY
+            //LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<DictionaryDataAdaptJsonNetServiceStack>, DICOS_TEST_FILE_PATH, 10000);//(Can't deserialize properly)
+            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<DictionaryDataAdaptJsonNetServiceStack>, DICOS_TEST_FILE_PATH, 10000);
+            LoopTest("ServiceStack", new JsonSerializer<DictionaryDataAdaptJsonNetServiceStack>().DeserializeFromString, DICOS_TEST_FILE_PATH, 10000);
+#endif
+            LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<DictionaryData>, DICOS_TEST_FILE_PATH, 10000);
+
+#if !JSON_PARSER_ONLY
+            //LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<DictionaryDataAdaptJsonNetServiceStack>, DICOS_TEST_FILE_PATH, 100000);//(Can't deserialize properly)
+            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<DictionaryDataAdaptJsonNetServiceStack>, DICOS_TEST_FILE_PATH, 100000);
+            LoopTest("ServiceStack", new JsonSerializer<DictionaryDataAdaptJsonNetServiceStack>().DeserializeFromString, DICOS_TEST_FILE_PATH, 100000);
+#endif
+            LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<DictionaryData>, DICOS_TEST_FILE_PATH, 100000);
+
+#if !JSON_PARSER_ONLY
+            //LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<DictionaryDataAdaptJsonNetServiceStack>, DICOS_TEST_FILE_PATH, 1000000);//(Can't deserialize properly)
+            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<DictionaryDataAdaptJsonNetServiceStack>, DICOS_TEST_FILE_PATH, 1000000);
+            LoopTest("ServiceStack", new JsonSerializer<DictionaryDataAdaptJsonNetServiceStack>().DeserializeFromString, DICOS_TEST_FILE_PATH, 1000000);
+#endif
+            LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<DictionaryData>, DICOS_TEST_FILE_PATH, 1000000);
 
 #if !JSON_PARSER_ONLY
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().DeserializeObject, SMALL_TEST_FILE_PATH, 10000);
