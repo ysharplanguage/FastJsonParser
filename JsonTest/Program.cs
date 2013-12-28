@@ -19,18 +19,19 @@ using ServiceStack.Text;
 
 // Our stuff
 using System.Text.Json;
+using System.IO;
 
 namespace Test
 {
     class Program
     {
-        const string OJ_TEST_FILE_PATH = @"..\..\TestData\_oj-highly-nested.json.txt";
-        const string BOON_SMALL_TEST_FILE_PATH = @"..\..\TestData\boon-small.json.txt";
-        const string TINY_TEST_FILE_PATH = @"..\..\TestData\tiny.json.txt";
-        const string DICOS_TEST_FILE_PATH = @"..\..\TestData\dicos.json.txt";
-        const string SMALL_TEST_FILE_PATH = @"..\..\TestData\small.json.txt";
-        const string FATHERS_TEST_FILE_PATH = @"..\..\TestData\fathers.json.txt";
-        const string HUGE_TEST_FILE_PATH = @"..\..\TestData\huge.json.txt";
+		private static readonly string OJ_TEST_FILE_PATH = string.Format(@"..{0}..{0}TestData{0}_oj-highly-nested.json.txt", Path.DirectorySeparatorChar);
+		private static readonly string BOON_SMALL_TEST_FILE_PATH = string.Format(@"..{0}..{0}TestData{0}boon-small.json.txt", Path.DirectorySeparatorChar);
+		private static readonly string TINY_TEST_FILE_PATH = string.Format(@"..{0}..{0}TestData{0}tiny.json.txt", Path.DirectorySeparatorChar);
+		private static readonly string DICOS_TEST_FILE_PATH = string.Format(@"..{0}..{0}TestData{0}dicos.json.txt", Path.DirectorySeparatorChar);
+		private static readonly string SMALL_TEST_FILE_PATH = string.Format(@"..{0}..{0}TestData{0}small.json.txt", Path.DirectorySeparatorChar);
+		private static readonly string FATHERS_TEST_FILE_PATH = string.Format(@"..{0}..{0}TestData{0}fathers.json.txt", Path.DirectorySeparatorChar);
+		private static readonly string HUGE_TEST_FILE_PATH = string.Format(@"..{0}..{0}TestData{0}huge.json.txt", Path.DirectorySeparatorChar);
 
 #if RUN_UNIT_TESTS
         static object UnitTest<T>(string input, Func<string, T> parse) { return UnitTest(input, parse, false); }
@@ -385,12 +386,15 @@ namespace Test
 #endif
             Test(typeof(JsonParser).FullName, new JsonParser().Parse<FathersData>, FATHERS_TEST_FILE_PATH);
 
+			if (File.Exists (HUGE_TEST_FILE_PATH))
+			{
 #if !JSON_PARSER_ONLY
-            Test(typeof(JavaScriptSerializer).FullName, msJss.DeserializeObject, HUGE_TEST_FILE_PATH);
-            Test("JSON.NET 5.0 r8", JsonConvert.DeserializeObject, HUGE_TEST_FILE_PATH);//(JSON.NET: OutOfMemoryException)
-            //Test("ServiceStack", new JsonSerializer<object>().DeserializeFromString, HUGE_TEST_FILE_PATH);
+				Test (typeof(JavaScriptSerializer).FullName, msJss.DeserializeObject, HUGE_TEST_FILE_PATH);
+				Test ("JSON.NET 5.0 r8", JsonConvert.DeserializeObject, HUGE_TEST_FILE_PATH);//(JSON.NET: OutOfMemoryException)
+				//Test("ServiceStack", new JsonSerializer<object>().DeserializeFromString, HUGE_TEST_FILE_PATH);
 #endif
-            Test(typeof(JsonParser).FullName, new JsonParser().Parse<object>, HUGE_TEST_FILE_PATH);
+				Test (typeof(JsonParser).FullName, new JsonParser ().Parse<object>, HUGE_TEST_FILE_PATH);
+			}
 
             StreamTest();
         }
