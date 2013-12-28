@@ -353,7 +353,7 @@ Note Rick is one of our fellows from the Java realm - and from his own comparati
         * ( * Which yields System.Text.Json.JsonParser's throughput : 31,538,619 bytes / second)
     * [dicos.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/dicos.json.txt)
 
-Note: this reads "JavaScriptSerializer... N / A" for this test because I couldn't get Microsoft's JavaScriptSerializer to deserialize that [dicos.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/dicos.json.txt) data properly.
+Note: this reads "JavaScriptSerializer... N / A" for this test because I couldn't get Microsoft's JavaScriptSerializer to deserialize [dicos.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/dicos.json.txt)'s data properly... and easily.
 
 ***"Small JSON" test***
 
