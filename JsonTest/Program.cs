@@ -102,6 +102,9 @@ namespace Test
             obj = UnitTest("{\"Name\":\"Paul\",\"Status\":\"Married\"}", s => new JsonParser().Parse<Person>(s));
             System.Diagnostics.Debug.Assert(obj is Person && ((Person)obj).Name == "Paul" && ((Person)obj).Status == Status.Married);
 
+            obj = UnitTest("{\"History\":[{\"key\":\"1801-06-30\",\"value\":\"Birth date\"}]}", s => new JsonParser().Parse<Person>(s));
+            System.Diagnostics.Debug.Assert(obj is Person && ((Person)obj).History[new DateTime(1801, 6, 30)] == "Birth date");
+
             // A few error cases
             obj = UnitTest("\"unfinished", s => new JsonParser().Parse<string>(s), true);
             System.Diagnostics.Debug.Assert(obj is Exception && ((Exception)obj).Message.StartsWith("Bad string"));
@@ -225,12 +228,25 @@ namespace Test
         {
             public int Id { get; set; }
             public string Name { get; set; }
+
             // Both string and integral enum value representations can be parsed:
             public Status Status { get; set; }
+
             public string Address { get; set; }
+
             // Just to be sure we support that one, too:
             public IEnumerable<int> Scores { get; set; }
+
             public object Data { get; set; }
+
+            // Generic dictionaries are also supported; e.g.:
+            // '{
+            //    "Name": "F. Bastiat", ...
+            //    "History": [
+            //       { "key": "1801-06-30", "value": "Birth date" }, ...
+            //    ]
+            //  }'
+            public IDictionary<DateTime, string> History { get; set; }
         }
 
         public class FathersData
