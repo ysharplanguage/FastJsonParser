@@ -223,9 +223,14 @@ namespace System.Text.Json
                 return new ItemInfo { Type = type, Name = String.Empty, Set = (Action<object, JsonParser, int, int>)method.CreateDelegate(typeof(Action<object, JsonParser, int, int>)) };
             }
 
+            private Type GetEnumUnderlyingType(Type enumType)
+            {
+                return enumType.GetFields(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic)[0].FieldType;
+            }
+
             protected string GetParseName(Type type)
             {
-                var typeName = (!WellKnown.Contains(type) ? ((type.IsEnum && WellKnown.Contains(type.GetEnumUnderlyingType())) ? type.GetEnumUnderlyingType().Name : null) : type.Name);
+                var typeName = (!WellKnown.Contains(type) ? ((type.IsEnum && WellKnown.Contains((GetEnumUnderlyingType(type)))) ? type.GetEnumUnderlyingType().Name : null) : type.Name);
                 return ((typeName != null) ? String.Concat("Parse", typeName) : null);
             }
 
