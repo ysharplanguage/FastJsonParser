@@ -435,6 +435,31 @@ These are used by some of the above tests:
         }
 
 
+        // Used in the "dicos.json" test
+        public enum SomeKey
+        {
+            Key0, Key1, Key2, Key3, Key4,
+            Key5, Key6, Key7, Key8, Key9
+        }
+
+
+        // Used in the "dicos.json" test
+        public class DictionaryData
+        {
+            public IList<IDictionary<SomeKey, string>> Dictionaries { get; set; }
+        }
+
+
+        // Used in the "dicos.json" test
+        // (adapted for JSON.NET and ServiceStack to deserialize OK)
+        public class DictionaryDataAdaptJsonNetServiceStack
+        {
+            public IList<
+                IList<KeyValuePair<SomeKey, string>>
+            > Dictionaries { get; set; }
+        }
+
+
         // Used in the "fathers.json" test
         public class FathersData
         {
