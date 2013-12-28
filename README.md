@@ -40,7 +40,7 @@ For now(~), the only tiers of interest for this parser are the desktop/server ti
 
 This JSON parser/deserializer also aims at staying "simple", short, fast, and for use by some desktop tooling or server-side code that would require the full .NET anyway, and unlikely to ever be usable on mobile devices (unless those can eventually run the full .NET).
 
-(~ i.e., until it gets stable enough and/or I hear people's interest for it to run elsewhere)
+(~ i.e., until it gets stable enough and I hear people's interest for it to run elsewhere)
 
 Early development status warning
 --------------------------------
