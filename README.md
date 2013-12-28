@@ -205,6 +205,30 @@ So, without further ado... (larger figure - # parses per second - means faster)
 <td>N / A</td>
 </tr>
 <tr>
+<td><strong>dicos.json</strong><br/>922 bytes<br/>10,000 iter.<br/><strong>POCO</strong><br/>(<a href="#POCOs">see below</a>)</td>
+<td>N / A</td>
+<td>6.6 K parses/sec</td>
+<td>16.7 K parses/sec</td>
+<td>31.7 K parses/sec</td>
+<td>N / A</td>
+</tr>
+<tr>
+<td><strong>dicos.json</strong><br/>922 bytes<br/>100,000 iter.<br/><strong>POCO</strong><br/>(<a href="#POCOs">see below</a>)</td>
+<td>N / A</td>
+<td>7.0 K parses/sec</td>
+<td>19.1 K parses/sec</td>
+<td>34.8 K parses/sec</td>
+<td>N / A</td>
+</tr>
+<tr>
+<td><strong>dicos.json</strong><br/>922 bytes<br/>1,000,000 iter.<br/><strong>POCO</strong><br/>(<a href="#POCOs">see below</a>)</td>
+<td>N / A</td>
+<td>7.2 K parses/sec</td>
+<td>18.7 K parses/sec</td>
+<td>34.2 K parses/sec</td>
+<td>N / A</td>
+</tr>
+<tr>
 <td><strong>small.json</strong><br/>3.5 KB<br/>10,000 iter.<br/>Loosely-typed</td>
 <td>1.5 K parses/sec</td>
 <td>4.5 K parses/sec</td>
@@ -308,6 +332,26 @@ Note Rick is one of our fellows from the Java realm - and from his own comparati
         * vs. ServiceStack in ~ 6.8 seconds
         * ( * Which yields System.Text.Json.JsonParser's throughput : 21,594,966 bytes / second)
     * [tiny.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/tiny.json.txt)
+
+***"Dicos JSON" test***
+
+* "Loop" Test over JSON "dictionaries" (deserializing x times the JSON contained in the [dicos.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/dicos.json.txt) file = 922 bytes) - with POCO target (1 class):
+    * Performed 10,000 iterations: in ~ 315 milliseconds (pretty good) ( * )
+        * vs. JavaScriptSerializer... N / A
+        * vs. JSON.NET in ~ 1,525 milliseconds
+        * vs. ServiceStack in ~ 600 milliseconds
+        * ( * Which yields System.Text.Json.JsonParser's throughput : 29,551,282 bytes / second)
+    * Performed 100,000 iterations: in ~ 2.87 seconds (not bad) ( * )
+        * vs. JavaScriptSerializer... N / A
+        * vs. JSON.NET in ~ 14.2 seconds
+        * vs. ServiceStack in ~ 5.25 milliseconds
+        * ( * Which yields System.Text.Json.JsonParser's throughput : 32,125,435 bytes / second)
+    * Performed 1,000,000 iterations: in ~ 29.2 seconds (not bad either) ( * )
+        * vs. JavaScriptSerializer... N / A
+        * vs. JSON.NET in ~ 2 minutes 19 seconds
+        * vs. ServiceStack in ~ 53.4 seconds
+        * ( * Which yields System.Text.Json.JsonParser's throughput : 31,538,619 bytes / second)
+    * [dicos.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/dicos.json.txt)
 
 ***"Small JSON" test***
 
