@@ -54,7 +54,7 @@ namespace System.Text.Json
         private const int LBS = 128;
         private const int TDS = 128;
 
-        private IDictionary<Type, int> thash = new Dictionary<Type, int>();
+        private IDictionary<Type, int> rtti = new Dictionary<Type, int>();
         private TypeInfo[] types = new TypeInfo[TDS];
 
         private Func<int, object>[] parse = new Func<int, object>[128];
@@ -78,10 +78,10 @@ namespace System.Text.Json
             internal long Value;
         }
 
-        internal class PropInfo
+        internal class ItemInfo
         {
             internal string Name;
-            internal Action<object, JsonParser, int> Set;
+            internal Action<object, JsonParser, int, int> Set;
             internal Type Type;
             internal int Outer;
         }
@@ -92,13 +92,16 @@ namespace System.Text.Json
 
             internal Func<object> Ctor;
             internal EnumInfo[] Enum;
-            internal PropInfo[] Prop;
-            internal PropInfo Item;
+            internal ItemInfo[] Prop;
+            internal ItemInfo Dico;
+            internal ItemInfo List;
             internal bool IsEnum;
             internal Type EType;
             internal Type Type;
             internal int Outer;
             internal int Inner;
+            internal int Value;
+            internal int Key;
 
             static TypeInfo()
             {
@@ -120,13 +123,24 @@ namespace System.Text.Json
                 var ctor = type.GetConstructor(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.CreateInstance, null, System.Type.EmptyTypes, null);
                 if (ctor != null)
                 {
-                    var dyn = new System.Reflection.Emit.DynamicMethod("", typeof(object), null, type, true);
+                    var dyn = new System.Reflection.Emit.DynamicMethod("", typeof(object), null, typeof(string), true);
                     var il = dyn.GetILGenerator();
                     il.Emit(System.Reflection.Emit.OpCodes.Newobj, ctor);
                     il.Emit(System.Reflection.Emit.OpCodes.Ret);
                     return (Func<object>)dyn.CreateDelegate(typeof(Func<object>));
                 }
                 return null;
+            }
+
+            private Func<object> GetCtor(Type clr, Type key, Type value)
+            {
+                var type = typeof(Dictionary<,>).MakeGenericType(key, value);
+                var ctor = (type = (((type != clr) && clr.IsClass) ? clr : type)).GetConstructor(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.CreateInstance, null, System.Type.EmptyTypes, null);
+                var dyn = new System.Reflection.Emit.DynamicMethod("", typeof(object), null, typeof(string), true);
+                var il = dyn.GetILGenerator();
+                il.Emit(System.Reflection.Emit.OpCodes.Newobj, ctor);
+                il.Emit(System.Reflection.Emit.OpCodes.Ret);
+                return (Func<object>)dyn.CreateDelegate(typeof(Func<object>));
             }
 
             private SortedList<string, EnumInfo> GetEnumInfos(Type type)
@@ -137,10 +151,11 @@ namespace System.Text.Json
                 return einfo;
             }
 
-            private PropInfo GetPropInfo(Type type, string name, System.Reflection.MethodInfo set, System.Reflection.MethodInfo parse)
+            private ItemInfo GetItemInfo(Type type, string name, System.Reflection.MethodInfo setter)
             {
-                var dyn = new System.Reflection.Emit.DynamicMethod("Set" + name, null, new Type[] { typeof(object), typeof(JsonParser), typeof(int) }, typeof(string), true);
-                var il = dyn.GetILGenerator();
+                var method = new System.Reflection.Emit.DynamicMethod("Set" + name, null, new Type[] { typeof(object), typeof(JsonParser), typeof(int), typeof(int) }, typeof(string), true);
+                var parse = GetParserParse(GetParseName(type));
+                var il = method.GetILGenerator();
                 il.Emit(System.Reflection.Emit.OpCodes.Ldarg_0);
                 il.Emit(System.Reflection.Emit.OpCodes.Ldarg_1);
                 il.Emit(System.Reflection.Emit.OpCodes.Ldarg_2);
@@ -148,37 +163,97 @@ namespace System.Text.Json
                 if (type.IsValueType && (parse.ReturnType == typeof(object)))
                     il.Emit(System.Reflection.Emit.OpCodes.Unbox_Any, type);
                 if (parse.ReturnType.IsValueType && (type == typeof(object)))
-                    il.Emit(System.Reflection.Emit.OpCodes.Box, type);
-                il.Emit(System.Reflection.Emit.OpCodes.Callvirt, set);
+                    il.Emit(System.Reflection.Emit.OpCodes.Box, parse.ReturnType);
+                il.Emit(System.Reflection.Emit.OpCodes.Callvirt, setter);
                 il.Emit(System.Reflection.Emit.OpCodes.Ret);
-                return new PropInfo { Type = type, Name = name, Set = (Action<object, JsonParser, int>)dyn.CreateDelegate(typeof(Action<object, JsonParser, int>)) };
+                return new ItemInfo { Type = type, Name = name, Set = (Action<object, JsonParser, int, int>)method.CreateDelegate(typeof(Action<object, JsonParser, int, int>)) };
+            }
+
+            private ItemInfo GetItemInfo(Type type, Type key, Type value, System.Reflection.MethodInfo setter)
+            {
+                var method = new System.Reflection.Emit.DynamicMethod("Add", null, new Type[] { typeof(object), typeof(JsonParser), typeof(int), typeof(int) }, typeof(string), true);
+                var sBrace = typeof(JsonParser).GetMethod("SBrace", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                var eBrace = typeof(JsonParser).GetMethod("EBrace", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                var kColon = typeof(JsonParser).GetMethod("KColon", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                var sComma = typeof(JsonParser).GetMethod("SComma", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                var vParse = GetParserParse(GetParseName(value));
+                var kParse = GetParserParse(GetParseName(key));
+                var il = method.GetILGenerator();
+                il.DeclareLocal(key);
+                il.DeclareLocal(value);
+
+                il.Emit(System.Reflection.Emit.OpCodes.Ldarg_1);
+                il.Emit(System.Reflection.Emit.OpCodes.Callvirt, sBrace);
+
+                il.Emit(System.Reflection.Emit.OpCodes.Ldarg_1);
+                il.Emit(System.Reflection.Emit.OpCodes.Callvirt, kColon);
+
+                il.Emit(System.Reflection.Emit.OpCodes.Ldarg_1);
+                il.Emit(System.Reflection.Emit.OpCodes.Ldarg_3);
+                il.Emit(System.Reflection.Emit.OpCodes.Callvirt, kParse);
+                if (key.IsValueType && (kParse.ReturnType == typeof(object)))
+                    il.Emit(System.Reflection.Emit.OpCodes.Unbox_Any, key);
+                if (kParse.ReturnType.IsValueType && (key == typeof(object)))
+                    il.Emit(System.Reflection.Emit.OpCodes.Box, kParse.ReturnType);
+                il.Emit(System.Reflection.Emit.OpCodes.Stloc_0);
+
+                il.Emit(System.Reflection.Emit.OpCodes.Ldarg_1);
+                il.Emit(System.Reflection.Emit.OpCodes.Callvirt, sComma);
+
+                il.Emit(System.Reflection.Emit.OpCodes.Ldarg_1);
+                il.Emit(System.Reflection.Emit.OpCodes.Callvirt, kColon);
+
+                il.Emit(System.Reflection.Emit.OpCodes.Ldarg_1);
+                il.Emit(System.Reflection.Emit.OpCodes.Ldarg_2);
+                il.Emit(System.Reflection.Emit.OpCodes.Callvirt, vParse);
+                if (value.IsValueType && (vParse.ReturnType == typeof(object)))
+                    il.Emit(System.Reflection.Emit.OpCodes.Unbox_Any, value);
+                if (vParse.ReturnType.IsValueType && (value == typeof(object)))
+                    il.Emit(System.Reflection.Emit.OpCodes.Box, vParse.ReturnType);
+                il.Emit(System.Reflection.Emit.OpCodes.Stloc_1);
+
+                il.Emit(System.Reflection.Emit.OpCodes.Ldarg_1);
+                il.Emit(System.Reflection.Emit.OpCodes.Callvirt, eBrace);
+
+                il.Emit(System.Reflection.Emit.OpCodes.Ldarg_0);
+                il.Emit(System.Reflection.Emit.OpCodes.Ldloc_0);
+                il.Emit(System.Reflection.Emit.OpCodes.Ldloc_1);
+                il.Emit(System.Reflection.Emit.OpCodes.Callvirt, setter);
+                il.Emit(System.Reflection.Emit.OpCodes.Ret);
+                return new ItemInfo { Type = type, Name = String.Empty, Set = (Action<object, JsonParser, int, int>)method.CreateDelegate(typeof(Action<object, JsonParser, int, int>)) };
             }
 
             protected string GetParseName(Type type)
             {
-                return (!WellKnown.Contains(type) ? ((type.IsEnum && WellKnown.Contains(type.GetEnumUnderlyingType())) ? type.GetEnumUnderlyingType().Name : null) : type.Name);
+                var typeName = (!WellKnown.Contains(type) ? ((type.IsEnum && WellKnown.Contains(type.GetEnumUnderlyingType())) ? type.GetEnumUnderlyingType().Name : null) : type.Name);
+                return ((typeName != null) ? String.Concat("Parse", typeName) : null);
             }
 
-            protected System.Reflection.MethodInfo GetParserParse(string parseName)
+            protected System.Reflection.MethodInfo GetParserParse(string pName)
             {
-                return typeof(JsonParser).GetMethod((parseName ?? "Val"), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                return typeof(JsonParser).GetMethod((pName ?? "Val"), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
             }
 
-            protected TypeInfo(Type type, int outer, Type elem)
+            protected TypeInfo(Type type, int outer, Type eType, Type kType, Type vType)
             {
                 var props = type.GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
-                var pinfo = new SortedList<string, PropInfo>();
+                var infos = new SortedList<string, ItemInfo>();
                 IsEnum = type.IsEnum;
                 Outer = outer;
-                EType = elem;
+                EType = eType;
                 Type = type;
-                Ctor = GetCtor((EType ?? Type), (EType != null));
+                Ctor = (((kType != null) && (vType != null)) ? GetCtor(Type, kType, vType) : GetCtor((EType ?? Type),  (EType != null)));
                 for (var i = 0; i < props.Length; i++)
-                    if (props[i].CanWrite)
-                        pinfo.Add(props[i].Name, GetPropInfo(props[i].PropertyType, props[i].Name, props[i].GetSetMethod(), GetParserParse(GetParseName(props[i].PropertyType))));
+                {
+                    System.Reflection.PropertyInfo pi;
+                    System.Reflection.MethodInfo set;
+                    if ((pi = props[i]).CanWrite && ((set = pi.GetSetMethod()).GetParameters().Length == 1))
+                        infos.Add(pi.Name, GetItemInfo(pi.PropertyType, pi.Name, set));
+                }
+                Dico = (((kType != null) && (vType != null)) ? GetItemInfo(Type, kType, vType, typeof(Dictionary<,>).MakeGenericType(kType, vType).GetMethod("Add", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public)) : null);
+                List = ((EType != null) ? GetItemInfo(EType, String.Empty, typeof(List<>).MakeGenericType(EType).GetMethod("Add", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public)) : null);
                 Enum = (IsEnum ? GetEnumInfos(Type).Values.ToArray() : null);
-                Prop = pinfo.Values.ToArray();
-                Item = ((EType != null) ? GetPropInfo(EType, "", typeof(List<>).MakeGenericType(EType).GetMethod("Add", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public), GetParserParse(GetParseName(EType))) : null);
+                Prop = infos.Values.ToArray();
             }
         }
 
@@ -188,22 +263,23 @@ namespace System.Text.Json
 
             private Func<JsonParser, int, T> GetParseFunc()
             {
-                var parse = GetParserParse(GetParseName(typeof(T)));
+                var pName = GetParseName(typeof(T));
+                var parse = GetParserParse(pName);
                 if (parse != null)
                 {
-                    var dyn = new System.Reflection.Emit.DynamicMethod("Parse" + typeof(T).Name, typeof(T), new Type[] { typeof(JsonParser), typeof(int) }, typeof(string), true);
-                    var il = dyn.GetILGenerator();
+                    var method = new System.Reflection.Emit.DynamicMethod(parse.Name, typeof(T), new Type[] { typeof(JsonParser), typeof(int) }, typeof(string), true);
+                    var il = method.GetILGenerator();
                     il.Emit(System.Reflection.Emit.OpCodes.Ldarg_0);
                     il.Emit(System.Reflection.Emit.OpCodes.Ldarg_1);
                     il.Emit(System.Reflection.Emit.OpCodes.Callvirt, parse);
                     il.Emit(System.Reflection.Emit.OpCodes.Ret);
-                    return (Func<JsonParser, int, T>)dyn.CreateDelegate(typeof(Func<JsonParser, int, T>));
+                    return (Func<JsonParser, int, T>)method.CreateDelegate(typeof(Func<JsonParser, int, T>));
                 }
                 return null;
             }
 
-            internal TypeInfo(int outer, Type elem)
-                : base(typeof(T), outer, elem)
+            internal TypeInfo(int outer, Type eType, Type kType, Type vType)
+                : base(typeof(T), outer, eType, kType, vType)
             {
                 Parse = GetParseFunc();
             }
@@ -312,7 +388,7 @@ namespace System.Text.Json
             return null;
         }
 
-        private bool Boolean(int outer)
+        private bool ParseBoolean(int outer)
         {
             var ch = Space();
             switch (ch)
@@ -323,7 +399,7 @@ namespace System.Text.Json
             }
         }
 
-        private byte Byte(int outer)
+        private byte ParseByte(int outer)
         {
             var ch = Space();
             bool b = false;
@@ -343,7 +419,7 @@ namespace System.Text.Json
             }
         }
 
-        private short Int16(int outer)
+        private short ParseInt16(int outer)
         {
             short it = 1, n = 0;
             var ch = Space();
@@ -364,7 +440,7 @@ namespace System.Text.Json
             }
         }
 
-        private int Int32(int outer)
+        private int ParseInt32(int outer)
         {
             int it = 1, n = 0;
             var ch = Space();
@@ -385,7 +461,7 @@ namespace System.Text.Json
             }
         }
 
-        private long Int64(int outer)
+        private long ParseInt64(int outer)
         {
             long it = 1, n = 0;
             var ch = Space();
@@ -406,7 +482,7 @@ namespace System.Text.Json
             }
         }
 
-        private float Single(int outer)
+        private float ParseSingle(int outer)
         {
             var ch = Space();
             bool b = false;
@@ -430,7 +506,7 @@ namespace System.Text.Json
             return float.Parse(s);
         }
 
-        private double Double(int outer)
+        private double ParseDouble(int outer)
         {
             var ch = Space();
             bool b = false;
@@ -454,7 +530,7 @@ namespace System.Text.Json
             return double.Parse(s);
         }
 
-        private decimal Decimal(int outer)
+        private decimal ParseDecimal(int outer)
         {
             var ch = Space();
             bool b = false;
@@ -472,7 +548,7 @@ namespace System.Text.Json
             return decimal.Parse(s);
         }
 
-        private string String(int outer)
+        private string ParseString(int outer)
         {
             var ch = Space();
             var ec = false;
@@ -499,16 +575,16 @@ namespace System.Text.Json
             throw Error((outer >= 0) ? "Bad string" : "Bad key");
         }
 
-        private DateTime DateTime(int outer)
+        private DateTime ParseDateTime(int outer)
         {
-            return System.DateTime.Parse(String(0));
+            return System.DateTime.Parse(ParseString(0));
         }
 
-        private PropInfo Key(int outer)
+        private ItemInfo GetPropInfo(int outer)
         {
             var a = types[outer].Prop; int ch = Space(), n = a.Length, c = 0, i = 0, nc = 0;
             bool k = (n > 0), ec = false;
-            PropInfo p = null;
+            ItemInfo p = null;
             string s = null;
             if (ch == '"')
             {
@@ -540,13 +616,13 @@ namespace System.Text.Json
 
         private object Error(int outer) { throw Error("Bad value"); }
         private object Null(int outer) { Next('n'); Next('u'); Next('l'); Next('l'); return null; }
-        private object False(int outer) { return Boolean(0); }
-        private object True(int outer) { return Boolean(0); }
+        private object False(int outer) { return ParseBoolean(0); }
+        private object True(int outer) { return ParseBoolean(0); }
 
         private object Num(int outer)
         {
-            var ch = Space();
-            bool b = false;
+            var ch = chr;
+            var b = false;
             lsb.Length = 0; lln = 0;
             if (ch == '-') ch = Char(ch);
             while ((ch >= '0') && (ch <= '9') && (b = true)) ch = Char(ch);
@@ -565,12 +641,13 @@ namespace System.Text.Json
             return ((lsb.Length > 0) ? lsb.ToString() : new string(lbf, 0, lln));
         }
 
-        private object Str(int outer) { return String(0); }
+        private object Str(int outer) { return ParseString(0); }
 
         private object Obj(int outer)
         {
             var cached = types[outer];
-            var obj = cached.Ctor();
+            var inst = cached.Ctor();
+            var obj = (outer > 0);
             var ch = chr;
             if (ch == '{')
             {
@@ -579,25 +656,25 @@ namespace System.Text.Json
                 if (ch == '}')
                 {
                     Read();
-                    return obj;
+                    return inst;
                 }
                 while (ch < EOF)
                 {
-                    var prop = ((outer > 0) ? Key(outer) : null);
-                    var hash = ((outer == 0) ? String(-1) : null);
+                    var prop = (obj ? GetPropInfo(outer) : null);
+                    var key = (!obj ? ParseString(-1) : null);
                     Space();
                     Next(':');
-                    if (prop != null)
-                        prop.Set(obj, this, prop.Outer);
-                    else if (hash != null)
-                        ((IDictionary)obj).Add(hash, Val(0));
+                    if (key != null)
+                        ((IDictionary)inst).Add(key, Val(0));
+                    else if (prop != null)
+                        prop.Set(inst, this, prop.Outer, 0);
                     else
                         Val(0);
                     ch = Space();
                     if (ch == '}')
                     {
                         Read();
-                        return obj;
+                        return inst;
                     }
                     Next(',');
                     ch = Space();
@@ -606,42 +683,50 @@ namespace System.Text.Json
             throw Error("Bad object");
         }
 
+        private void SBrace() { Next('{'); }
+        private void EBrace() { Space(); Next('}'); }
+        private void KColon() { ParseString(-1); Space(); Next(':'); }
+        private void SComma() { Space(); Next(','); }
+
         private object Arr(int outer)
         {
-            var cached = types[(outer > 0) ? outer : 1];
-            var item = cached.Item;
+            var cached = types[(outer > 0) ? outer : 1]; var dico = (cached.Dico != null);
+            var item = (dico ? cached.Dico : cached.List);
             var ch = chr;
+            outer = (dico ? cached.Value : cached.Inner);
             if (ch == '[')
             {
-                IList list;
+                object inst;
                 Read();
                 ch = Space();
-                list = (IList)cached.Ctor();
+                inst = cached.Ctor();
                 if (ch == ']')
                 {
                     Read();
                     if (cached.Type.IsArray)
                     {
+                        IList list = (IList)inst;
                         var array = Array.CreateInstance(cached.EType, list.Count);
                         list.CopyTo(array, 0);
                         return array;
                     }
-                    return list;
+                    return inst;
                 }
                 while (ch < EOF)
                 {
-                    item.Set(list, this, cached.Inner);
+                    item.Set(inst, this, outer, cached.Key);
                     ch = Space();
                     if (ch == ']')
                     {
                         Read();
                         if (cached.Type.IsArray)
                         {
+                            IList list = (IList)inst;
                             var array = Array.CreateInstance(cached.EType, list.Count);
                             list.CopyTo(array, 0);
                             return array;
                         }
-                        return list;
+                        return inst;
                     }
                     Next(',');
                     ch = Space();
@@ -665,6 +750,28 @@ namespace System.Text.Json
                 return null;
         }
 
+        private Type Realizes(Type type, Type generic)
+        {
+            var itfs = type.GetInterfaces();
+            foreach (var it in itfs)
+                if (it.IsGenericType && it.GetGenericTypeDefinition() == generic)
+                    return type;
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == generic)
+                return type;
+            if (type.BaseType == null)
+                return null;
+            return Realizes(type.BaseType, generic);
+        }
+
+        private bool GetKeyValueTypes(Type type, out Type key, out Type value)
+        {
+            var generic = (Realizes(type, typeof(Dictionary<,>)) ?? Realizes(type, typeof(IDictionary<,>)));
+            var kvPair = ((generic != null) && (generic.GetGenericArguments().Length == 2));
+            value = (kvPair ? generic.GetGenericArguments()[1] : null);
+            key = (kvPair ? generic.GetGenericArguments()[0] : null);
+            return kvPair;
+        }
+
         private int Closure(int outer)
         {
             var prop = types[outer].Prop;
@@ -675,14 +782,17 @@ namespace System.Text.Json
         private int Entry(Type type)
         {
             int outer;
-            if (!thash.TryGetValue(type, out outer))
+            if (!rtti.TryGetValue(type, out outer))
             {
-                var etype = GetElementType(type);
-                outer = thash.Count;
-                types[outer] = (TypeInfo)Activator.CreateInstance(typeof(TypeInfo<>).MakeGenericType(type), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, new object[] { outer, etype }, null);
+                Type et, kt, vt;
+                bool dico = GetKeyValueTypes(type, out kt, out vt);
+                et = (!dico ? GetElementType(type) : null);
+                outer = rtti.Count;
+                types[outer] = (TypeInfo)Activator.CreateInstance(typeof(TypeInfo<>).MakeGenericType(type), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, new object[] { outer, et, kt, vt }, null);
                 types[outer].Ctor = types[outer].Ctor;
-                thash.Add(type, outer);
-                if (etype != null) types[outer].Inner = Entry(etype);
+                rtti.Add(type, outer);
+                if (dico) { types[outer].Value = Entry(vt); types[outer].Key = Entry(kt); }
+                if (et != null) types[outer].Inner = Entry(et);
             }
             return Closure(outer);
         }
