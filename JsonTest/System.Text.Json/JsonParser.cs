@@ -143,12 +143,12 @@ namespace System.Text.Json
                 return (Func<object>)dyn.CreateDelegate(typeof(Func<object>));
             }
 
-            private SortedList<string, EnumInfo> GetEnumInfos(Type type)
+            private EnumInfo[] GetEnumInfos(Type type)
             {
-                var einfo = new SortedList<string, EnumInfo>();
+                var einfo = new Dictionary<string, EnumInfo>();
                 foreach (var name in System.Enum.GetNames(type))
                     einfo.Add(name, new EnumInfo { Name = name, Value = Convert.ToInt64(System.Enum.Parse(type, name)) });
-                return einfo;
+                return einfo.OrderBy(pair => pair.Key).Select(pair => pair.Value).ToArray();
             }
 
             private ItemInfo GetItemInfo(Type type, string name, System.Reflection.MethodInfo setter)
@@ -242,7 +242,7 @@ namespace System.Text.Json
             protected TypeInfo(Type type, int outer, Type eType, Type kType, Type vType)
             {
                 var props = type.GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
-                var infos = new SortedList<string, ItemInfo>();
+                var infos = new Dictionary<string, ItemInfo>();
                 IsEnum = type.IsEnum;
                 Outer = outer;
                 EType = eType;
@@ -257,8 +257,8 @@ namespace System.Text.Json
                 }
                 Dico = (((kType != null) && (vType != null)) ? GetItemInfo(Type, kType, vType, typeof(Dictionary<,>).MakeGenericType(kType, vType).GetMethod("Add", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public)) : null);
                 List = ((EType != null) ? GetItemInfo(EType, String.Empty, typeof(List<>).MakeGenericType(EType).GetMethod("Add", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public)) : null);
-                Enum = (IsEnum ? GetEnumInfos(Type).Values.ToArray() : null);
-                Prop = infos.Values.ToArray();
+                Enum = (IsEnum ? GetEnumInfos(Type) : null);
+                Prop = infos.OrderBy(pair => pair.Key).Select(pair => pair.Value).ToArray();
             }
         }
 
