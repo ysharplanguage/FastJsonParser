@@ -49,7 +49,7 @@ http://forums.xamarin.com/discussion/comment/38955/#Comment_38955
 Early development status warning
 --------------------------------
 
-Although it is promisingly fast, please note this parser/deserializer is still experimental.
+Although it is promisingly fast, lightweight, and easy to use, please note this parser/deserializer is still experimental.
 
 I do *not* recommend it for any use in production, at this stage. This may or may not evolve soon, but for one thing to begin with, it's in need of more extensive JSON conformance tests.
 
