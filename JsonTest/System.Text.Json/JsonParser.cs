@@ -114,6 +114,7 @@ namespace System.Text.Json
                 WellKnown.Add(typeof(double));
                 WellKnown.Add(typeof(decimal));
                 WellKnown.Add(typeof(DateTime));
+                WellKnown.Add(typeof(DateTimeOffset));
                 WellKnown.Add(typeof(string));
             }
 
@@ -580,9 +581,20 @@ namespace System.Text.Json
             throw Error((outer >= 0) ? "Bad string" : "Bad key");
         }
 
+        private DateTimeOffset ParseDateTimeOffset(int outer)
+        {
+            DateTimeOffset dateTimeOffset;
+            if (!DateTimeOffset.TryParse(ParseString(0), System.Globalization.CultureInfo.CurrentCulture, System.Globalization.DateTimeStyles.RoundtripKind, out dateTimeOffset))
+                throw Error("Bad date/time offset");
+            return dateTimeOffset;
+        }
+
         private DateTime ParseDateTime(int outer)
         {
-            return System.DateTime.Parse(ParseString(0));
+            DateTime dateTime;
+            if (!DateTime.TryParse(ParseString(0), System.Globalization.CultureInfo.CurrentCulture, System.Globalization.DateTimeStyles.RoundtripKind, out dateTime))
+                throw Error("Bad date/time");
+            return dateTime;
         }
 
         private ItemInfo GetPropInfo(int outer)
