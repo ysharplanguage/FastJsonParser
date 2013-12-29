@@ -42,6 +42,10 @@ This JSON parser/deserializer also aims at staying "simple", short, fast, and fo
 
 (~ i.e., until it gets stable enough and I hear people's interest for it to run elsewhere)
 
+Nevertheless, [Sami](https://github.com/sami1971) has just recently been able to do a quick performance test on his Android device (as this code could luckily compile as-is), and came up with a couple benchmark results which seem encouraging:
+
+http://forums.xamarin.com/discussion/comment/38955/#Comment_38955
+
 Early development status warning
 --------------------------------
 
