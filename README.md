@@ -38,9 +38,9 @@ This aims at parsing textual JSON data, and to deserialize it into our (strongly
 
 For now(~), the only tiers of interest for this parser are the desktop/server tiers. There are other JSON librairies with good performances, and already well tested/documented, which *also* support mobile devices that run more limited flavors of .NET ([JSON.NET](http://james.newtonking.com/json) and [ServiceStack](https://github.com/ServiceStack/ServiceStack) come to mind).
 
-This JSON parser/deserializer thus aims first at staying "simple", short, fast, and for use by some desktop tooling or server-side code that would require the full .NET anyway, and unlikely to ever be usable on mobile devices (unless those can eventually run the full .NET).
-
 (~ i.e., until it gets stable enough and I hear people's interest for it to run elsewhere)
+
+This JSON parser/deserializer thus aims first at staying "simple", short, fast, and for use by some desktop tooling or server-side code that would require the full .NET anyway, and unlikely to ever be usable on mobile devices (unless those can eventually run the full .NET).
 
 Nevertheless, [Sami](https://github.com/sami1971) has just recently been able to do a quick performance test on his Android device (as the code could luckily compile for it *as-is*), and came up with a couple benchmark results which do seem encouraging:
 
