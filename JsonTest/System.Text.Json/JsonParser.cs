@@ -230,7 +230,7 @@ namespace System.Text.Json
 
             protected string GetParseName(Type type)
             {
-                var typeName = (!WellKnown.Contains(type) ? ((type.IsEnum && WellKnown.Contains((GetEnumUnderlyingType(type)))) ? GetEnumUnderlyingType(type).Name : null) : type.Name);
+                var typeName = (!WellKnown.Contains(type) ? ((type.IsEnum && WellKnown.Contains(GetEnumUnderlyingType(type))) ? GetEnumUnderlyingType(type).Name : null) : type.Name);
                 return ((typeName != null) ? String.Concat("Parse", typeName) : null);
             }
 
@@ -247,7 +247,7 @@ namespace System.Text.Json
                 Outer = outer;
                 EType = eType;
                 Type = type;
-                Ctor = (((kType != null) && (vType != null)) ? GetCtor(Type, kType, vType) : GetCtor((EType ?? Type),  (EType != null)));
+                Ctor = (((kType != null) && (vType != null)) ? GetCtor(Type, kType, vType) : GetCtor((EType ?? Type), (EType != null)));
                 for (var i = 0; i < props.Length; i++)
                 {
                     System.Reflection.PropertyInfo pi;
