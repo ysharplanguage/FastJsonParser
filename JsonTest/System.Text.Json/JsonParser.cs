@@ -230,7 +230,7 @@ namespace System.Text.Json
 
             protected string GetParseName(Type type)
             {
-                var typeName = (!WellKnown.Contains(type) ? ((type.IsEnum && WellKnown.Contains((GetEnumUnderlyingType(type)))) ? type.GetEnumUnderlyingType().Name : null) : type.Name);
+                var typeName = (!WellKnown.Contains(type) ? ((type.IsEnum && WellKnown.Contains((GetEnumUnderlyingType(type)))) ? GetEnumUnderlyingType(type).Name : null) : type.Name);
                 return ((typeName != null) ? String.Concat("Parse", typeName) : null);
             }
 
