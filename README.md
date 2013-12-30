@@ -272,6 +272,8 @@ The same, with the test files and timings details:
 
 (smaller time means faster)
 
+<a name="Peters"></a>
+
 ***Peter's "Oj Strict Mode Performance" test***
 
 * "Loop" Test over Peter's "Oj Strict Mode Performance" sample (deserializing x times the JSON contained in the [_oj-highly-nested.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/_oj-highly-nested.json.txt) file = 257 bytes) - "loosely-typed" deserialization:
@@ -338,6 +340,8 @@ Note Rick is one of our fellows from the Java realm - and from his own comparati
         * vs. ServiceStack in ~ 6.8 seconds
         * ( * Which yields System.Text.Json.JsonParser's throughput : 21,594,966 bytes / second)
     * [tiny.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/tiny.json.txt)
+
+<a name="Dicos"></a>
 
 ***"Dicos JSON" test***
 
