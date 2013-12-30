@@ -659,36 +659,52 @@ namespace System.Text.Json
 
         private object Obj(int outer)
         {
-            var cached = types[outer];
-            var inst = cached.Ctor();
-            var obj = (outer > 0);
+            var cached = types[outer]; var ctor = cached.Ctor;
+            var typed = ((outer > 0) && (ctor != null));
             var ch = chr;
             if (ch == '{')
             {
+                object obj = null;
                 Read();
                 ch = Space();
                 if (ch == '}')
                 {
                     Read();
-                    return inst;
+                    return ctor();
                 }
                 while (ch < EOF)
                 {
-                    var prop = (obj ? GetPropInfo(cached) : null);
-                    var key = (!obj ? ParseString(-1) : null);
+                    var prop = (typed ? GetPropInfo(cached) : null);
+                    var key = (!typed ? ParseString(-1) : null);
                     Space();
                     Next(':');
                     if (key != null)
-                        ((IDictionary)inst).Add(key, Val(0));
+                    {
+                        var val = Val(0);
+                        if (obj == null)
+                        {
+                            if (key == "__type")
+                            {
+                                obj = ((typed = (val is string)) ? (cached = types[Entry(Type.GetType((string)val, true))]).Ctor() : ctor());
+                                typed = !(obj is IDictionary);
+                            }
+                            else
+                                obj = (obj ?? ctor());
+                        }
+                        if (!typed) ((IDictionary)obj).Add(key, val);
+                    }
                     else if (prop != null)
-                        prop.Set(inst, this, prop.Outer, 0);
+                    {
+                        obj = (obj ?? ctor());
+                        prop.Set(obj, this, prop.Outer, 0);
+                    }
                     else
                         Val(0);
                     ch = Space();
                     if (ch == '}')
                     {
                         Read();
-                        return inst;
+                        return obj;
                     }
                     Next(',');
                     ch = Space();
@@ -709,37 +725,37 @@ namespace System.Text.Json
             var ch = chr;
             if (ch == '[')
             {
-                object inst;
+                object obj;
                 Read();
                 ch = Space();
-                inst = cached.Ctor();
+                obj = cached.Ctor();
                 if (ch == ']')
                 {
                     Read();
                     if (cached.Type.IsArray)
                     {
-                        IList list = (IList)inst;
+                        IList list = (IList)obj;
                         var array = Array.CreateInstance(cached.EType, list.Count);
                         list.CopyTo(array, 0);
                         return array;
                     }
-                    return inst;
+                    return obj;
                 }
                 while (ch < EOF)
                 {
-                    item.Set(inst, this, cached.Inner, cached.Key);
+                    item.Set(obj, this, cached.Inner, cached.Key);
                     ch = Space();
                     if (ch == ']')
                     {
                         Read();
                         if (cached.Type.IsArray)
                         {
-                            IList list = (IList)inst;
+                            IList list = (IList)obj;
                             var array = Array.CreateInstance(cached.EType, list.Count);
                             list.CopyTo(array, 0);
                             return array;
                         }
-                        return inst;
+                        return obj;
                     }
                     Next(',');
                     ch = Space();
