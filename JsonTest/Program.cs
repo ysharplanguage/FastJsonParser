@@ -107,6 +107,21 @@ namespace Test
             obj = UnitTest("{\"History\":[{\"key\":\"1801-06-30T00:00:00Z\",\"value\":\"Birth date\"}]}", s => new JsonParser().Parse<Person>(s));
             System.Diagnostics.Debug.Assert(obj is Person && ((Person)obj).History[new DateTime(1801, 6, 30, 0, 0, 0, DateTimeKind.Utc)] == "Birth date");
 
+            obj = UnitTest(@"{""Items"":[
+                {
+                    ""__type"": ""Test.Program+Stuff, Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
+                    ""Id"": 123, ""Name"": ""Foo""
+                },
+                {
+                    ""__type"": ""Test.Program+Stuff, Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
+                    ""Id"": 456, ""Name"": ""Bar""
+                }]}", s => new JsonParser().Parse<StuffHolder>(s));
+            System.Diagnostics.Debug.Assert
+            (
+                obj is StuffHolder && ((StuffHolder)obj).Items.Count == 2 &&
+                ((Stuff)((StuffHolder)obj).Items[1]).Name == "Bar"
+            );
+
             // A few error cases
             obj = UnitTest("\"unfinished", s => new JsonParser().Parse<string>(s), true);
             System.Diagnostics.Debug.Assert(obj is Exception && ((Exception)obj).Message.StartsWith("Bad string"));
@@ -224,6 +239,25 @@ namespace Test
             Single,
             Married,
             Divorced
+        }
+
+        public interface ISomething
+        {
+            int Id { get; set; }
+            // Notice how "Name" isn't introduced here yet, but
+            // instead, only in the implementation class "Stuff"
+            // below:
+        }
+
+        public class Stuff : ISomething
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
+        }
+
+        public class StuffHolder
+        {
+            public IList<ISomething> Items { get; set; }
         }
 
         public class Person
