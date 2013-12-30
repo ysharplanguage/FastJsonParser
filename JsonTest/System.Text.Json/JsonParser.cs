@@ -367,7 +367,7 @@ namespace System.Text.Json
             return ch;
         }
 
-        private EnumInfo Enum(TypeInfo type)
+        private EnumInfo GetEnumInfo(TypeInfo type)
         {
             var a = type.Enums; int n = a.Length, c = 0, i = 0, nc = 0, ch;
             EnumInfo e = null;
@@ -410,7 +410,7 @@ namespace System.Text.Json
             TypeInfo t;
             if ((ch == '"') && (t = types[outer]).IsEnum)
             {
-                var e = Enum(t);
+                var e = GetEnumInfo(t);
                 if (e == null) throw Error(System.String.Format("Bad enum value ({0})", t.Type.FullName));
                 return (byte)e.Value;
             }
@@ -430,7 +430,7 @@ namespace System.Text.Json
             TypeInfo t;
             if ((ch == '"') && (t = types[outer]).IsEnum)
             {
-                var e = Enum(t);
+                var e = GetEnumInfo(t);
                 if (e == null) throw Error(System.String.Format("Bad enum value ({0})", t.Type.FullName));
                 return (short)e.Value;
             }
@@ -451,7 +451,7 @@ namespace System.Text.Json
             TypeInfo t;
             if ((ch == '"') && (t = types[outer]).IsEnum)
             {
-                var e = Enum(t);
+                var e = GetEnumInfo(t);
                 if (e == null) throw Error(System.String.Format("Bad enum value ({0})", t.Type.FullName));
                 return (int)e.Value;
             }
@@ -472,7 +472,7 @@ namespace System.Text.Json
             TypeInfo t;
             if ((ch == '"') && (t = types[outer]).IsEnum)
             {
-                var e = Enum(t);
+                var e = GetEnumInfo(t);
                 if (e == null) throw Error(System.String.Format("Bad enum value ({0})", t.Type.FullName));
                 return e.Value;
             }
@@ -802,7 +802,6 @@ namespace System.Text.Json
                 et = (!dico ? GetElementType(type) : null);
                 outer = rtti.Count;
                 types[outer] = (TypeInfo)Activator.CreateInstance(typeof(TypeInfo<>).MakeGenericType(type), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, new object[] { et, kt, vt }, null);
-                types[outer].Ctor = types[outer].Ctor;
                 rtti.Add(type, outer);
                 types[outer].Inner = ((et != null) ? Entry(et) : (dico ? Entry(vt) : 0));
                 if (dico) types[outer].Key = Entry(kt);
