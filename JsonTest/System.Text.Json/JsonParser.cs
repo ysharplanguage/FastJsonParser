@@ -91,16 +91,14 @@ namespace System.Text.Json
             private static readonly HashSet<Type> WellKnown = new HashSet<Type>();
 
             internal Func<object> Ctor;
-            internal EnumInfo[] Enum;
-            internal ItemInfo[] Prop;
+            internal EnumInfo[] Enums;
+            internal ItemInfo[] Props;
             internal ItemInfo Dico;
             internal ItemInfo List;
             internal bool IsEnum;
             internal Type EType;
             internal Type Type;
-            internal int Outer;
             internal int Inner;
-            internal int Value;
             internal int Key;
 
             static TypeInfo()
@@ -240,12 +238,11 @@ namespace System.Text.Json
                 return typeof(JsonParser).GetMethod((pName ?? "Val"), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
             }
 
-            protected TypeInfo(Type type, int outer, Type eType, Type kType, Type vType)
+            protected TypeInfo(Type type, Type eType, Type kType, Type vType)
             {
                 var props = type.GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
                 var infos = new Dictionary<string, ItemInfo>();
                 IsEnum = type.IsEnum;
-                Outer = outer;
                 EType = eType;
                 Type = type;
                 Ctor = (((kType != null) && (vType != null)) ? GetCtor(Type, kType, vType) : GetCtor((EType ?? Type), (EType != null)));
@@ -258,8 +255,8 @@ namespace System.Text.Json
                 }
                 Dico = (((kType != null) && (vType != null)) ? GetItemInfo(Type, kType, vType, typeof(Dictionary<,>).MakeGenericType(kType, vType).GetMethod("Add", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public)) : null);
                 List = ((EType != null) ? GetItemInfo(EType, String.Empty, typeof(List<>).MakeGenericType(EType).GetMethod("Add", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public)) : null);
-                Enum = (IsEnum ? GetEnumInfos(Type) : null);
-                Prop = infos.OrderBy(pair => pair.Key).Select(pair => pair.Value).ToArray();
+                Enums = (IsEnum ? GetEnumInfos(Type) : null);
+                Props = infos.OrderBy(pair => pair.Key).Select(pair => pair.Value).ToArray();
             }
         }
 
@@ -284,8 +281,8 @@ namespace System.Text.Json
                 return null;
             }
 
-            internal TypeInfo(int outer, Type eType, Type kType, Type vType)
-                : base(typeof(T), outer, eType, kType, vType)
+            internal TypeInfo(Type eType, Type kType, Type vType)
+                : base(typeof(T), eType, kType, vType)
             {
                 Parse = GetParseFunc();
             }
@@ -370,9 +367,9 @@ namespace System.Text.Json
             return ch;
         }
 
-        private EnumInfo Enum(TypeInfo info)
+        private EnumInfo Enum(TypeInfo type)
         {
-            var a = info.Enum; int n = a.Length, c = 0, i = 0, nc = 0, ch;
+            var a = type.Enums; int n = a.Length, c = 0, i = 0, nc = 0, ch;
             EnumInfo e = null;
             string s = null;
             var ec = false;
@@ -597,9 +594,9 @@ namespace System.Text.Json
             return dateTime;
         }
 
-        private ItemInfo GetPropInfo(int outer)
+        private ItemInfo GetPropInfo(TypeInfo type)
         {
-            var a = types[outer].Prop; int ch = Space(), n = a.Length, c = 0, i = 0, nc = 0;
+            var a = type.Props; int ch = Space(), n = a.Length, c = 0, i = 0, nc = 0;
             bool k = (n > 0), ec = false;
             ItemInfo p = null;
             string s = null;
@@ -677,7 +674,7 @@ namespace System.Text.Json
                 }
                 while (ch < EOF)
                 {
-                    var prop = (obj ? GetPropInfo(outer) : null);
+                    var prop = (obj ? GetPropInfo(cached) : null);
                     var key = (!obj ? ParseString(-1) : null);
                     Space();
                     Next(':');
@@ -710,7 +707,6 @@ namespace System.Text.Json
             var cached = types[(outer > 0) ? outer : 1]; var dico = (cached.Dico != null);
             var item = (dico ? cached.Dico : cached.List);
             var ch = chr;
-            outer = (dico ? cached.Value : cached.Inner);
             if (ch == '[')
             {
                 object inst;
@@ -731,7 +727,7 @@ namespace System.Text.Json
                 }
                 while (ch < EOF)
                 {
-                    item.Set(inst, this, outer, cached.Key);
+                    item.Set(inst, this, cached.Inner, cached.Key);
                     ch = Space();
                     if (ch == ']')
                     {
@@ -791,7 +787,7 @@ namespace System.Text.Json
 
         private int Closure(int outer)
         {
-            var prop = types[outer].Prop;
+            var prop = types[outer].Props;
             for (var i = 0; i < prop.Length; i++) prop[i].Outer = Entry(prop[i].Type);
             return outer;
         }
@@ -805,11 +801,11 @@ namespace System.Text.Json
                 bool dico = GetKeyValueTypes(type, out kt, out vt);
                 et = (!dico ? GetElementType(type) : null);
                 outer = rtti.Count;
-                types[outer] = (TypeInfo)Activator.CreateInstance(typeof(TypeInfo<>).MakeGenericType(type), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, new object[] { outer, et, kt, vt }, null);
+                types[outer] = (TypeInfo)Activator.CreateInstance(typeof(TypeInfo<>).MakeGenericType(type), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, new object[] { et, kt, vt }, null);
                 types[outer].Ctor = types[outer].Ctor;
                 rtti.Add(type, outer);
-                if (dico) { types[outer].Value = Entry(vt); types[outer].Key = Entry(kt); }
-                if (et != null) types[outer].Inner = Entry(et);
+                types[outer].Inner = ((et != null) ? Entry(et) : (dico ? Entry(vt) : 0));
+                if (dico) types[outer].Key = Entry(kt);
             }
             return Closure(outer);
         }
