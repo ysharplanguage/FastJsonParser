@@ -766,7 +766,7 @@ namespace System.Text.Json
                     Next(':');
                     if (key != null)
                     {
-                        var val = Val(0);
+                        var val = Val(cached.Inner);
                         if (obj == null)
                         {
                             if ((key is string) && ((string)key == "__type"))
