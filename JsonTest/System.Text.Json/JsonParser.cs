@@ -397,7 +397,7 @@ namespace System.Text.Json
         private bool ParseBoolean(int outer)
         {
             var ch = Space();
-            if ((ch == '"') && (types[outer].T == outer))
+            if ((ch == '"') && (outer > 0) && (types[outer].T == outer))
             {
                 bool b;
                 Read();
@@ -423,7 +423,7 @@ namespace System.Text.Json
             bool b = false;
             byte n = 0;
             TypeInfo t;
-            if (ch == '"')
+            if ((ch == '"') && (outer > 0))
             {
                 ch = Read();
                 if ((t = types[outer]).IsEnum && ((ch < '0') || (ch > '9')))
@@ -454,7 +454,7 @@ namespace System.Text.Json
             var ch = Space();
             bool b = false;
             TypeInfo t;
-            if (ch == '"')
+            if ((ch == '"') && (outer > 0))
             {
                 ch = Read();
                 if ((t = types[outer]).IsEnum && (ch != '-') && ((ch < '0') || (ch > '9')))
@@ -486,7 +486,7 @@ namespace System.Text.Json
             var ch = Space();
             bool b = false;
             TypeInfo t;
-            if (ch == '"')
+            if ((ch == '"') && (outer > 0))
             {
                 ch = Read();
                 if ((t = types[outer]).IsEnum && (ch != '-') && ((ch < '0') || (ch > '9')))
@@ -518,7 +518,7 @@ namespace System.Text.Json
             var ch = Space();
             bool b = false;
             TypeInfo t;
-            if (ch == '"')
+            if ((ch == '"') && (outer > 0))
             {
                 ch = Read();
                 if ((t = types[outer]).IsEnum && (ch != '-') && ((ch < '0') || (ch > '9')))
@@ -550,7 +550,7 @@ namespace System.Text.Json
             bool b = false;
             string s;
             lsb.Length = 0; lln = 0;
-            if ((ch == '"') && (types[outer].T == outer))
+            if ((ch == '"') && (outer > 0) && (types[outer].T == outer))
             {
                 float n;
                 Read();
@@ -563,11 +563,7 @@ namespace System.Text.Json
             {
                 if (ch == '-') ch = Char(ch);
                 while ((ch >= '0') && (ch <= '9') && (b = true)) ch = Char(ch);
-                if (ch == '.')
-                {
-                    ch = Char(ch);
-                    while ((ch >= '0') && (ch <= '9')) ch = Char(ch);
-                }
+                if (ch == '.') { ch = Char(ch); while ((ch >= '0') && (ch <= '9')) ch = Char(ch); }
                 if ((ch == 'e') || (ch == 'E'))
                 {
                     ch = Char(ch);
@@ -586,7 +582,7 @@ namespace System.Text.Json
             bool b = false;
             string s;
             lsb.Length = 0; lln = 0;
-            if ((ch == '"') && (types[outer].T == outer))
+            if ((ch == '"') && (outer > 0) && (types[outer].T == outer))
             {
                 double n;
                 Read();
@@ -599,11 +595,7 @@ namespace System.Text.Json
             {
                 if (ch == '-') ch = Char(ch);
                 while ((ch >= '0') && (ch <= '9') && (b = true)) ch = Char(ch);
-                if (ch == '.')
-                {
-                    ch = Char(ch);
-                    while ((ch >= '0') && (ch <= '9')) ch = Char(ch);
-                }
+                if (ch == '.') { ch = Char(ch); while ((ch >= '0') && (ch <= '9')) ch = Char(ch); }
                 if ((ch == 'e') || (ch == 'E'))
                 {
                     ch = Char(ch);
@@ -622,7 +614,7 @@ namespace System.Text.Json
             bool b = false;
             string s;
             lsb.Length = 0; lln = 0;
-            if ((ch == '"') && (types[outer].T == outer))
+            if ((ch == '"') && (outer > 0) && (types[outer].T == outer))
             {
                 decimal n;
                 Read();
@@ -635,11 +627,7 @@ namespace System.Text.Json
             {
                 if (ch == '-') ch = Char(ch);
                 while ((ch >= '0') && (ch <= '9') && (b = true)) ch = Char(ch);
-                if (ch == '.')
-                {
-                    ch = Char(ch);
-                    while ((ch >= '0') && (ch <= '9')) ch = Char(ch);
-                }
+                if (ch == '.') { ch = Char(ch); while ((ch >= '0') && (ch <= '9')) ch = Char(ch); }
                 if (!b) throw Error("Bad number (decimal)");
                 s = ((lsb.Length > 0) ? lsb.ToString() : new string(lbf, 0, lln));
                 return decimal.Parse(s);
