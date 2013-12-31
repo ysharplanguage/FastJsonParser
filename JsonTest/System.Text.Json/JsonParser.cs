@@ -90,16 +90,19 @@ namespace System.Text.Json
         {
             private static readonly HashSet<Type> WellKnown = new HashSet<Type>();
 
+            internal Func<JsonParser, int, object> Parser;
             internal Func<object> Ctor;
             internal EnumInfo[] Enums;
             internal ItemInfo[] Props;
             internal ItemInfo Dico;
             internal ItemInfo List;
+            internal bool IsStruct;
             internal bool IsEnum;
             internal Type EType;
             internal Type Type;
             internal int Inner;
             internal int Key;
+            internal int T;
 
             static TypeInfo()
             {
@@ -242,6 +245,7 @@ namespace System.Text.Json
             {
                 var props = type.GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
                 var infos = new Dictionary<string, ItemInfo>();
+                IsStruct = type.IsValueType;
                 IsEnum = type.IsEnum;
                 EType = eType;
                 Type = type;
@@ -250,7 +254,7 @@ namespace System.Text.Json
                 {
                     System.Reflection.PropertyInfo pi;
                     System.Reflection.MethodInfo set;
-                    if ((pi = props[i]).CanWrite && ((set = pi.GetSetMethod()).GetParameters().Length == 1))
+                    if ((pi = props[i]).CanWrite && ((set = pi.GetSetMethod(true)).GetParameters().Length == 1))
                         infos.Add(pi.Name, GetItemInfo(pi.PropertyType, pi.Name, set));
                 }
                 Dico = (((kType != null) && (vType != null)) ? GetItemInfo(Type, kType, vType, typeof(Dictionary<,>).MakeGenericType(kType, vType).GetMethod("Add", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public)) : null);
@@ -264,19 +268,18 @@ namespace System.Text.Json
         {
             internal Func<JsonParser, int, T> Parse;
 
-            private Func<JsonParser, int, T> GetParseFunc()
+            private Func<JsonParser, int, R> GetParseFunc<R>(string pName)
             {
-                var pName = GetParseName(typeof(T));
-                var parse = GetParserParse(pName);
+                var parse = GetParserParse(pName ?? "Key");
                 if (parse != null)
                 {
-                    var method = new System.Reflection.Emit.DynamicMethod(parse.Name, typeof(T), new Type[] { typeof(JsonParser), typeof(int) }, typeof(string), true);
+                    var method = new System.Reflection.Emit.DynamicMethod(parse.Name, typeof(R), new Type[] { typeof(JsonParser), typeof(int) }, typeof(string), true);
                     var il = method.GetILGenerator();
                     il.Emit(System.Reflection.Emit.OpCodes.Ldarg_0);
                     il.Emit(System.Reflection.Emit.OpCodes.Ldarg_1);
                     il.Emit(System.Reflection.Emit.OpCodes.Callvirt, parse);
                     il.Emit(System.Reflection.Emit.OpCodes.Ret);
-                    return (Func<JsonParser, int, T>)method.CreateDelegate(typeof(Func<JsonParser, int, T>));
+                    return (Func<JsonParser, int, R>)method.CreateDelegate(typeof(Func<JsonParser, int, R>));
                 }
                 return null;
             }
@@ -284,7 +287,8 @@ namespace System.Text.Json
             internal TypeInfo(Type eType, Type kType, Type vType)
                 : base(typeof(T), eType, kType, vType)
             {
-                Parse = GetParseFunc();
+                var parse = (Parse = GetParseFunc<T>(GetParseName(typeof(T))));
+                Parser = (Func<JsonParser, int, object>)((parser, outer) => parse(parser, outer));
             }
         }
 
@@ -375,7 +379,6 @@ namespace System.Text.Json
             var ec = false;
             if (n > 0)
             {
-                Read();
                 while (true)
                 {
                     switch (ch = chr)
@@ -394,11 +397,23 @@ namespace System.Text.Json
         private bool ParseBoolean(int outer)
         {
             var ch = Space();
-            switch (ch)
+            if ((ch == '"') && (types[outer].T == outer))
             {
-                case 'f': Next('f'); Next('a'); Next('l'); Next('s'); Next('e'); return false;
-                case 't': Next('t'); Next('r'); Next('u'); Next('e'); return true;
-                default: throw Error("Bad boolean");
+                bool b;
+                Read();
+                b = ParseBoolean(0);
+                Space();
+                Next('"');
+                return b;
+            }
+            else
+            {
+                switch (ch)
+                {
+                    case 'f': Next('f'); Next('a'); Next('l'); Next('s'); Next('e'); return false;
+                    case 't': Next('t'); Next('r'); Next('u'); Next('e'); return true;
+                    default: throw Error("Bad boolean");
+                }
             }
         }
 
@@ -408,11 +423,22 @@ namespace System.Text.Json
             bool b = false;
             byte n = 0;
             TypeInfo t;
-            if ((ch == '"') && (t = types[outer]).IsEnum)
+            if (ch == '"')
             {
-                var e = GetEnumInfo(t);
-                if (e == null) throw Error(System.String.Format("Bad enum value ({0})", t.Type.FullName));
-                return (byte)e.Value;
+                ch = Read();
+                if ((t = types[outer]).IsEnum && ((ch < '0') || (ch > '9')))
+                {
+                    var e = GetEnumInfo(t);
+                    if (e == null) throw Error(System.String.Format("Bad enum value ({0})", t.Type.FullName));
+                    return (byte)e.Value;
+                }
+                else
+                {
+                    n = ParseByte(0);
+                    Space();
+                    Next('"');
+                    return n;
+                }
             }
             else
             {
@@ -428,11 +454,22 @@ namespace System.Text.Json
             var ch = Space();
             bool b = false;
             TypeInfo t;
-            if ((ch == '"') && (t = types[outer]).IsEnum)
+            if (ch == '"')
             {
-                var e = GetEnumInfo(t);
-                if (e == null) throw Error(System.String.Format("Bad enum value ({0})", t.Type.FullName));
-                return (short)e.Value;
+                ch = Read();
+                if ((t = types[outer]).IsEnum && (ch != '-') && ((ch < '0') || (ch > '9')))
+                {
+                    var e = GetEnumInfo(t);
+                    if (e == null) throw Error(System.String.Format("Bad enum value ({0})", t.Type.FullName));
+                    return (short)e.Value;
+                }
+                else
+                {
+                    n = ParseInt16(0);
+                    Space();
+                    Next('"');
+                    return n;
+                }
             }
             else
             {
@@ -449,11 +486,22 @@ namespace System.Text.Json
             var ch = Space();
             bool b = false;
             TypeInfo t;
-            if ((ch == '"') && (t = types[outer]).IsEnum)
+            if (ch == '"')
             {
-                var e = GetEnumInfo(t);
-                if (e == null) throw Error(System.String.Format("Bad enum value ({0})", t.Type.FullName));
-                return (int)e.Value;
+                ch = Read();
+                if ((t = types[outer]).IsEnum && (ch != '-') && ((ch < '0') || (ch > '9')))
+                {
+                    var e = GetEnumInfo(t);
+                    if (e == null) throw Error(System.String.Format("Bad enum value ({0})", t.Type.FullName));
+                    return (int)e.Value;
+                }
+                else
+                {
+                    n = ParseInt32(0);
+                    Space();
+                    Next('"');
+                    return n;
+                }
             }
             else
             {
@@ -470,11 +518,22 @@ namespace System.Text.Json
             var ch = Space();
             bool b = false;
             TypeInfo t;
-            if ((ch == '"') && (t = types[outer]).IsEnum)
+            if (ch == '"')
             {
-                var e = GetEnumInfo(t);
-                if (e == null) throw Error(System.String.Format("Bad enum value ({0})", t.Type.FullName));
-                return e.Value;
+                ch = Read();
+                if ((t = types[outer]).IsEnum && (ch != '-') && ((ch < '0') || (ch > '9')))
+                {
+                    var e = GetEnumInfo(t);
+                    if (e == null) throw Error(System.String.Format("Bad enum value ({0})", t.Type.FullName));
+                    return e.Value;
+                }
+                else
+                {
+                    n = ParseInt64(0);
+                    Space();
+                    Next('"');
+                    return n;
+                }
             }
             else
             {
@@ -491,22 +550,34 @@ namespace System.Text.Json
             bool b = false;
             string s;
             lsb.Length = 0; lln = 0;
-            if (ch == '-') ch = Char(ch);
-            while ((ch >= '0') && (ch <= '9') && (b = true)) ch = Char(ch);
-            if (ch == '.')
+            if ((ch == '"') && (types[outer].T == outer))
             {
-                ch = Char(ch);
-                while ((ch >= '0') && (ch <= '9')) ch = Char(ch);
+                float n;
+                Read();
+                n = ParseSingle(0);
+                Space();
+                Next('"');
+                return n;
             }
-            if ((ch == 'e') || (ch == 'E'))
+            else
             {
-                ch = Char(ch);
-                if ((ch == '-') || (ch == '+')) ch = Char(ch);
-                while ((ch >= '0') && (ch <= '9')) ch = Char(ch);
+                if (ch == '-') ch = Char(ch);
+                while ((ch >= '0') && (ch <= '9') && (b = true)) ch = Char(ch);
+                if (ch == '.')
+                {
+                    ch = Char(ch);
+                    while ((ch >= '0') && (ch <= '9')) ch = Char(ch);
+                }
+                if ((ch == 'e') || (ch == 'E'))
+                {
+                    ch = Char(ch);
+                    if ((ch == '-') || (ch == '+')) ch = Char(ch);
+                    while ((ch >= '0') && (ch <= '9')) ch = Char(ch);
+                }
+                if (!b) throw Error("Bad number (float)");
+                s = ((lsb.Length > 0) ? lsb.ToString() : new string(lbf, 0, lln));
+                return float.Parse(s);
             }
-            if (!b) throw Error("Bad number (float)");
-            s = ((lsb.Length > 0) ? lsb.ToString() : new string(lbf, 0, lln));
-            return float.Parse(s);
         }
 
         private double ParseDouble(int outer)
@@ -515,22 +586,34 @@ namespace System.Text.Json
             bool b = false;
             string s;
             lsb.Length = 0; lln = 0;
-            if (ch == '-') ch = Char(ch);
-            while ((ch >= '0') && (ch <= '9') && (b = true)) ch = Char(ch);
-            if (ch == '.')
+            if ((ch == '"') && (types[outer].T == outer))
             {
-                ch = Char(ch);
-                while ((ch >= '0') && (ch <= '9')) ch = Char(ch);
+                double n;
+                Read();
+                n = ParseDouble(0);
+                Space();
+                Next('"');
+                return n;
             }
-            if ((ch == 'e') || (ch == 'E'))
+            else
             {
-                ch = Char(ch);
-                if ((ch == '-') || (ch == '+')) ch = Char(ch);
-                while ((ch >= '0') && (ch <= '9')) ch = Char(ch);
+                if (ch == '-') ch = Char(ch);
+                while ((ch >= '0') && (ch <= '9') && (b = true)) ch = Char(ch);
+                if (ch == '.')
+                {
+                    ch = Char(ch);
+                    while ((ch >= '0') && (ch <= '9')) ch = Char(ch);
+                }
+                if ((ch == 'e') || (ch == 'E'))
+                {
+                    ch = Char(ch);
+                    if ((ch == '-') || (ch == '+')) ch = Char(ch);
+                    while ((ch >= '0') && (ch <= '9')) ch = Char(ch);
+                }
+                if (!b) throw Error("Bad number (double)");
+                s = ((lsb.Length > 0) ? lsb.ToString() : new string(lbf, 0, lln));
+                return double.Parse(s);
             }
-            if (!b) throw Error("Bad number (double)");
-            s = ((lsb.Length > 0) ? lsb.ToString() : new string(lbf, 0, lln));
-            return double.Parse(s);
         }
 
         private decimal ParseDecimal(int outer)
@@ -539,16 +622,28 @@ namespace System.Text.Json
             bool b = false;
             string s;
             lsb.Length = 0; lln = 0;
-            if (ch == '-') ch = Char(ch);
-            while ((ch >= '0') && (ch <= '9') && (b = true)) ch = Char(ch);
-            if (ch == '.')
+            if ((ch == '"') && (types[outer].T == outer))
             {
-                ch = Char(ch);
-                while ((ch >= '0') && (ch <= '9')) ch = Char(ch);
+                decimal n;
+                Read();
+                n = ParseDecimal(0);
+                Space();
+                Next('"');
+                return n;
             }
-            if (!b) throw Error("Bad number (decimal)");
-            s = ((lsb.Length > 0) ? lsb.ToString() : new string(lbf, 0, lln));
-            return decimal.Parse(s);
+            else
+            {
+                if (ch == '-') ch = Char(ch);
+                while ((ch >= '0') && (ch <= '9') && (b = true)) ch = Char(ch);
+                if (ch == '.')
+                {
+                    ch = Char(ch);
+                    while ((ch >= '0') && (ch <= '9')) ch = Char(ch);
+                }
+                if (!b) throw Error("Bad number (decimal)");
+                s = ((lsb.Length > 0) ? lsb.ToString() : new string(lbf, 0, lln));
+                return decimal.Parse(s);
+            }
         }
 
         private string ParseString(int outer)
@@ -655,12 +750,15 @@ namespace System.Text.Json
             return ((lsb.Length > 0) ? lsb.ToString() : new string(lbf, 0, lln));
         }
 
+        private object Key(int outer) { return ParseString(-1); }
+
         private object Str(int outer) { return ParseString(0); }
 
         private object Obj(int outer)
         {
-            var cached = types[outer]; var ctor = cached.Ctor;
-            var typed = ((outer > 0) && (ctor != null));
+            var cached = types[outer]; var hash = types[cached.Key]; var ctor = cached.Ctor; var parser = hash.Parser;
+            var typed = ((outer > 0) && (ctor != null) && (cached.Dico == null));
+            var keyed = hash.T;
             var ch = chr;
             if (ch == '{')
             {
@@ -675,7 +773,7 @@ namespace System.Text.Json
                 while (ch < EOF)
                 {
                     var prop = (typed ? GetPropInfo(cached) : null);
-                    var key = (!typed ? ParseString(-1) : null);
+                    var key = (!typed ? parser(this, keyed) : null);
                     Space();
                     Next(':');
                     if (key != null)
@@ -683,7 +781,7 @@ namespace System.Text.Json
                         var val = Val(0);
                         if (obj == null)
                         {
-                            if (key == "__type")
+                            if ((key is string) && ((string)key == "__type"))
                             {
                                 obj = ((typed = (val is string)) ? (cached = types[Entry(Type.GetType((string)val, true))]).Ctor() : ctor());
                                 typed = !(obj is IDictionary);
@@ -691,7 +789,8 @@ namespace System.Text.Json
                             else
                                 obj = (obj ?? ctor());
                         }
-                        if (!typed) ((IDictionary)obj).Add(key, val);
+                        if (!typed)
+                            ((IDictionary)obj).Add(key, val);
                     }
                     else if (prop != null)
                     {
@@ -722,6 +821,8 @@ namespace System.Text.Json
         {
             var cached = types[(outer > 0) ? outer : 1]; var dico = (cached.Dico != null);
             var item = (dico ? cached.Dico : cached.List);
+            var val = cached.Inner;
+            var key = cached.Key;
             var ch = chr;
             if (ch == '[')
             {
@@ -743,7 +844,7 @@ namespace System.Text.Json
                 }
                 while (ch < EOF)
                 {
-                    item.Set(obj, this, cached.Inner, cached.Key);
+                    item.Set(obj, this, val, key);
                     ch = Space();
                     if (ch == ']')
                     {
@@ -818,6 +919,7 @@ namespace System.Text.Json
                 et = (!dico ? GetElementType(type) : null);
                 outer = rtti.Count;
                 types[outer] = (TypeInfo)Activator.CreateInstance(typeof(TypeInfo<>).MakeGenericType(type), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, new object[] { et, kt, vt }, null);
+                types[outer].T = outer;
                 rtti.Add(type, outer);
                 types[outer].Inner = ((et != null) ? Entry(et) : (dico ? Entry(vt) : 0));
                 if (dico) types[outer].Key = Entry(kt);
