@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 // For the JavaScriptSerializer
@@ -170,6 +171,41 @@ namespace Test
                 ((SampleConfigItem)((SampleConfigData<int>)obj).ConfigItems[456]).Id == 456000
             );
 
+            obj = UnitTest(@"{
+                ""OwnerByWealth"": {
+                    ""15999.99"":
+                        { ""Id"": 1,
+                          ""Name"": ""Peter"",
+                          ""Assets"": [
+                            { ""Name"": ""Car"",
+                              ""Price"": 15999.99 } ]
+                        },
+                    ""250000.05"":
+                        { ""Id"": 2,
+                          ""Name"": ""Paul"",
+                          ""Assets"": [
+                            { ""Name"": ""House"",
+                              ""Price"": 250000.05 } ]
+                        }
+                },
+                ""WealthByOwner"": [
+                    { ""key"": { ""Id"": 1, ""Name"": ""Peter"" }, ""value"": 15999.99 },
+                    { ""key"": { ""Id"": 2, ""Name"": ""Paul"" }, ""value"": 250000.05 }
+                ]
+            }", s => new JsonParser().Parse<Owners>(s));
+            Owner peter, owner;
+            System.Diagnostics.Debug.Assert
+            (
+                (obj is Owners) &&
+                (peter = ((Owners)obj).WealthByOwner.Keys.
+                    Where(person => person.Name == "Peter").FirstOrDefault()
+                ) != null &&
+                (owner = ((Owners)obj).OwnerByWealth[15999.99m]) != null &&
+                (owner.Name == peter.Name) &&
+                (owner.Assets.Count == 1) &&
+                (owner.Assets[0].Name == "Car")
+            );
+
             // A few error cases
             obj = UnitTest("\"unfinished", s => new JsonParser().Parse<string>(s), true);
             System.Diagnostics.Debug.Assert(obj is Exception && ((Exception)obj).Message.StartsWith("Bad string"));
@@ -306,6 +342,23 @@ namespace Test
         public class StuffHolder
         {
             public IList<ISomething> Items { get; set; }
+        }
+
+        public class Asset
+        {
+            public string Name { get; set; }
+            public decimal Price { get; set; }
+        }
+
+        public class Owner : Person
+        {
+            public IList<Asset> Assets { get; set; }
+        }
+
+        public class Owners
+        {
+            public IDictionary<decimal, Owner> OwnerByWealth { get; set; }
+            public IDictionary<Owner, decimal> WealthByOwner { get; set; }
         }
 
         public class Person
