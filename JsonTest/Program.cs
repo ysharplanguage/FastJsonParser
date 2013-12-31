@@ -122,6 +122,54 @@ namespace Test
                 ((Stuff)((StuffHolder)obj).Items[1]).Name == "Bar"
             );
 
+            string configTestInputVendors = @"{
+                ""ConfigItems"": {
+                    ""Vendor1"": {
+                        ""__type"": ""Test.Program+SampleConfigItem, Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
+                        ""Id"": 100,
+                        ""Content"": ""config content for vendor 1""
+                    },
+                    ""Vendor3"": {
+                        ""__type"": ""Test.Program+SampleConfigItem, Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
+                        ""Id"": 300,
+                        ""Content"": ""config content for vendor 3""
+                    }
+                }
+            }";
+
+            string configTestInputIntegers = @"{
+                ""ConfigItems"": {
+                    ""123"": {
+                        ""__type"": ""Test.Program+SampleConfigItem, Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
+                        ""Id"": 123000,
+                        ""Content"": ""config content for key 123""
+                    },
+                    ""456"": {
+                        ""__type"": ""Test.Program+SampleConfigItem, Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
+                        ""Id"": 456000,
+                        ""Content"": ""config content for key 456""
+                    }
+                }
+            }";
+
+            obj = UnitTest(configTestInputVendors, s => new JsonParser().Parse<SampleConfigData<VendorID>>(s));
+            System.Diagnostics.Debug.Assert
+            (
+                obj is SampleConfigData<VendorID> &&
+                ((SampleConfigData<VendorID>)obj).ConfigItems.ContainsKey(VendorID.Vendor3) &&
+                ((SampleConfigData<VendorID>)obj).ConfigItems[VendorID.Vendor3] is SampleConfigItem &&
+                ((SampleConfigItem)((SampleConfigData<VendorID>)obj).ConfigItems[VendorID.Vendor3]).Id == 300
+            );
+
+            obj = UnitTest(configTestInputIntegers, s => new JsonParser().Parse<SampleConfigData<int>>(s));
+            System.Diagnostics.Debug.Assert
+            (
+                obj is SampleConfigData<int> &&
+                ((SampleConfigData<int>)obj).ConfigItems.ContainsKey(456) &&
+                ((SampleConfigData<int>)obj).ConfigItems[456] is SampleConfigItem &&
+                ((SampleConfigItem)((SampleConfigData<int>)obj).ConfigItems[456]).Id == 456000
+            );
+
             // A few error cases
             obj = UnitTest("\"unfinished", s => new JsonParser().Parse<string>(s), true);
             System.Diagnostics.Debug.Assert(obj is Exception && ((Exception)obj).Message.StartsWith("Bad string"));
@@ -324,6 +372,27 @@ namespace Test
         {
             public int age { get; set; }
             public string name { get; set; }
+        }
+
+        public enum VendorID
+        {
+            Vendor0,
+            Vendor1,
+            Vendor2,
+            Vendor3,
+            Vendor4,
+            Vendor5
+        }
+
+        public class SampleConfigItem
+        {
+            public int Id { get; set; }
+            public string Content { get; set; }
+        }
+
+        public class SampleConfigData<TKey>
+        {
+            public Dictionary<TKey, object> ConfigItems { get; private set; }
         }
 
         static void SpeedTests()
