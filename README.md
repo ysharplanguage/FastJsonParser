@@ -149,10 +149,10 @@ So, without further ado... (larger figure - # parses per second - means faster)
 <tr>
 <th>Test /<br/>JSON size /<br/># Iterations /<br/>POCO or<br/>loosely-typed?</th>
 <th>Microsoft's<br/><a href="http://msdn.microsoft.com/en-us/library/system.web.script.serialization.javascriptserializer%28v=vs.100%29.aspx">JavaScript<br/>Serializer</a></th>
-<th>James<br/>Newton-King's<br/><a href="http://james.newtonking.com/json">JSON.NET</a></th>
-<th>Demis Bellot's<br/><a href="https://github.com/ServiceStack/ServiceStack">ServiceStack</a></th>
+<th>James<br/>Newton-<br/>King's<br/><a href="http://james.newtonking.com/json">JSON.NET</a></th>
+<th>Demis<br/>Bellot's<br/><a href="https://github.com/ServiceStack/ServiceStack">ServiceStack</a></th>
 <th><a href="https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs">This<br/>JsonParser</a></th>
-<th>Peter Ohler's<br/><a href="http://www.ohler.com/oj/">"Oj"</a><br/>(C extension<br/>to Ruby)</th>
+<th>Peter<br/>Ohler's <a href="http://www.ohler.com/oj/">"Oj"</a><br/>(C extension<br/>to Ruby)</th>
 </tr>
 <tr>
 <td><strong>_oj-highly-nested.json</strong><br/>257 bytes<br/>10,000 iter.<br/>Loosely-typed</td>
