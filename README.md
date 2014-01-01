@@ -529,7 +529,7 @@ In any case, I don't plan to make this small JSON deserializer as general-purpos
 
 "... Why do you even care, when you already have the excellent, fast, feature-rich [JSON.NET](http://james.newtonking.com/json) and [ServiceStack](https://github.com/ServiceStack/ServiceStack) around?"
 
-Indeed, pure parsing + deserialization speed isn't in fact my *long term* goal, or not for any *arbitrary* JSON input, anyway. For another, and broader project - still in design stage - that I have, I plan to use JSON as a "malleable" IR (intermediary representation) for code and meta data transformations that I will need to make happen in-between a high level source language (e.g., C#, or F#,...) and the target CIL (or, even, some other low-level target).
+Indeed, pure parsing + deserialization speed isn't in fact my *long term* goal, or not for any *arbitrary* JSON input, anyway. For another, and broader project - still in design stage - that I have, I plan to use JSON as a "malleable" IR (intermediate representation) for code and meta data transformations that I'll have to make happen in-between a high level source language (e.g., C#, or F#,...) and the target CIL (or some other lower target).
 
 [JSON.NET](http://james.newtonking.com/json)'s deserialization performances are great, and so are [ServiceStack](https://github.com/ServiceStack/ServiceStack)'s - [really, they are, already](http://theburningmonk.com/benchmarks/) - but I would like to have something of my own in my toolbox much smaller/more manageable (in terms of # of SLOC), and simpler to extend, for whatever unforeseen requirements of the deserialization process (from JSON text into CLR types and values) I may have to tackle.
 
