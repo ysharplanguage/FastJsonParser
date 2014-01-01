@@ -771,7 +771,7 @@ namespace System.Text.Json
                         {
                             if ((key is string) && ((string)key == "__type"))
                             {
-                                obj = ((typed = (val is string)) ? (cached = types[Entry(Type.GetType((string)val, true))]).Ctor() : ctor());
+                                obj = ((val is string) ? (cached = types[Entry(Type.GetType((string)val, true))]).Ctor() : ctor());
                                 typed = !(obj is IDictionary);
                             }
                             else
