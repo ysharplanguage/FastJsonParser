@@ -148,11 +148,11 @@ So, without further ado... (larger figure - # parses per second - means faster)
 <table border="1" width="100%">
 <tr>
 <th>Test /<br/>JSON size /<br/># Iterations /<br/>POCO or<br/>loosely-typed?</th>
-<th>JavaScript<br/>Serializer</th>
-<th>JSON.NET</th>
-<th>ServiceStack</th>
-<th><a href="https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs">JsonParser</a></th>
-<th><a href="http://www.ohler.com/oj/">Peter's  "Oj"</a><br/>(C extension to Ruby)</th>
+<th>Microsoft's<br/>JavaScript<br/>Serializer</th>
+<th>James Newton-King's<br/>JSON.NET</th>
+<th>Demis Bellot's<br/>ServiceStack</th>
+<th><a href="https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs">This JsonParser</a></th>
+<th><a href="http://www.ohler.com/oj/">Peter Ohler's</a><br/>"Oj"<br/>(C extension to Ruby)</th>
 </tr>
 <tr>
 <td><strong>_oj-highly-nested.json</strong><br/>257 bytes<br/>10,000 iter.<br/>Loosely-typed</td>
