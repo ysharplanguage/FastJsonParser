@@ -51,7 +51,7 @@ Early development status warning
 
 Although it is promisingly fast, lightweight, and easy to use, please note this parser/deserializer is still experimental.
 
-I do *not* recommend it for any use in production, at this stage. This may or may not evolve soon, but for one thing to begin with, it's in need of more extensive JSON conformance tests.
+I do *not* recommend it for any use in production, at this point. This may or may not evolve soon, but for one simple thing to begin with, it's in need of more extensive JSON conformance tests.
 
 That being said, you can feel free to fork / bugfix / augment / improve it at your own will.
 
