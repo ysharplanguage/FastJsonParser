@@ -152,7 +152,7 @@ So, without further ado... (larger figure - # parses per second - means faster)
 <th>James<br/>Newton-King's<br/><a href="http://james.newtonking.com/json">JSON.NET</a></th>
 <th>Demis Bellot's<br/><a href="https://github.com/ServiceStack/ServiceStack">ServiceStack</a></th>
 <th><a href="https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs">This<br/>JsonParser</a></th>
-<th>Peter Ohler's<br/><a href="http://www.ohler.com/oj/">"Oj"</a><br/>(a C extension<br/>to Ruby)</th>
+<th>Peter Ohler's<br/><a href="http://www.ohler.com/oj/">"Oj"</a><br/>(C extension<br/>to Ruby)</th>
 </tr>
 <tr>
 <td><strong>_oj-highly-nested.json</strong><br/>257 bytes<br/>10,000 iter.<br/>Loosely-typed</td>
