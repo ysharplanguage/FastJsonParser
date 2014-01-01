@@ -16,7 +16,7 @@ System.Text.Json
 
 This is a minimalistic and fast JSON parser/deserializer, for full .NET.
 
-The complete source code of the parser is pretty short (in a [single source file less than 900 SLOC-long](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs)) and comes with speed tests and their sample data, all in the "JsonTest" and "TestData" folders.
+The complete source code of the parser is pretty short (in a [single source file less than 900 SLOC-long](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs)) and comes with some speed tests and their sample data, all in the "JsonTest" and "TestData" folders.
 
 The console test program, [Program.cs](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/Program.cs), also includes a few unit tests (for both nominal cases vs. error cases), and it will attempt to execute them before the speed tests.
 
