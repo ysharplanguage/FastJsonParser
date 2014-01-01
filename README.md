@@ -42,7 +42,7 @@ For now(~), the only tiers of interest for this parser are the desktop/server ti
 
 This JSON parser/deserializer thus aims first at staying "simple", short, fast, and for use by some desktop tooling or server-side code that would require the full .NET anyway, and unlikely to ever be usable on mobile devices (unless those can eventually run the full .NET).
 
-Nevertheless, [Sami](https://github.com/sami1971) has just recently been able to do a quick performance test on his Android device (as the code could luckily compile for it *as-is*), and came up with a couple benchmark results which do seem encouraging - i.e., see this thread of Xamarin's Android forum:
+Nevertheless, [Sami](https://github.com/sami1971) has just recently been able to do a quick performance test on his Android device (as the code could luckily compile for it *as-is*), and came up with a few benchmark results (~ a dozen or so) which do seem encouraging - i.e., see this thread of Xamarin's Android forum:
 
 http://forums.xamarin.com/discussion/comment/38955/#Comment_38955
 
