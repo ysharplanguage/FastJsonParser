@@ -206,6 +206,23 @@ namespace Test
                 (owner.Assets[0].Name == "Car")
             );
 
+            // Support for JSON.NET's "$type" pseudo-key (in addition to ServiceStack's "__type"):
+            Person jsonNetPerson = new Person { Id = 123, Name = "Foo", Scores = new[] { 100, 200, 300 } };
+            
+            // (Expected serialized form shown in next comment)
+            string jsonNetString = JsonConvert.SerializeObject(jsonNetPerson, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Objects });
+            // => '{"$type":"Test.Program+Person, Test","Id":123,"Name":"Foo","Status":0,"Address":null,"Scores":[100,200,300],"Data":null,"History":null}'
+
+            // (Note the Parse<object>(...))
+            object restoredObject = UnitTest(jsonNetString, s => new JsonParser().Parse<object>(jsonNetString));
+            System.Diagnostics.Debug.Assert
+            (
+                restoredObject is Person &&
+                ((Person)restoredObject).Name == "Foo" &&
+                ((IList<int>)((Person)restoredObject).Scores).Count == 3 &&
+                ((IList<int>)((Person)restoredObject).Scores)[2] == 300
+            );
+
             // A few error cases
             obj = UnitTest("\"unfinished", s => new JsonParser().Parse<string>(s), true);
             System.Diagnostics.Debug.Assert(obj is Exception && ((Exception)obj).Message.StartsWith("Bad string"));
@@ -269,6 +286,20 @@ namespace Test
             Console.WriteLine("Press a key...");
             Console.WriteLine();
             Console.ReadKey();
+        }
+
+        public struct Complex<N> : IEquatable<Complex<N>>
+        {
+            public readonly N Re;
+            public readonly N Im;
+            public Complex(N re, N im)
+            {
+                Re = re; Im = im;
+            }
+            public bool Equals(Complex<N> other)
+            {
+                return object.Equals(Re, other.Re) && object.Equals(Im, other.Im);
+            }
         }
 
         static void Test(string parserName, Func<string, object> parseFunc, string testFile)
