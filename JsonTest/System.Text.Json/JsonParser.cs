@@ -254,7 +254,7 @@ namespace System.Text.Json
                 {
                     System.Reflection.PropertyInfo pi;
                     System.Reflection.MethodInfo set;
-                    if ((pi = props[i]).CanWrite && ((set = pi.GetSetMethod(true)).GetParameters().Length == 1))
+                    if ((pi = props[i]).CanWrite && ((set = pi.GetSetMethod()).GetParameters().Length == 1))
                         infos.Add(pi.Name, GetItemInfo(pi.PropertyType, pi.Name, set));
                 }
                 Dico = (((kType != null) && (vType != null)) ? GetItemInfo(Type, kType, vType, typeof(Dictionary<,>).MakeGenericType(kType, vType).GetMethod("Add", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public)) : null);
@@ -375,8 +375,8 @@ namespace System.Text.Json
         {
             var a = type.Enums; int n = a.Length, c = 0, i = 0, nc = 0, ch;
             EnumInfo e = null;
-            string s = null;
             var ec = false;
+            string s;
             if (n > 0)
             {
                 while (true)
@@ -397,7 +397,7 @@ namespace System.Text.Json
         private bool ParseBoolean(int outer)
         {
             var ch = Space();
-            if ((ch == '"') && (outer > 0) && (types[outer].T == outer))
+            if ((outer > 0) && (ch == '"'))
             {
                 bool b;
                 Read();
@@ -423,7 +423,7 @@ namespace System.Text.Json
             bool b = false;
             byte n = 0;
             TypeInfo t;
-            if ((ch == '"') && (outer > 0))
+            if ((outer > 0) && (ch == '"'))
             {
                 ch = Read();
                 if ((t = types[outer]).IsEnum && ((ch < '0') || (ch > '9')))
@@ -454,7 +454,7 @@ namespace System.Text.Json
             var ch = Space();
             bool b = false;
             TypeInfo t;
-            if ((ch == '"') && (outer > 0))
+            if ((outer > 0) && (ch == '"'))
             {
                 ch = Read();
                 if ((t = types[outer]).IsEnum && (ch != '-') && ((ch < '0') || (ch > '9')))
@@ -486,7 +486,7 @@ namespace System.Text.Json
             var ch = Space();
             bool b = false;
             TypeInfo t;
-            if ((ch == '"') && (outer > 0))
+            if ((outer > 0) && (ch == '"'))
             {
                 ch = Read();
                 if ((t = types[outer]).IsEnum && (ch != '-') && ((ch < '0') || (ch > '9')))
@@ -518,7 +518,7 @@ namespace System.Text.Json
             var ch = Space();
             bool b = false;
             TypeInfo t;
-            if ((ch == '"') && (outer > 0))
+            if ((outer > 0) && (ch == '"'))
             {
                 ch = Read();
                 if ((t = types[outer]).IsEnum && (ch != '-') && ((ch < '0') || (ch > '9')))
@@ -550,7 +550,7 @@ namespace System.Text.Json
             bool b = false;
             string s;
             lsb.Length = 0; lln = 0;
-            if ((ch == '"') && (outer > 0) && (types[outer].T == outer))
+            if ((outer > 0) && (ch == '"'))
             {
                 float n;
                 Read();
@@ -582,7 +582,7 @@ namespace System.Text.Json
             bool b = false;
             string s;
             lsb.Length = 0; lln = 0;
-            if ((ch == '"') && (outer > 0) && (types[outer].T == outer))
+            if ((outer > 0) && (ch == '"'))
             {
                 double n;
                 Read();
@@ -614,7 +614,7 @@ namespace System.Text.Json
             bool b = false;
             string s;
             lsb.Length = 0; lln = 0;
-            if ((ch == '"') && (outer > 0) && (types[outer].T == outer))
+            if ((outer > 0) && (ch == '"'))
             {
                 decimal n;
                 Read();
@@ -745,7 +745,7 @@ namespace System.Text.Json
         private object Obj(int outer)
         {
             var cached = types[outer]; var hash = types[cached.Key]; var ctor = cached.Ctor; var parser = hash.Parser;
-            var typed = ((outer > 0) && (ctor != null) && (cached.Dico == null));
+            var typed = ((outer > 0) && (cached.Dico == null) && (ctor != null));
             var keyed = hash.T;
             var ch = chr;
             if (ch == '{')
@@ -807,7 +807,7 @@ namespace System.Text.Json
 
         private object Arr(int outer)
         {
-            var cached = types[(outer > 0) ? outer : 1]; var dico = (cached.Dico != null);
+            var cached = types[(outer != 0) ? outer : 1]; var dico = (cached.Dico != null);
             var item = (dico ? cached.Dico : cached.List);
             var val = cached.Inner;
             var key = cached.Key;
@@ -862,7 +862,7 @@ namespace System.Text.Json
         {
             if (type.IsArray)
                 return type.GetElementType();
-            else if (typeof(System.Collections.IEnumerable).IsAssignableFrom(type))
+            else if ((type != typeof(string)) && typeof(System.Collections.IEnumerable).IsAssignableFrom(type))
                 return (type.IsGenericType ? type.GetGenericArguments()[0] : typeof(object));
             else
                 return null;
