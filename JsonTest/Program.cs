@@ -445,7 +445,7 @@ namespace Test
 
         public class SampleConfigData<TKey>
         {
-            public Dictionary<TKey, object> ConfigItems { get; private set; }
+            public Dictionary<TKey, object> ConfigItems { get; set; }
         }
 
         static void SpeedTests()
