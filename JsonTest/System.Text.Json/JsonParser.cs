@@ -658,6 +658,8 @@ namespace System.Text.Json
                     if (ch < EOF) { if (!ec || (ch >= 128)) Char(ch); else { CharEsc(ch); ec = false; } } else break;
                 }
             }
+            if (ch == 'n')
+                return (string)Null(0);
             throw Error((outer >= 0) ? "Bad string" : "Bad key");
         }
 
@@ -769,9 +771,10 @@ namespace System.Text.Json
                         var val = Val(cached.Inner);
                         if (obj == null)
                         {
-                            if ((key is string) && ((string)key == "__type"))
+                            string str;
+                            if (((str = (key as string)) != null) && ((str == "__type") || (str == "$type")))
                             {
-                                obj = ((val is string) ? (cached = types[Entry(Type.GetType((string)val, true))]).Ctor() : ctor());
+                                obj = (((str = (val as string)) != null) ? (cached = types[Entry(Type.GetType(str, true))]).Ctor() : ctor());
                                 typed = !(obj is IDictionary);
                             }
                             else
