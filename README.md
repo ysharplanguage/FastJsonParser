@@ -422,20 +422,25 @@ These are used by some of the above tests:
         }
 
 
-        // Used in the "tiny.json" test
+        // Used in the "tiny.json" test AND the unit tests
         public enum Status { Single, Married, Divorced }
         
-        // Used in the "tiny.json" test
+        // Used in the "tiny.json" test AND the unit tests
         public class Person
         {
             public int Id { get; set; }
             public string Name { get; set; }
+            
             // Both string and integral enum value representations can be parsed:
             public Status Status { get; set; }
+            
             public string Address { get; set; }
+            
             // Just to be sure we support that one, too:
             public IEnumerable<int> Scores { get; set; }
+            
             public object Data { get; set; }
+            
             // Generic dictionaries are also supported; e.g.:
             // '{
             //    "Name": "F. Bastiat", ...
@@ -444,6 +449,9 @@ These are used by some of the above tests:
             //    ]
             //  }'
             public IDictionary<DateTime, string> History { get; set; }
+            
+            // 1-char-long strings in the JSON can be deserialized into System.Char:
+            public char Abc { get; set; }
         }
 
 
