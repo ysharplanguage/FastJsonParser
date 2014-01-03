@@ -207,7 +207,7 @@ namespace Test
             );
 
             // Support for JSON.NET's "$type" pseudo-key (in addition to ServiceStack's "__type"):
-            Person jsonNetPerson = new Person { Id = 123, Name = "Foo", Scores = new[] { 100, 200, 300 } };
+            Person jsonNetPerson = new Person { Id = 123, Abc = '#', Name = "Foo", Scores = new[] { 100, 200, 300 } };
             
             // (Expected serialized form shown in next comment)
             string jsonNetString = JsonConvert.SerializeObject(jsonNetPerson, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Objects });
@@ -410,6 +410,7 @@ namespace Test
             //    ]
             //  }'
             public IDictionary<DateTime, string> History { get; set; }
+            public char Abc { get; set; }
         }
 
         public enum SomeKey
