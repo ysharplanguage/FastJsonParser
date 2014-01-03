@@ -211,7 +211,7 @@ namespace Test
             
             // (Expected serialized form shown in next comment)
             string jsonNetString = JsonConvert.SerializeObject(jsonNetPerson, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Objects });
-            // => '{"$type":"Test.Program+Person, Test","Id":123,"Name":"Foo","Status":0,"Address":null,"Scores":[100,200,300],"Data":null,"History":null}'
+            // => '{"$type":"Test.Program+Person, Test","Id":123,"Name":"Foo","Status":0,"Address":null,"Scores":[100,200,300],"Data":null,"History":null,"Abc":"#"}'
 
             // (Note the Parse<object>(...))
             object restoredObject = UnitTest(jsonNetString, s => new JsonParser().Parse<object>(jsonNetString));
@@ -219,6 +219,7 @@ namespace Test
             (
                 restoredObject is Person &&
                 ((Person)restoredObject).Name == "Foo" &&
+                ((Person)restoredObject).Abc == '#' &&
                 ((IList<int>)((Person)restoredObject).Scores).Count == 3 &&
                 ((IList<int>)((Person)restoredObject).Scores)[2] == 300
             );
