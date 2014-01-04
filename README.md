@@ -319,7 +319,7 @@ Rick's original test can be found at:
 
 http://rick-hightower.blogspot.com/2013/11/benchmark-for-json-parsing-boon-scores.html
 
-Note Rick is one of our fellows from the Java realm - and from his own comparative figures that I eventually noticed, it does seem that [Rick's "Boon"](https://github.com/RichardHightower/json-parsers-benchmark/blob/master/README.md) is also, indeed, *pretty fast*, among the number of Java toolboxes for JSON.
+Note Rick is one of our fellows from the Java realm - and from [his own comparative figures](http://rick-hightower.blogspot.com/2013/12/boon-json-parser-seems-to-be-fastest.html) that I eventually noticed, it does seem that [Rick's "Boon"](https://github.com/RichardHightower/json-parsers-benchmark/blob/master/README.md) is also, indeed, *pretty fast*, among the number of Java toolboxes for JSON.
 
 ***"Tiny JSON" test***
 
