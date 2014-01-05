@@ -323,7 +323,7 @@ Note Rick is one of our fellows from the Java realm - and from [his own comparat
 
 ***"Tiny JSON" test***
 
-* "Loop" Test over tiny JSON (deserializing x times the JSON contained in the [tiny.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/tiny.json.txt) file = 126 bytes) - with POCO target (1 class):
+* "Loop" Test over tiny JSON (deserializing x times the JSON contained in the [tiny.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/tiny.json.txt) file = 127 bytes) - with POCO target (1 class):
     * Performed 10,000 iterations: in ~ 56 milliseconds (pretty good) ( * )
         * vs. JavaScriptSerializer in ~ 550 milliseconds
         * vs. JSON.NET in ~ 250 milliseconds
