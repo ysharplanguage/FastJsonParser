@@ -76,6 +76,7 @@ namespace System.Text.Json
         {
             internal string Name;
             internal long Value;
+            internal int Len;
         }
 
         internal class ItemInfo
@@ -84,6 +85,7 @@ namespace System.Text.Json
             internal Action<object, JsonParser, int, int> Set;
             internal Type Type;
             internal int Outer;
+            internal int Len;
         }
 
         internal class TypeInfo
@@ -150,7 +152,7 @@ namespace System.Text.Json
             {
                 var einfo = new Dictionary<string, EnumInfo>();
                 foreach (var name in System.Enum.GetNames(type))
-                    einfo.Add(name, new EnumInfo { Name = name, Value = Convert.ToInt64(System.Enum.Parse(type, name)) });
+                    einfo.Add(name, new EnumInfo { Name = name, Value = Convert.ToInt64(System.Enum.Parse(type, name)), Len = name.Length });
                 return einfo.OrderBy(pair => pair.Key).Select(pair => pair.Value).ToArray();
             }
 
@@ -169,7 +171,7 @@ namespace System.Text.Json
                     il.Emit(System.Reflection.Emit.OpCodes.Box, parse.ReturnType);
                 il.Emit(System.Reflection.Emit.OpCodes.Callvirt, setter);
                 il.Emit(System.Reflection.Emit.OpCodes.Ret);
-                return new ItemInfo { Type = type, Name = name, Set = (Action<object, JsonParser, int, int>)method.CreateDelegate(typeof(Action<object, JsonParser, int, int>)) };
+                return new ItemInfo { Type = type, Name = name, Set = (Action<object, JsonParser, int, int>)method.CreateDelegate(typeof(Action<object, JsonParser, int, int>)), Len = name.Length };
             }
 
             private ItemInfo GetItemInfo(Type type, Type key, Type value, System.Reflection.MethodInfo setter)
@@ -376,9 +378,7 @@ namespace System.Text.Json
         private EnumInfo GetEnumInfo(TypeInfo type)
         {
             var a = type.Enums; int n = a.Length, c = 0, i = 0, nc = 0, ch;
-            EnumInfo e = null;
             var ec = false;
-            string s;
             if (n > 0)
             {
                 while (true)
@@ -386,11 +386,11 @@ namespace System.Text.Json
                     switch (ch = chr)
                     {
                         case '\\': ch = Read(); ec = true; break;
-                        case '"': Read(); return ((i < n) ? e : null);
+                        case '"': Read(); return (((i < n) && (c > 0)) ? a[i] : null);
                         default: break;
                     }
                     if (ch < EOF) { if (!ec || (ch >= 128)) { nc = ch; Read(); } else { nc = Esc(ch); ec = false; } } else break;
-                    while ((i < n) && ((c >= (s = (e = a[i]).Name).Length) || (s[c] != nc))) i++; c++;
+                    while ((i < n) && ((c >= a[i].Len) || (a[i].Name[c] != nc))) i++; c++;
                 }
             }
             return null;
@@ -587,6 +587,7 @@ namespace System.Text.Json
         {
             var ch = Space();
             var ec = false;
+            outer++;
             if (ch == '"')
             {
                 Read();
@@ -600,7 +601,7 @@ namespace System.Text.Json
                             break;
                         case '"':
                             Read();
-                            return ((lsb.Length > 0) ? lsb.ToString() : new string(lbf, 0, lln));
+                            return ((outer >= 0) ? ((lsb.Length > 0) ? lsb.ToString() : new string(lbf, 0, lln)) : null);
                         default:
                             break;
                     }
@@ -609,7 +610,7 @@ namespace System.Text.Json
             }
             if (ch == 'n')
                 return (string)Null(0);
-            throw Error((outer >= 0) ? "Bad string" : "Bad key");
+            throw Error((outer > 0) ? "Bad string" : "Bad key");
         }
 
         private DateTimeOffset ParseDateTimeOffset(int outer)
@@ -632,8 +633,6 @@ namespace System.Text.Json
         {
             var a = type.Props; int ch = Space(), n = a.Length, c = 0, i = 0, nc = 0;
             bool k = (n > 0), ec = false;
-            ItemInfo p = null;
-            string s;
             if (ch == '"')
             {
                 Read();
@@ -647,16 +646,12 @@ namespace System.Text.Json
                             break;
                         case '"':
                             Read();
-                            return ((i < n) ? p : null);
+                            return (((i < n) && (c > 0)) ? a[i] : null);
                         default:
                             break;
                     }
                     if (ch < EOF) { if (!ec || (ch >= 128)) Char(nc = ch); else { nc = CharEsc(ch); ec = false; } } else break;
-                    if (k)
-                    {
-                        while ((i < n) && ((c >= (s = (p = a[i]).Name).Length) || (s[c] != nc))) i++;
-                        c++;
-                    }
+                    if (k) { while ((i < n) && ((c >= a[i].Len) || (a[i].Name[c] != nc))) i++; c++; }
                 }
             }
             throw Error("Bad key");
@@ -745,7 +740,7 @@ namespace System.Text.Json
 
         private void SBrace() { Next('{'); }
         private void EBrace() { Space(); Next('}'); }
-        private void KColon() { ParseString(-1); Space(); Next(':'); }
+        private void KColon() { ParseString(-2); Space(); Next(':'); }
         private void SComma() { Space(); Next(','); }
 
         private object Arr(int outer)
