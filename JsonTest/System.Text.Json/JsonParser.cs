@@ -44,7 +44,7 @@ namespace System.Text.Json
 {
     public class JsonParser
     {
-        private static readonly short[] HEX = new short[128];
+        private static readonly byte[] HEX = new byte[128];
         private static readonly bool[] HXD = new bool[128];
         private static readonly char[] ESC = new char[128];
         private static readonly bool[] IDF = new bool[128];
@@ -90,7 +90,7 @@ namespace System.Text.Json
         {
             private static readonly HashSet<Type> WellKnown = new HashSet<Type>();
 
-            internal Func<JsonParser, int, object> Parser;
+            internal Func<JsonParser, int, object> Parse;
             internal Func<object> Ctor;
             internal EnumInfo[] Enums;
             internal ItemInfo[] Props;
@@ -268,7 +268,7 @@ namespace System.Text.Json
 
         internal class TypeInfo<T> : TypeInfo
         {
-            internal Func<JsonParser, int, T> Parse;
+            internal Func<JsonParser, int, T> Value;
 
             private Func<JsonParser, int, R> GetParseFunc<R>(string pName)
             {
@@ -289,15 +289,15 @@ namespace System.Text.Json
             internal TypeInfo(int self, Type eType, Type kType, Type vType)
                 : base(typeof(T), self, eType, kType, vType)
             {
-                var parse = (Parse = GetParseFunc<T>(GetParseName(typeof(T))));
-                Parser = (Func<JsonParser, int, object>)((parser, outer) => parse(parser, outer));
+                var value = (Value = GetParseFunc<T>(GetParseName(typeof(T))));
+                Parse = (Func<JsonParser, int, object>)((parser, outer) => value(parser, outer));
             }
         }
 
         static JsonParser()
         {
-            for (char c = '0'; c <= '9'; c++) { HXD[c] = true; HEX[c] = (short)(c - 48); }
-            for (char c = 'A'; c <= 'F'; c++) { HXD[c] = HXD[c + 32] = true; HEX[c] = HEX[c + 32] = (short)(c - 55); }
+            for (char c = '0'; c <= '9'; c++) { HXD[c] = true; HEX[c] = (byte)(c - 48); }
+            for (char c = 'A'; c <= 'F'; c++) { HXD[c] = HXD[c + 32] = true; HEX[c] = HEX[c + 32] = (byte)(c - 55); }
             ESC['/'] = '/'; ESC['\\'] = '\\';
             ESC['b'] = '\b'; ESC['f'] = '\f'; ESC['n'] = '\n'; ESC['r'] = '\r'; ESC['t'] = '\t'; ESC['u'] = 'u';
             for (int c = ANY; c < 128; c++) if (ESC[c] == ANY) ESC[c] = (char)c;
@@ -347,7 +347,7 @@ namespace System.Text.Json
             if (ec == 'u')
             {
                 int cp = 0, ic = -1;
-                while ((++ic < 4) && ((ch = Read()) <= 'f') && HXD[ch]) checked { cp *= 16; cp += HEX[ch]; }
+                while ((++ic < 4) && ((ch = Read()) <= 'f') && HXD[ch]) { cp *= 16; cp += HEX[ch]; }
                 if ((ic < 4) || (cp > char.MaxValue)) throw Error("Invalid Unicode character");
                 ch = Convert.ToChar(cp);
             }
@@ -363,7 +363,7 @@ namespace System.Text.Json
             if (ec == 'u')
             {
                 int cp = 0, ic = -1;
-                while ((++ic < 4) && ((ch = Read()) <= 'f') && HXD[ch]) checked { cp *= 16; cp += HEX[ch]; }
+                while ((++ic < 4) && ((ch = Read()) <= 'f') && HXD[ch]) { cp *= 16; cp += HEX[ch]; }
                 if ((ic < 4) || (cp > char.MaxValue)) throw Error("Invalid Unicode character");
                 ch = Convert.ToChar(cp);
             }
@@ -404,8 +404,8 @@ namespace System.Text.Json
             {
                 switch (ch)
                 {
-                    case 'f': Next('f'); Next('a'); Next('l'); Next('s'); Next('e'); return false;
-                    case 't': Next('t'); Next('r'); Next('u'); Next('e'); return true;
+                    case 'f': Read(); Next('a'); Next('l'); Next('s'); Next('e'); return false;
+                    case 't': Read(); Next('r'); Next('u'); Next('e'); return true;
                     default: throw Error("Bad boolean");
                 }
             }
@@ -663,9 +663,9 @@ namespace System.Text.Json
         }
 
         private object Error(int outer) { throw Error("Bad value"); }
-        private object Null(int outer) { Next('n'); Next('u'); Next('l'); Next('l'); return null; }
-        private object False(int outer) { return ParseBoolean(0); }
-        private object True(int outer) { return ParseBoolean(0); }
+        private object Null(int outer) { Read(); Next('u'); Next('l'); Next('l'); return null; }
+        private object False(int outer) { Read(); Next('a'); Next('l'); Next('s'); Next('e'); return false; }
+        private object True(int outer) { Read(); Next('r'); Next('u'); Next('e'); return true; }
 
         private object Num(int outer)
         {
@@ -686,7 +686,7 @@ namespace System.Text.Json
 
         private object Obj(int outer)
         {
-            var cached = types[outer]; var hash = types[cached.Key]; var ctor = cached.Ctor; var parser = hash.Parser;
+            var cached = types[outer]; var hash = types[cached.Key]; var ctor = cached.Ctor; var parsed = hash.Parse;
             var typed = ((outer > 0) && (cached.Dico == null) && (ctor != null));
             var keyed = hash.T;
             var ch = chr;
@@ -703,25 +703,25 @@ namespace System.Text.Json
                 while (ch < EOF)
                 {
                     var prop = (typed ? GetPropInfo(cached) : null);
-                    var key = (!typed ? parser(this, keyed) : null);
+                    var key = (!typed ? parsed(this, keyed) : null);
                     Space();
                     Next(':');
                     if (key != null)
                     {
-                        var val = Val(cached.Inner);
+                        var value = Val(cached.Inner);
                         if (obj == null)
                         {
-                            string str;
-                            if (((str = (key as string)) != null) && ((str == "__type") || (str == "$type")))
+                            string name;
+                            if (((name = (key as string)) != null) && ((name == "__type") || (name == "$type")))
                             {
-                                obj = (((str = (val as string)) != null) ? (cached = types[Entry(Type.GetType(str, true))]).Ctor() : ctor());
+                                obj = (((name = (value as string)) != null) ? (cached = types[Entry(Type.GetType(name, true))]).Ctor() : ctor());
                                 typed = !(obj is IDictionary);
                             }
                             else
                                 obj = (obj ?? ctor());
                         }
                         if (!typed)
-                            ((IDictionary)obj).Add(key, val);
+                            ((IDictionary)obj).Add(key, value);
                     }
                     else if (prop != null)
                     {
@@ -863,7 +863,7 @@ namespace System.Text.Json
             len = input.Length;
             txt = input;
             Reset(StringRead, StringNext, StringChar, StringSpace);
-            return (typeof(T).IsValueType ? ((TypeInfo<T>)types[outer]).Parse(this, outer) : (T)Val(outer));
+            return (typeof(T).IsValueType ? ((TypeInfo<T>)types[outer]).Value(this, outer) : (T)Val(outer));
         }
 
         private T DoParse<T>(System.IO.TextReader input)
@@ -871,7 +871,7 @@ namespace System.Text.Json
             var outer = Entry(typeof(T));
             str = input;
             Reset(StreamRead, StreamNext, StreamChar, StreamSpace);
-            return (typeof(T).IsValueType ? ((TypeInfo<T>)types[outer]).Parse(this, outer) : (T)Val(outer));
+            return (typeof(T).IsValueType ? ((TypeInfo<T>)types[outer]).Value(this, outer) : (T)Val(outer));
         }
 
         public JsonParser()
