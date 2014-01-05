@@ -289,20 +289,6 @@ namespace Test
             Console.ReadKey();
         }
 
-        public struct Complex<N> : IEquatable<Complex<N>>
-        {
-            public readonly N Re;
-            public readonly N Im;
-            public Complex(N re, N im)
-            {
-                Re = re; Im = im;
-            }
-            public bool Equals(Complex<N> other)
-            {
-                return object.Equals(Re, other.Re) && object.Equals(Im, other.Im);
-            }
-        }
-
         static void Test(string parserName, Func<string, object> parseFunc, string testFile)
         {
             Console.Clear();
