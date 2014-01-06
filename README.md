@@ -119,7 +119,7 @@ In my opinion, *in that case*, it's the application.
 Performances
 ------------
 
-Following below: a few figures, the outcome *average numbers* (only) that I obtain from the tests provided here, along with a few remarks.
+Following in the table below: a few figures, the outcome *average numbers* (only) that I obtain from the tests provided here, along with a few remarks.
 
 Consistently enough, I also obtain similar performance ratios for the same 4 parsers/deserializers when compared one-to-one, after I adapt (for this JsonParser doesn't provide object-to-JSON text *serialization*) and I run "the burning monk's" simple speed tester for JSON, which can be found at:
 
@@ -127,7 +127,7 @@ http://theburningmonk.com/2013/09/binary-and-json-serializer-benchmarks-updated
 
 ***Disclaimer***
 
-Note such figures (either the "burning monk's", or these below) can always - potentially - be much dependent on the test data at hand, and/or the way testing is performed.
+Note such figures (either the "burning monk's", or the following) can always - potentially - be much dependent on the test data at hand, and/or the way testing is performed.
 
 Of course, YMMV, so it's always a good idea to make *your own* benchmarks, using *your test data*, in the data "shape" you're interested in, and that you expect to encounter with *a good probability* in your domain.
 
@@ -141,7 +141,9 @@ Of course, YMMV, so it's always a good idea to make *your own* benchmarks, using
 
 .NET 4.0 target, on a humble Ideapad Intel Core i5 CPU @ 2.50GHz, 6 GB RAM, running Win7 64bit, with a ~ 98%..99% idle CPU (a nice enough personal laptop, but not exactly a beast of speed nowadays).
 
-Just for comparison with the native code world, on the third row of the table below I also give (this one measure only, for a glimpse) the throughput achieved by <a href="http://www.ohler.com/oj/">Peter's "Oj"</a> ("Oj" - *Optimized JSON* - is a C extension to Ruby) for 100,000 parses over his own JSON sample that I've reused to prepare this benchmark (see [_oj-highly-nested.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/_oj-highly-nested.json.txt), copied from Peter's: http://www.ohler.com/dev/oj_misc/performance_strict.html)
+Just for comparison with the native code world, on the third row of the table below I also give (this one measure only, for a glimpse) the throughput achieved by <a href="http://www.ohler.com/oj/">Peter's "Oj"</a> ("Oj" - *Optimized JSON* - is a C extension to Ruby) for 100,000 parses over his own JSON sample that I've reused to prepare this benchmark.
+
+(Refer to [_oj-highly-nested.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/_oj-highly-nested.json.txt), copied from Peter's page: http://www.ohler.com/dev/oj_misc/performance_strict.html)
 
 So, without further ado... (larger figure - # parses per second - means faster)
 
