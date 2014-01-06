@@ -24,6 +24,62 @@ using System.Text.Json;
 
 namespace Test
 {
+    public class E
+    {
+        public object zero { get; set; }
+        public int one { get; set; }
+        public int two { get; set; }
+        public List<int> three { get; set; }
+        public List<int> four { get; set; }
+    }
+
+    public class F
+    {
+        public object g { get; set; }
+    }
+
+    public class E2
+    {
+        public F f { get; set; }
+    }
+
+    public class D
+    {
+        public E2 e { get; set; }
+    }
+
+    public class C
+    {
+        public D d { get; set; }
+    }
+
+    public class B
+    {
+        public C c { get; set; }
+    }
+
+    public class A
+    {
+        public B b { get; set; }
+    }
+
+    public class H
+    {
+        public A a { get; set; }
+    }
+
+    public class HighlyNested
+    {
+        public string a { get; set; }
+        public bool b { get; set; }
+        public int c { get; set; }
+        public List<object> d { get; set; }
+        public E e { get; set; }
+        public object f { get; set; }
+        public H h { get; set; }
+        public List<List<List<List<List<List<List<object>>>>>>> i { get; set; }
+    }
+
     class Program
     {
         private static readonly string OJ_TEST_FILE_PATH = string.Format(@"..{0}..{0}TestData{0}_oj-highly-nested.json.txt", Path.DirectorySeparatorChar);
@@ -266,13 +322,16 @@ namespace Test
         }
 #endif
 
-        static void LoopTest(string parserName, Func<string, object> parseFunc, string testFile, int count)
+        static void LoopTest<T>(string parserName, Func<string, T> parseFunc, string testFile, int count)
         {
             Console.Clear();
             Console.WriteLine("Parser: {0}", parserName);
             Console.WriteLine();
             Console.WriteLine("Loop Test File: {0}", testFile);
+            Console.WriteLine();
             Console.WriteLine("Iterations: {0}", count.ToString("0,0"));
+            Console.WriteLine();
+            Console.WriteLine("Deserialization: {0}", (typeof(T) != typeof(object)) ? "POCO(s)" : "loosely-typed");
             Console.WriteLine();
             Console.WriteLine("Press ESC to skip this test or any other key to start...");
             Console.WriteLine();
@@ -307,12 +366,14 @@ namespace Test
             Console.ReadKey();
         }
 
-        static void Test(string parserName, Func<string, object> parseFunc, string testFile)
+        static void Test<T>(string parserName, Func<string, T> parseFunc, string testFile)
         {
             Console.Clear();
             Console.WriteLine("Parser: {0}", parserName);
             Console.WriteLine();
             Console.WriteLine("Test File: {0}", testFile);
+            Console.WriteLine();
+            Console.WriteLine("Deserialization: {0}", (typeof(T) != typeof(object)) ? "POCO(s)" : "loosely-typed");
             Console.WriteLine();
             Console.WriteLine("Press ESC to skip this test or any other key to start...");
             Console.WriteLine();
@@ -339,7 +400,7 @@ namespace Test
 
             if (o is FathersData)
             {
-                Console.WriteLine("Fathers : {0}", ((FathersData)o).fathers.Length.ToString("0,0"));
+                Console.WriteLine("Fathers : {0}", ((FathersData)(object)o).fathers.Length.ToString("0,0"));
                 Console.WriteLine();
             }
             GC.Collect();
@@ -502,11 +563,25 @@ namespace Test
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<object>, OJ_TEST_FILE_PATH, 10000);
 
 #if !JSON_PARSER_ONLY
+            LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<HighlyNested>, OJ_TEST_FILE_PATH, 10000);
+            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<HighlyNested>, OJ_TEST_FILE_PATH, 10000);
+            LoopTest("ServiceStack", new JsonSerializer<HighlyNested>().DeserializeFromString, OJ_TEST_FILE_PATH, 10000);
+#endif
+            LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<HighlyNested>, OJ_TEST_FILE_PATH, 10000);
+
+#if !JSON_PARSER_ONLY
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().DeserializeObject, OJ_TEST_FILE_PATH, 100000);
             LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject, OJ_TEST_FILE_PATH, 100000);
             //LoopTest("ServiceStack", new JsonSerializer<object>().DeserializeFromString, OJ_TEST_FILE_PATH, 100000);
 #endif
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<object>, OJ_TEST_FILE_PATH, 100000);
+
+#if !JSON_PARSER_ONLY
+            LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<HighlyNested>, OJ_TEST_FILE_PATH, 100000);
+            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<HighlyNested>, OJ_TEST_FILE_PATH, 100000);
+            LoopTest("ServiceStack", new JsonSerializer<HighlyNested>().DeserializeFromString, OJ_TEST_FILE_PATH, 100000);
+#endif
+            LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<HighlyNested>, OJ_TEST_FILE_PATH, 100000);
 
 #if !JSON_PARSER_ONLY
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 1000000);
