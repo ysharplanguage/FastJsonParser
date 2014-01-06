@@ -69,6 +69,24 @@ namespace Test
             obj = UnitTest("true", s => new JsonParser().Parse<object>(s));
             System.Diagnostics.Debug.Assert(obj is bool && (bool)obj);
 
+            obj = UnitTest(@"""\z""", s => new JsonParser().Parse<char>(s));
+            System.Diagnostics.Debug.Assert(obj is char && (char)obj == 'z');
+
+            obj = UnitTest(@"""\t""", s => new JsonParser().Parse<char>(s));
+            System.Diagnostics.Debug.Assert(obj is char && (char)obj == '\t');
+
+            obj = UnitTest(@"""\u0021""", s => new JsonParser().Parse<char>(s));
+            System.Diagnostics.Debug.Assert(obj is char && (char)obj == '!');
+
+            obj = UnitTest(@"""\u007D""", s => new JsonParser().Parse<char>(s));
+            System.Diagnostics.Debug.Assert(obj is char && (char)obj == '}');
+
+            obj = UnitTest(@" ""\u007e"" ", s => new JsonParser().Parse<char>(s));
+            System.Diagnostics.Debug.Assert(obj is char && (char)obj == '~');
+
+            obj = UnitTest(@" ""\u202A"" ", s => new JsonParser().Parse<char>(s));
+            System.Diagnostics.Debug.Assert(obj is char && (int)(char)obj == 0x202a);
+
             obj = UnitTest("123", s => new JsonParser().Parse<int>(s));
             System.Diagnostics.Debug.Assert(obj is int && (int)obj == 123);
 
@@ -208,7 +226,7 @@ namespace Test
 
             // Support for JSON.NET's "$type" pseudo-key (in addition to ServiceStack's "__type"):
             Person jsonNetPerson = new Person { Id = 123, Abc = '#', Name = "Foo", Scores = new[] { 100, 200, 300 } };
-            
+
             // (Expected serialized form shown in next comment)
             string jsonNetString = JsonConvert.SerializeObject(jsonNetPerson, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Objects });
             // => '{"$type":"Test.Program+Person, Test","Id":123,"Name":"Foo","Status":0,"Address":null,"Scores":[100,200,300],"Data":null,"History":null,"Abc":"#"}'
