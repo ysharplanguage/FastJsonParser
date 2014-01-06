@@ -354,7 +354,7 @@ Note Rick is one of our fellows from the Java realm - and from [his own comparat
     * Performed 100,000 iterations: in ~ 2.52 seconds (not bad) ( * )
         * vs. JavaScriptSerializer... N / A
         * vs. JSON.NET in ~ 14.2 seconds
-        * vs. ServiceStack in ~ 5.25 milliseconds
+        * vs. ServiceStack in ~ 5.25 seconds
         * ( * Which yields System.Text.Json.JsonParser's throughput : 36,623,067 bytes / second)
     * Performed 1,000,000 iterations: in ~ 25.8 seconds (not bad either) ( * )
         * vs. JavaScriptSerializer... N / A
