@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Cyril Jandia
+ * Copyright (c) 2013, 2014 Cyril Jandia
  *
  * http://www.cjandia.com/
  *
