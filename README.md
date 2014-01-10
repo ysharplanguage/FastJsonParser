@@ -4,7 +4,7 @@ System.Text.Json
 * <a href="#Overview">Overview</a>
 * <a href="#Goal">Goal</a>
 * <a href="#Interface">Public interface</a>
-* <a href="#Performances">Performances</a>
+* <a href="#Performances">Performance</a>
 * <a href="#POCOs">Test target POCOs</a>
 * <a href="#Roadmap">Roadmap</a>
 * <a href="#Background">Background</a>
@@ -36,7 +36,7 @@ Goal
 
 This aims at parsing textual JSON data, and to deserialize it into our (strongly typed) [POCO](http://en.wikipedia.org/wiki/Plain_Old_CLR_Object)s, as fast as possible.
 
-For now(~), the only tiers of interest for this parser are the desktop/server tiers. There are other JSON librairies with good performances, and already well tested/documented, which *also* support mobile devices that run more limited flavors of .NET ([JSON.NET](http://james.newtonking.com/json) and [ServiceStack](https://github.com/ServiceStack/ServiceStack) come to mind).
+For now(~), the only tiers of interest for this parser are the desktop/server tiers. There are other JSON librairies with good performance, and already well tested/documented, which *also* support mobile devices that run more limited flavors of .NET ([JSON.NET](http://james.newtonking.com/json) and [ServiceStack](https://github.com/ServiceStack/ServiceStack) come to mind).
 
 (~ i.e., until it gets stable enough and I hear people's interest for it to run elsewhere)
 
@@ -116,8 +116,8 @@ In my opinion, *in that case*, it's the application.
 
 <a name="Performances"></a>
 
-Performances
-------------
+Performance
+-----------
 
 Following in the table below: a few figures, the outcome *average numbers* (only) that I obtain from the tests provided here, along with a few remarks.
 
@@ -541,11 +541,11 @@ In any case, I don't plan to make this small JSON deserializer as general-purpos
 
 Indeed, pure parsing + deserialization speed isn't in fact my *long term* goal, or not for any *arbitrary* JSON input, anyway. For another, and broader project - still in design stage - that I have, I plan to use JSON as a "malleable" IR (intermediate representation) for code and meta data transformations that I'll have to make happen in-between a high level source language (e.g., C#, or F#,...) and the target CIL (or some other lower target).
 
-[JSON.NET](http://james.newtonking.com/json)'s deserialization performances are great, and so are [ServiceStack](https://github.com/ServiceStack/ServiceStack)'s - [really, they are, already](http://theburningmonk.com/benchmarks/) - but I would like to have something of my own in my toolbox much smaller/more manageable (in terms of # of SLOC), and simpler to extend, for whatever unforeseen requirements of the deserialization process (from JSON text into CLR types and values) I may have to tackle.
+[JSON.NET](http://james.newtonking.com/json)'s deserialization performance is great, and so is [ServiceStack](https://github.com/ServiceStack/ServiceStack)'s - [really, they are, already](http://theburningmonk.com/benchmarks/) - but I would like to have something of my own in my toolbox much smaller/more manageable (in terms of # of SLOC), and simpler to extend, for whatever unforeseen requirements of the deserialization process (from JSON text into CLR types and values) I may have to tackle.
 
-From an earlier experiment on that other project, I found out that I will *not* need a *generic* way to solve a *specific* deserialization sub-problem very efficiently (which nobody can really do - as there is "no silver bullet" / "one size fits all" for that matter), but instead I will only need a *specific* way to solve it efficiently, by extending this small parser's functionality only where and how that's exactly needed (while trying to maintain its good performances).
+From an earlier experiment on that other project, I found out that I will *not* need a *generic* way to solve a *specific* deserialization sub-problem very efficiently (which nobody can really do - as there is "no silver bullet" / "one size fits all" for that matter), but instead I will only need a *specific* way to solve it efficiently, by extending this small parser's functionality only where and how that's exactly needed (while trying to maintain its good performance).
 
-Finally, this parser/deserializer is/was a nice learning opportunity for me with parsing JSON, and to verify by myself once again [what I had read about](http://msdn.microsoft.com/en-us/magazine/cc507639.aspx) and experienced many times before. That is: never try to merely guess about performances, but instead always do your best to measure and to find out *where exactly* the parsing and deserialization slowdowns (and memory consumption costs) *actually* come from.
+Finally, this parser/deserializer is/was a nice learning opportunity for me with parsing JSON, and to verify by myself once again [what I had read about](http://msdn.microsoft.com/en-us/magazine/cc507639.aspx) and experienced many times before. That is: never try to merely guess about performance, but instead always do your best to measure and to find out *where exactly* the parsing and deserialization slowdowns (and memory consumption costs) *actually* come from.
 
 Other questions?
 ----------------
