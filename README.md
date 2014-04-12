@@ -4,7 +4,7 @@ System.Text.Json
 * <a href="#Overview">Overview</a>
 * <a href="#Goal">Goal</a>
 * <a href="#Interface">Public interface</a>
-* <a href="#Performances">Performance</a>
+* <a href="#Performance">Performance</a>
 * <a href="#POCOs">Test target POCOs</a>
 * <a href="#Roadmap">Roadmap</a>
 * <a href="#Background">Background</a>
@@ -114,7 +114,7 @@ In my opinion, *in that case*, it's the application.
 
 (Also, one can read [this very informative post of Eric Lippert](http://ericlippert.com/2013/07/25/what-is-the-type-of-the-null-literal/) about the so-called "null type".)
 
-<a name="Performances"></a>
+<a name="Performance"></a>
 
 Performance
 -----------
