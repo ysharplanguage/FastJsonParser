@@ -22,6 +22,8 @@ The console test program includes a few unit tests (for both nominal cases vs. e
 
 Do not hesitate to add more of the former (i.e., unit tests) and to raise here whatever issues you may find.
 
+There's a link to this repository at [json.org](http://www.json.org/), btw (in the C# implementations section).
+
 Also available on NuGet
 -----------------------
 
