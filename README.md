@@ -139,6 +139,8 @@ Of course, YMMV, so it's always a good idea to make *your own* benchmarks, using
 * [JSON.NET](http://james.newtonking.com/json) **v5.0 r8**, and
 * [ServiceStack](https://github.com/ServiceStack/ServiceStack) **v3.9.59**
 
+Before you try to run the speed tests against the test data provided, please note this repository does **not** include the binaries for the versions of JSON.NET and ServiceStack mentioned (you can obtain those from their respective links above).
+
 ***Executable target, and H/W used***
 
 .NET 4.0 target, on a humble Ideapad Intel Core i5 CPU @ 2.50GHz, 6 GB RAM, running Win7 64bit, with a ~ 98%..99% idle CPU (a nice enough personal laptop, but not exactly a beast of speed nowadays).
