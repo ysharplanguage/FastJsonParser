@@ -5,6 +5,8 @@ System.Text.Json
 * <a href="#Goal">Goal</a>
 * <a href="#Interface">Public interface</a>
 * <a href="#Performance">Performance</a>
+    * <a href="#PerfOverview">Speed Tests Results : Overview</a>
+    * <a href="#PerfDetailed">Speed Tests Results : Detailed</a>
 * <a href="#POCOs">Test target POCOs</a>
 * <a href="#Roadmap">Roadmap</a>
 * <a href="#Background">Background</a>
@@ -127,6 +129,28 @@ Consistently enough, I also obtain similar performance ratios for the same 4 par
 
 http://theburningmonk.com/2013/09/binary-and-json-serializer-benchmarks-updated
 
+<a name="PerfOverview"></a>
+***Speed Tests Results : Overview***
+
+<table border="1" width="100%">
+<tr>
+<th></th>
+<th>Microsoft's<br/><a href="http://msdn.microsoft.com/en-us/library/system.web.script.serialization.javascriptserializer%28v=vs.100%29.aspx">JavaScript<br/>Serializer</a></th>
+<th>James<br/>Newton-<br/>King's<br/><a href="http://james.newtonking.com/json">JSON.NET</a></th>
+<th>Demis<br/>Bellot's<br/><a href="https://github.com/ServiceStack/ServiceStack">ServiceStack</a></th>
+<th><a href="https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs">This<br/>JsonParser</a></th>
+<th>Peter<br/>Ohler's <a href="http://www.ohler.com/oj/">"Oj"</a><br/>C extension<br/>to Ruby</th>
+</tr>
+<tr>
+<td><strong>Performance +gain(-loss)<br/>(average percentages)<br/>vs...</strong></td>
+<td><strong>+ 425 %</strong></td>
+<td><strong>+ 127 %</strong></td>
+<td><strong>+ 32 %</strong></td>
+<td><strong>= 100 %</strong></td>
+<td><strong>- 108 %</strong></td>
+</tr>
+</table>
+
 ***Disclaimer***
 
 Note such figures (either the "burning monk's", or the following) can always - potentially - be much dependent on the test data at hand, and/or the way testing is performed.
@@ -148,6 +172,9 @@ Before you try to run the speed tests against the test data provided, please not
 Just for comparison out of curiosity, on the third row of the table below I also give (this one measure only, for a glimpse) the throughput achieved, in the native code realm, by <a href="http://www.ohler.com/oj/">Peter Ohler's "Oj"</a> ("Oj" - *Optimized JSON* : a C extension to Ruby) for 100,000 parses over his own JSON sample that I've reused to prepare this benchmark.
 
 (Refer to [_oj-highly-nested.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/_oj-highly-nested.json.txt), copied from Peter's: http://www.ohler.com/dev/oj_misc/performance_strict.html)
+
+<a name="PerfDetailed"></a>
+***Speed Tests Results : Detailed***
 
 So, without further ado... (larger figure - # parses per second - means faster)
 
