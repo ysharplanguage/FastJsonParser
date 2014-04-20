@@ -123,7 +123,7 @@ In my opinion, *in that case*, it's the application.
 Performance
 -----------
 
-Following in the table below: a few figures, the outcome *average numbers* (only) that I obtain from the tests provided here, along with a few remarks.
+Following in the table below: a few figures, the outcome *average numbers* (only) that I obtain from the tests provided here.
 
 Consistently enough, I also obtain similar performance ratios for the same 4 parsers/deserializers when compared one-to-one, after I adapt (for this JsonParser doesn't provide object-to-JSON text *serialization*) and I run "the burning monk's" simple speed tester for JSON, which can be found at:
 
@@ -142,7 +142,7 @@ http://theburningmonk.com/2013/09/binary-and-json-serializer-benchmarks-updated
 <th>Peter<br/>Ohler's <a href="http://www.ohler.com/oj/">"Oj"</a><br/>C extension<br/>to Ruby</th>
 </tr>
 <tr>
-<td><strong>Performance<br/>+/- gain/loss % (averages)</strong></td>
+<td><strong>Performance<br/>+/- gain/loss %<br/>(averages)</strong></td>
 <td><strong>+ 425 %</strong></td>
 <td><strong>+ 127 %</strong></td>
 <td><strong>+ 32 %</strong></td>
