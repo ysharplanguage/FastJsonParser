@@ -134,7 +134,7 @@ http://theburningmonk.com/2013/09/binary-and-json-serializer-benchmarks-updated
 
 <table border="1" width="100%">
 <tr>
-<th></th>
+<th>versus...</th>
 <th>Microsoft's<br/><a href="http://msdn.microsoft.com/en-us/library/system.web.script.serialization.javascriptserializer%28v=vs.100%29.aspx">JavaScript Serializer</a></th>
 <th>James Newton-King's<br/><a href="http://james.newtonking.com/json">JSON.NET</a></th>
 <th>Demis<br/>Bellot's<br/><a href="https://github.com/ServiceStack/ServiceStack">ServiceStack</a></th>
