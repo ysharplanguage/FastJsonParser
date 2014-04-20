@@ -284,13 +284,13 @@ The same, with the test files and timings details:
 
 * "Loop" Test over Peter's "Oj Strict Mode Performance" sample (deserializing x times the JSON contained in the [_oj-highly-nested.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/_oj-highly-nested.json.txt) file = 257 bytes) - "loosely-typed" deserialization:
     * Performed 10,000 iterations: in ~ 235 milliseconds ( * )
-        * vs. JavaScriptSerializer in ~ 875 milliseconds
-        * vs. JSON.NET in ~ 805 milliseconds
+        * vs. JavaScriptSerializer in ~ 875 milliseconds (... **272 %** slower)
+        * vs. JSON.NET in ~ 805 milliseconds (... **242 %** slower)
         * vs. ServiceStack... N / A
         * ( * Which yields System.Text.Json.JsonParser's throughput : 10,982,905 bytes / second)
     * Performed 100,000 iterations: in ~ 2.71 seconds ( * )
-        * vs. JavaScriptSerializer in ~ 9.05 seconds
-        * vs. JSON.NET in ~ 7.95 seconds
+        * vs. JavaScriptSerializer in ~ 9.05 seconds (... **239 %** slower)
+        * vs. JSON.NET in ~ 7.95 seconds (... **193 %** slower)
         * vs. ServiceStack... N / A
         * ( * Which yields System.Text.Json.JsonParser's throughput : 9,486,895 bytes / second)
     * [_oj-highly-nested.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/_oj-highly-nested.json.txt) comes from Peter's sample and tests, at:
