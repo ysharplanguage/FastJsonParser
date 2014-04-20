@@ -142,11 +142,11 @@ http://theburningmonk.com/2013/09/binary-and-json-serializer-benchmarks-updated
 <th>Peter<br/>Ohler's <a href="http://www.ohler.com/oj/">"Oj"</a><br/>C extension<br/>to Ruby</th>
 </tr>
 <tr>
-<td><strong>Performance +gain(-loss)<br/>(average percentages)<br/>vs...</strong></td>
+<td><strong>Performance<br/>+ gain % / - loss %<br/>(averages) vs...</strong></td>
 <td><strong>+ 425 %</strong></td>
 <td><strong>+ 127 %</strong></td>
 <td><strong>+ 32 %</strong></td>
-<td><strong>= 100 %</strong></td>
+<td></td>
 <td><strong>- 108 %</strong></td>
 </tr>
 </table>
