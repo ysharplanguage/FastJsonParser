@@ -138,11 +138,11 @@ http://theburningmonk.com/2013/09/binary-and-json-serializer-benchmarks-updated
 <th>Microsoft's<br/><a href="http://msdn.microsoft.com/en-us/library/system.web.script.serialization.javascriptserializer%28v=vs.100%29.aspx">JavaScript Serializer</a></th>
 <th>James Newton-King's<br/><a href="http://james.newtonking.com/json">JSON.NET</a></th>
 <th>Demis<br/>Bellot's<br/><a href="https://github.com/ServiceStack/ServiceStack">ServiceStack</a></th>
-<th><a href="https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs">This JsonParser</a></th>
-<th>Peter<br/>Ohler's <a href="http://www.ohler.com/oj/">"Oj"</a><br/>C extension<br/>to Ruby</th>
+<th><a href="https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs">This<br/>JsonParser</a></th>
+<th>Peter Ohler's<br/><a href="http://www.ohler.com/oj/">"Oj"</a><br/>C extension<br/>to Ruby</th>
 </tr>
 <tr>
-<td><strong>Performance<br/>+/- gain/loss %<br/>(averages)</strong></td>
+<td><strong>Performance<br/>+/- gain/loss<br/>(averages)</strong></td>
 <td><strong>+ 425 %</strong></td>
 <td><strong>+ 127 %</strong></td>
 <td><strong>+ 32 %</strong></td>
