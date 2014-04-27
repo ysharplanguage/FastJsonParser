@@ -671,28 +671,46 @@ namespace Test
                 Test(typeof(JsonParser).FullName, new JsonParser().Parse<object>, HUGE_TEST_FILE_PATH);
             }
 
-            StreamTest();
+            StreamTest(null);
+            StreamTest
+            (
+                new Dictionary<Type, Func<Type, string, int, bool>>
+                {
+                    {
+                        typeof(Father),
+                        (type, key, index) => key == "id" || key == "name"
+                    },
+                    {
+                        typeof(Father[]),
+                        (type, key, index) => index >= 29995
+                    }
+                }
+            );
         }
 
-        static void StreamTest()
+        static void StreamTest(IDictionary<Type, Func<Type, string, int, bool>> filter)
         {
             Console.Clear();
             System.Threading.Thread.MemoryBarrier();
             var initialMemory = System.GC.GetTotalMemory(true);
             using (var reader = new System.IO.StreamReader(FATHERS_TEST_FILE_PATH))
             {
-                Console.WriteLine("\"Fathers\" Test... streamed (press a key)");
+                Console.WriteLine("\"Fathers\" Test... streamed{0} (press a key)", (filter != null) ? " AND filtered" : String.Empty);
                 Console.WriteLine();
                 Console.ReadKey();
                 var st = DateTime.Now;
-                var o = new JsonParser().Parse<FathersData>(reader);
+                var o = new JsonParser().Parse<FathersData>(reader, filter);
                 var tm = (int)DateTime.Now.Subtract(st).TotalMilliseconds;
 
                 System.Threading.Thread.MemoryBarrier();
                 var finalMemory = System.GC.GetTotalMemory(true);
                 var consumption = finalMemory - initialMemory;
 
-                System.Diagnostics.Debug.Assert(o.fathers.Length == 30000);
+                Console.WriteLine();
+                if (filter == null)
+                    System.Diagnostics.Debug.Assert(o.fathers.Length == 30000);
+                else
+                    Console.WriteLine(JsonConvert.SerializeObject(o));
                 Console.WriteLine();
                 Console.WriteLine("... {0} ms", tm);
                 Console.WriteLine();
