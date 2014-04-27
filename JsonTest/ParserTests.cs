@@ -674,12 +674,12 @@ namespace Test
             StreamTest(null);
             StreamTest
             (
-                new Dictionary<Type, Func<Type, object, string, int, bool>>
+                new Dictionary<Type, Func<Type, object, object, int, bool>>
                 {
                     // We don't care about anything but these two properties :
                     {
                         typeof(Father),
-                        (type, obj, key, index) => key == "id" || key == "name"
+                        (type, obj, key, index) => (key as string) == "id" || (key as string) == "name"
                     },
                     // We want to pick only from the last 5 fathers in FathersData :
                     {
@@ -690,7 +690,7 @@ namespace Test
             );
         }
 
-        static void StreamTest(IDictionary<Type, Func<Type, object, string, int, bool>> filter)
+        static void StreamTest(IDictionary<Type, Func<Type, object, object, int, bool>> filter)
         {
             Console.Clear();
             System.Threading.Thread.MemoryBarrier();
