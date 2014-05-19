@@ -756,8 +756,8 @@ namespace Test
             Func<object, object> filteredFatherStreamCallback = obj =>
             {
                 Father father = (obj as Father);
-                // Output only the individual fathers that the filter decided to keep (i.e., when obj.Type is typeof(Father)),
-                // but don't output (even once) the resulting array (i.e., when obj.Type is typeof(Father[])):
+                // Output only the individual fathers that the filter decided to keep (i.e., when obj.Type equals typeof(Father)),
+                // but don't output (even once) the resulting array (i.e., when obj.Type equals typeof(Father[])):
                 if (father != null)
                 {
                     Console.WriteLine("\t\tId : {0}\t\tName : {1}", father.id, father.name);
@@ -792,7 +792,8 @@ namespace Test
                     }
                 };
 
-            // Read, parse, and deserialize fathers.json.txt in a streamed fashion, and using the above filter:
+            // Read, parse, and deserialize fathers.json.txt in a streamed fashion,
+            // and using the above filter, along with the callback we've set up:
             using (var reader = new System.IO.StreamReader(FATHERS_TEST_FILE_PATH))
             {
                 parser.Parse<FathersData>(reader, filter);
