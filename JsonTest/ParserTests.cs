@@ -796,7 +796,20 @@ namespace Test
             // and using the above filter, along with the callback we've set up:
             using (var reader = new System.IO.StreamReader(FATHERS_TEST_FILE_PATH))
             {
-                parser.Parse<FathersData>(reader, filter);
+                FathersData data = parser.Parse<FathersData>(reader, filter);
+
+                System.Diagnostics.Debug.Assert
+                (
+                    (data != null) &&
+                    (data.fathers != null) &&
+                    (data.fathers.Length == 5)
+                );
+                foreach (var i in Enumerable.Range(29995, 5))
+                    System.Diagnostics.Debug.Assert
+                    (
+                        (data.fathers[i - 29995].id == i) &&
+                        !String.IsNullOrEmpty(data.fathers[i - 29995].name)
+                    );
             }
         }
 
