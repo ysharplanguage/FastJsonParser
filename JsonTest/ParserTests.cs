@@ -823,7 +823,7 @@ namespace Test
             Console.ReadKey();
         }
 
-        // This test deserializes the first ten (10) fathers found in fathers.json.txt,
+        // This test deserializes the last ten (10) fathers found in fathers.json.txt,
         // and performs a fixup of the maiden names (all absent from fathers.json.txt)
         // of their daughters (if any):
         static void FilteredFatherStreamTestDaughterMaidenNamesFixup()
@@ -850,8 +850,8 @@ namespace Test
                 return obj;
             };
 
-            // Prepare our filters, i.e., we want only the first ten (10) fathers
-            // (array index in the resulting "Father[]" < 10)
+            // Prepare our filters, i.e., we want only the last ten (10) fathers
+            // (array index in the resulting "Father[]" >= 29990)
             var filters =
                 new Dictionary<Type, Func<Type, object, object, int, Func<object, object>>>
                 {
@@ -861,11 +861,11 @@ namespace Test
                         typeof(Father), // Note the type
                         (type, obj, key, index) => filteredFatherStreamCallback
                     },
-                    // We want to pick only the first 10 fathers from the source:
+                    // We want to pick only the last 10 fathers from the source:
                     {
                         typeof(Father[]), // Note the type
                         (type, obj, key, index) =>
-                            (index < 10) ?
+                            (index >= 29990) ?
                             filteredFatherStreamCallback :
                             JsonParser.Skip
                     }
