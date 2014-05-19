@@ -509,10 +509,14 @@ namespace Test
             public Father[] fathers { get; set; }
         }
 
-        public class Father
+        public class Someone
+        {
+            public string name { get; set; }
+        }
+
+        public class Father : Someone
         {
             public int id { get; set; }
-            public string name { get; set; }
             public bool married { get; set; }
             // Lists...
             public List<Son> sons { get; set; }
@@ -520,16 +524,17 @@ namespace Test
             public Daughter[] daughters { get; set; }
         }
 
-        public class Son
+        public class Child : Someone
         {
             public int age { get; set; }
-            public string name { get; set; }
         }
 
-        public class Daughter
+        public class Son : Child
         {
-            public int age { get; set; }
-            public string name { get; set; }
+        }
+
+        public class Daughter : Child
+        {
             public string maidenName { get; set; }
         }
 
