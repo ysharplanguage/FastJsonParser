@@ -521,10 +521,16 @@ These are used by some of the above tests:
 
 
         // Used in the "fathers.json" test
-        public class Father
+        public class Someone
+        {
+            public string name { get; set; }
+        }
+        
+        
+        // Used in the "fathers.json" test
+        public class Father : Someone
         {
             public int id { get; set; }
-            public string name { get; set; }
             public bool married { get; set; }
             // Lists...
             public List<Son> sons { get; set; }
@@ -534,19 +540,24 @@ These are used by some of the above tests:
 
 
         // Used in the "fathers.json" test
-        public class Son
+        public class Child : Someone
         {
             public int age { get; set; }
-            public string name { get; set; }
+        }
+        
+        
+        // Used in the "fathers.json" test
+        public class Son : Child
+        {
         }
 
 
         // Used in the "fathers.json" test
-        public class Daughter
+        public class Daughter : Child
         {
-            public int age { get; set; }
-            public string name { get; set; }
+            public string maidenName { get; set; }
         }
+
 
 <a name="Roadmap"></a>
 
