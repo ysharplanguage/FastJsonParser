@@ -96,7 +96,7 @@ namespace System.Text.Json
         {
             private static readonly HashSet<Type> WellKnown = new HashSet<Type>();
 
-            internal Func<Type, object, object, int, bool> Select;
+            internal Func<Type, object, object, int, Func<object, object>> Select;
             internal Func<JsonParser, int, object> Parse;
             internal Func<object> Ctor;
             internal EnumInfo[] Enums;
@@ -653,8 +653,9 @@ namespace System.Text.Json
         private object Obj(int outer)
         {
             var cached = types[outer]; var hash = types[cached.Key]; var select = cached.Select; var ctor = cached.Ctor;
-            var parse = hash.Parse;
+            var mapper = (null as Func<object, object>);
             var typed = ((outer > 0) && (cached.Dico == null) && (ctor != null));
+            var parse = hash.Parse;
             var keyed = hash.T;
             var ch = chr;
             if (ch == '{')
@@ -672,11 +673,12 @@ namespace System.Text.Json
                 {
                     var prop = (typed ? GetPropInfo(cached) : null);
                     var slot = (!typed ? parse(this, keyed) : null);
+                    Func<object, object> read = null;
                     Space();
                     Next(':');
                     if (slot != null)
                     {
-                        if ((select == null) || select(cached.Type, obj, slot, -1))
+                        if ((select == null) || ((read = select(cached.Type, obj, slot, -1)) != null))
                         {
                             var val = Val(cached.Inner);
                             var key = (slot as string);
@@ -698,7 +700,7 @@ namespace System.Text.Json
                     }
                     else if (prop != null)
                     {
-                        if ((select == null) || select(cached.Type, obj, prop.Name, -1))
+                        if ((select == null) || ((read = select(cached.Type, obj, prop.Name, -1)) != null))
                         {
                             obj = (obj ?? ctor());
                             prop.Set(obj, this, prop.Outer, 0);
@@ -708,11 +710,13 @@ namespace System.Text.Json
                     }
                     else
                         Val(0);
+                    mapper = (mapper ?? read);
                     ch = Space();
                     if (ch == '}')
                     {
+                        mapper = (mapper ?? Identity);
                         Read();
-                        return (obj ?? ctor());
+                        return mapper(obj ?? ctor());
                     }
                     Next(',');
                     ch = Space();
@@ -729,7 +733,8 @@ namespace System.Text.Json
         private object Arr(int outer)
         {
             var cached = types[(outer != 0) ? outer : 1]; var select = cached.Select; var dico = (cached.Dico != null);
-            var item = (dico ? cached.Dico : cached.List);
+            var mapper = (null as Func<object, object>);
+            var items = (dico ? cached.Dico : cached.List);
             var val = cached.Inner;
             var key = cached.Key;
             var ch = chr;
@@ -754,23 +759,26 @@ namespace System.Text.Json
                 }
                 while (ch < EOF)
                 {
+                    Func<object, object> read = null;
                     i++;
-                    if (dico || (select == null) || select(cached.Type, obj, null, i))
-                        item.Set(obj, this, val, key);
+                    if (dico || (select == null) || ((read = select(cached.Type, obj, null, i)) != null))
+                        items.Set(obj, this, val, key);
                     else
                         Val(0);
+                    mapper = (mapper ?? read);
                     ch = Space();
                     if (ch == ']')
                     {
+                        mapper = (mapper ?? Identity);
                         Read();
                         if (cached.Type.IsArray)
                         {
                             IList list = (IList)obj;
                             var array = Array.CreateInstance(cached.EType, list.Count);
                             list.CopyTo(array, 0);
-                            return array;
+                            return mapper(array);
                         }
-                        return obj;
+                        return mapper(obj);
                     }
                     Next(',');
                     ch = Space();
@@ -816,16 +824,16 @@ namespace System.Text.Json
             return kvPair;
         }
 
-        private int Closure(int outer, IDictionary<Type, Func<Type, object, object, int, bool>> filter)
+        private int Closure(int outer, IDictionary<Type, Func<Type, object, object, int, Func<object, object>>> filter)
         {
             var prop = types[outer].Props;
             for (var i = 0; i < prop.Length; i++) prop[i].Outer = Entry(prop[i].Type, filter);
             return outer;
         }
 
-        private int Entry(Type type, IDictionary<Type, Func<Type, object, object, int, bool>> filter)
+        private int Entry(Type type, IDictionary<Type, Func<Type, object, object, int, Func<object, object>>> filter)
         {
-            Func<Type, object, object, int, bool> select = null;
+            Func<Type, object, object, int, Func<object, object>> select = null;
             int outer;
             if (!rtti.TryGetValue(type, out outer))
             {
@@ -843,7 +851,7 @@ namespace System.Text.Json
             return Closure(outer, filter);
         }
 
-        private T DoParse<T>(string input, IDictionary<Type, Func<Type, object, object, int, bool>> filter)
+        private T DoParse<T>(string input, IDictionary<Type, Func<Type, object, object, int, Func<object, object>>> filter)
         {
             var outer = Entry(typeof(T), filter);
             len = input.Length;
@@ -852,7 +860,7 @@ namespace System.Text.Json
             return (typeof(T).IsValueType ? ((TypeInfo<T>)types[outer]).Value(this, outer) : (T)Val(outer));
         }
 
-        private T DoParse<T>(TextReader input, IDictionary<Type, Func<Type, object, object, int, bool>> filter)
+        private T DoParse<T>(TextReader input, IDictionary<Type, Func<Type, object, object, int, Func<object, object>>> filter)
         {
             var outer = Entry(typeof(T), filter);
             str = input;
@@ -872,25 +880,36 @@ namespace System.Text.Json
             Entry(typeof(char), null);
         }
 
+        public static object Identity(object obj) { return obj; }
+
+        public static readonly Func<object, object> Skip = null;
+
         public T Parse<T>(string input) { return Parse<T>(input, null); }
-        public T Parse<T>(string input, IDictionary<Type, Func<Type, object, object, int, bool>> filter)
+
+        public T Parse<T>(string input, IDictionary<Type, Func<Type, object, object, int, Func<object, object>>> mappers)
         {
             if (input == null) throw new ArgumentNullException("input", "cannot be null");
-            return DoParse<T>(input, filter);
+            return DoParse<T>(input, mappers);
         }
 
         public T Parse<T>(TextReader input) { return Parse<T>(input, null); }
-        public T Parse<T>(TextReader input, IDictionary<Type, Func<Type, object, object, int, bool>> filter)
+
+        public T Parse<T>(TextReader input, IDictionary<Type, Func<Type, object, object, int, Func<object, object>>> mappers)
         {
             if (input == null) throw new ArgumentNullException("input", "cannot be null");
-            return DoParse<T>(input, filter);
+            return DoParse<T>(input, mappers);
         }
 
-        public T Parse<T>(Stream input) { return Parse<T>(input, null); }
-        public T Parse<T>(Stream input, IDictionary<Type, Func<Type, object, object, int, bool>> filter)
+        public T Parse<T>(Stream input) { return Parse<T>(input, null as Encoding); }
+
+        public T Parse<T>(Stream input, Encoding encoding) { return Parse<T>(input, encoding, null); }
+
+        public T Parse<T>(Stream input, IDictionary<Type, Func<Type, object, object, int, Func<object, object>>> mappers) { return Parse<T>(input, null, mappers); }
+
+        public T Parse<T>(Stream input, Encoding encoding, IDictionary<Type, Func<Type, object, object, int, Func<object, object>>> mappers)
         {
             if (input == null) throw new ArgumentNullException("input", "cannot be null");
-            return DoParse<T>(new StreamReader(input), filter);
+            return DoParse<T>((encoding != null) ? new StreamReader(input, encoding) : new StreamReader(input), mappers);
         }
     }
 }
