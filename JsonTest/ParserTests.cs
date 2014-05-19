@@ -775,7 +775,7 @@ namespace Test
                 return obj;
             };
 
-            // Prepare our filter, and thus:
+            // Prepare our filters, and thus:
             // 1) we want only the last five (5) fathers (array index in the resulting "Father[]" >= 29,995),
             // (assuming we somehow have prior knowledge that the total count is 30,000)
             // and for each of them,
@@ -852,7 +852,7 @@ namespace Test
 
             // Prepare our filters, i.e., we want only the first ten (10) fathers
             // (array index in the resulting "Father[]" < 10)
-            var filter =
+            var filters =
                 new Dictionary<Type, Func<Type, object, object, int, Func<object, object>>>
                 {
                     // Necessary to perform post-processing on the daughters (if any)
@@ -875,7 +875,7 @@ namespace Test
             // and using the above filters, along with the callback we've set up:
             using (var reader = new System.IO.StreamReader(FATHERS_TEST_FILE_PATH))
             {
-                FathersData data = parser.Parse<FathersData>(reader, filter);
+                FathersData data = parser.Parse<FathersData>(reader, filters);
 
                 System.Diagnostics.Debug.Assert
                 (
