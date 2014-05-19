@@ -530,6 +530,7 @@ namespace Test
         {
             public int age { get; set; }
             public string name { get; set; }
+            public string maidenName { get; set; }
         }
 
         public enum VendorID
@@ -673,14 +674,16 @@ namespace Test
 
             StreamTest(null);
 
-            // Note this will be invoked thru the filter dictionary passed to this 2nd "StreamTest" below, in order to:
+            // Note this will be invoked thru the filters dictionary passed to this 2nd "StreamTest" below, in order to:
             // 1) for each "Father", skip the parsing of the properties to be ignored (i.e., all but "id" and "name")
             // 2) while populating the resulting "Father[]" array, skip the deserialization of the first 29,995 fathers
             Func<object, object> mapperCallback = obj =>
             {
                 Father father = (obj as Father);
-                // Output only the individual fathers that the filter decided to keep (i.e., when obj.Type is typeof(Father)),
-                // but don't output (even once) the resulting array (i.e., when obj.Type is typeof(Father[])):
+                // Output only the individual fathers that the filters decided to keep
+                // (i.e., when obj.Type equals typeof(Father)),
+                // but don't output (even once) the resulting array
+                // (i.e., when obj.Type equals typeof(Father[])):
                 if (father != null)
                 {
                     Console.WriteLine("\t\tId : {0}\t\tName : {1}", father.id, father.name);
@@ -693,7 +696,7 @@ namespace Test
             (
                 new Dictionary<Type, Func<Type, object, object, int, Func<object, object>>>
                 {
-                    // We don't care about anything but these two properties :
+                    // We don't care about anything but these 2 properties:
                     {
                         typeof(Father),
                         (type, obj, key, index) =>
@@ -701,7 +704,7 @@ namespace Test
                             mapperCallback :
                             JsonParser.Skip
                     },
-                    // We want to pick only from the last 5 fathers in FathersData :
+                    // We want to pick only the last 5 fathers from the source:
                     {
                         typeof(Father[]),
                         (type, obj, key, index) =>
@@ -752,17 +755,18 @@ namespace Test
             // Get our parser:
             var parser = new JsonParser();
 
-            // (Note this will be invoked thanks to the "filter" dictionary below)
+            // (Note this will be invoked thanks to the "filters" dictionary below)
             Func<object, object> filteredFatherStreamCallback = obj =>
             {
                 Father father = (obj as Father);
-                // Output only the individual fathers that the filter decided to keep (i.e., when obj.Type equals typeof(Father)),
+                // Output only the individual fathers that the filters decided to keep (i.e., when obj.Type equals typeof(Father)),
                 // but don't output (even once) the resulting array (i.e., when obj.Type equals typeof(Father[])):
                 if (father != null)
                 {
                     Console.WriteLine("\t\tId : {0}\t\tName : {1}", father.id, father.name);
                 }
-                // Do not project the filtered data in any specific way otherwise, just return it deserialized as-is:
+                // Do not project the filtered data in any specific way otherwise,
+                // just return it deserialized as-is:
                 return obj;
             };
 
@@ -771,10 +775,10 @@ namespace Test
             // (assuming we somehow have prior knowledge that the total count is 30,000)
             // and for each of them,
             // 2) we're only interested in obtaining their "id" and "name" properties
-            var filter = 
+            var filters = 
                 new Dictionary<Type, Func<Type, object, object, int, Func<object, object>>>
                 {
-                    // We don't care about anything but these two properties :
+                    // We don't care about anything but these 2 properties:
                     {
                         typeof(Father), // Note the type
                         (type, obj, key, index) =>
@@ -782,7 +786,7 @@ namespace Test
                             filteredFatherStreamCallback :
                             JsonParser.Skip
                     },
-                    // We want to pick only from the last 5 fathers in FathersData :
+                    // We want to pick only the last 5 fathers from the source:
                     {
                         typeof(Father[]), // Note the type
                         (type, obj, key, index) =>
@@ -793,10 +797,10 @@ namespace Test
                 };
 
             // Read, parse, and deserialize fathers.json.txt in a streamed fashion,
-            // and using the above filter, along with the callback we've set up:
+            // and using the above filters, along with the callback we've set up:
             using (var reader = new System.IO.StreamReader(FATHERS_TEST_FILE_PATH))
             {
-                FathersData data = parser.Parse<FathersData>(reader, filter);
+                FathersData data = parser.Parse<FathersData>(reader, filters);
 
                 System.Diagnostics.Debug.Assert
                 (
@@ -811,6 +815,87 @@ namespace Test
                         !String.IsNullOrEmpty(data.fathers[i - 29995].name)
                     );
             }
+            Console.ReadKey();
+        }
+
+        // This test deserializes the first ten (10) fathers found in fathers.json.txt,
+        // and performs a fixup of the maiden names (all absent from fathers.json.txt)
+        // of their daughters (if any):
+        static void FilteredFatherStreamTestDaughterMaidenNamesFixup()
+        {
+            // Get our parser:
+            var parser = new JsonParser();
+
+            // (Note this will be invoked thanks to the "filters" dictionary below)
+            Func<object, object> filteredFatherStreamCallback = obj =>
+            {
+                Father father = (obj as Father);
+                // Processes only the individual fathers that the filters decided to keep
+                // (i.e., iff obj.Type equals typeof(Father))
+                if (father != null)
+                {
+                    if ((father.daughters != null) && (father.daughters.Length > 0))
+                        // The fixup of the maiden names is done in-place, on
+                        // by-then freshly deserialized father's daughters:
+                        foreach (var daughter in father.daughters)
+                            daughter.maidenName = father.name.Substring(father.name.IndexOf(' ') + 1);
+                }
+                // Do not project the filtered data in any specific way otherwise,
+                // just return it deserialized as-is:
+                return obj;
+            };
+
+            // Prepare our filters, i.e., we want only the first ten (10) fathers
+            // (array index in the resulting "Father[]" < 10)
+            var filter =
+                new Dictionary<Type, Func<Type, object, object, int, Func<object, object>>>
+                {
+                    // Necessary to perform post-processing on the daughters (if any)
+                    // of each father we kept in "Father[]" via the 2nd filter below:
+                    {
+                        typeof(Father), // Note the type
+                        (type, obj, key, index) => filteredFatherStreamCallback
+                    },
+                    // We want to pick only the first 10 fathers from the source:
+                    {
+                        typeof(Father[]), // Note the type
+                        (type, obj, key, index) =>
+                            (index < 10) ?
+                            filteredFatherStreamCallback :
+                            JsonParser.Skip
+                    }
+                };
+
+            // Read, parse, and deserialize fathers.json.txt in a streamed fashion,
+            // and using the above filters, along with the callback we've set up:
+            using (var reader = new System.IO.StreamReader(FATHERS_TEST_FILE_PATH))
+            {
+                FathersData data = parser.Parse<FathersData>(reader, filter);
+
+                System.Diagnostics.Debug.Assert
+                (
+                    (data != null) &&
+                    (data.fathers != null) &&
+                    (data.fathers.Length == 10)
+                );
+                foreach (var father in data.fathers)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("\t\t{0}'s daughters:", father.name);
+                    if ((father.daughters != null) && (father.daughters.Length > 0))
+                        foreach (var daughter in father.daughters)
+                        {
+                            System.Diagnostics.Debug.Assert
+                            (
+                                !String.IsNullOrEmpty(daughter.maidenName)
+                            );
+                            Console.WriteLine("\t\t\t\t{0} {1}", daughter.name, daughter.maidenName);
+                        }
+                    else
+                        Console.WriteLine("\t\t\t\t(None)");
+                }
+            }
+            Console.ReadKey();
         }
 
         public static void Run()
