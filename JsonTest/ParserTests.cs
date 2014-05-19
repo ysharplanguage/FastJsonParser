@@ -672,25 +672,48 @@ namespace Test
             }
 
             StreamTest(null);
+
+            // Note this will be invoked thru the filter dictionary passed to this 2nd "StreamTest" below, in order to:
+            // 1) for each "Father", skip the parsing of the properties to be ignored (i.e., all but "id" and "name")
+            // 2) while populating the resulting "Father[]" array, skip the deserialization of the first 29,995 fathers
+            Func<object, object> mapperCallback = obj =>
+            {
+                Father father = (obj as Father);
+                // Output only the individual fathers that the filter decided to keep (i.e., when obj.Type is typeof(Father)),
+                // but don't output (even once) the resulting array (i.e., when obj.Type is typeof(Father[])):
+                if (father != null)
+                {
+                    Console.WriteLine("\t\tId : {0}\t\tName : {1}", father.id, father.name);
+                }
+                // Do not project the filtered data in any specific way otherwise, just return it deserialized as-is:
+                return obj;
+            };
+
             StreamTest
             (
-                new Dictionary<Type, Func<Type, object, object, int, bool>>
+                new Dictionary<Type, Func<Type, object, object, int, Func<object, object>>>
                 {
                     // We don't care about anything but these two properties :
                     {
                         typeof(Father),
-                        (type, obj, key, index) => (key as string) == "id" || (key as string) == "name"
+                        (type, obj, key, index) =>
+                            ((key as string) == "id" || (key as string) == "name") ?
+                            mapperCallback :
+                            JsonParser.Skip
                     },
                     // We want to pick only from the last 5 fathers in FathersData :
                     {
                         typeof(Father[]),
-                        (type, obj, key, index) => index >= 29995
+                        (type, obj, key, index) =>
+                            (index >= 29995) ?
+                            mapperCallback :
+                            JsonParser.Skip
                     }
                 }
             );
         }
 
-        static void StreamTest(IDictionary<Type, Func<Type, object, object, int, bool>> filter)
+        static void StreamTest(IDictionary<Type, Func<Type, object, object, int, Func<object, object>>> filter)
         {
             Console.Clear();
             System.Threading.Thread.MemoryBarrier();
@@ -710,9 +733,9 @@ namespace Test
 
                 Console.WriteLine();
                 if (filter == null)
+                {
                     System.Diagnostics.Debug.Assert(o.fathers.Length == 30000);
-                else
-                    Console.WriteLine(JsonConvert.SerializeObject(o));
+                }
                 Console.WriteLine();
                 Console.WriteLine("... {0} ms", tm);
                 Console.WriteLine();
@@ -720,6 +743,60 @@ namespace Test
                 Console.WriteLine();
             }
             Console.ReadKey();
+        }
+
+        // Existing test (above) simplified for SO question "Deserialize json array stream one item at a time":
+        // ( http://stackoverflow.com/questions/20374083/deserialize-json-array-stream-one-item-at-a-time )
+        static void FilteredFatherStreamTestSimplified()
+        {
+            // Get our parser:
+            var parser = new JsonParser();
+
+            // (Note this will be invoked thanks to the "filter" dictionary below)
+            Func<object, object> filteredFatherStreamCallback = obj =>
+            {
+                Father father = (obj as Father);
+                // Output only the individual fathers that the filter decided to keep (i.e., when obj.Type is typeof(Father)),
+                // but don't output (even once) the resulting array (i.e., when obj.Type is typeof(Father[])):
+                if (father != null)
+                {
+                    Console.WriteLine("\t\tId : {0}\t\tName : {1}", father.id, father.name);
+                }
+                // Do not project the filtered data in any specific way otherwise, just return it deserialized as-is:
+                return obj;
+            };
+
+            // Prepare our filter, and thus:
+            // 1) we want only the last five (5) fathers (array index in the resulting "Father[]" >= 29,995),
+            // (assuming we somehow have prior knowledge that the total count is 30,000)
+            // and for each of them,
+            // 2) we're only interested in obtaining their "id" and "name" properties
+            var filter = 
+                new Dictionary<Type, Func<Type, object, object, int, Func<object, object>>>
+                {
+                    // We don't care about anything but these two properties :
+                    {
+                        typeof(Father), // Note the type
+                        (type, obj, key, index) =>
+                            ((key as string) == "id" || (key as string) == "name") ?
+                            filteredFatherStreamCallback :
+                            JsonParser.Skip
+                    },
+                    // We want to pick only from the last 5 fathers in FathersData :
+                    {
+                        typeof(Father[]), // Note the type
+                        (type, obj, key, index) =>
+                            (index >= 29995) ?
+                            filteredFatherStreamCallback :
+                            JsonParser.Skip
+                    }
+                };
+
+            // Read, parse, and deserialize fathers.json.txt in a streamed fashion, and using the above filter:
+            using (var reader = new System.IO.StreamReader(FATHERS_TEST_FILE_PATH))
+            {
+                parser.Parse<FathersData>(reader, filter);
+            }
         }
 
         public static void Run()
