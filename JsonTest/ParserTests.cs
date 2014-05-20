@@ -775,11 +775,11 @@ namespace Test
                 return obj;
             };
 
-            // Prepare our filters, and thus:
+            // Prepare our filter, and thus:
             // 1) we want only the last five (5) fathers (array index in the resulting "Father[]" >= 29,995),
             // (assuming we somehow have prior knowledge that the total count is 30,000)
             // and for each of them,
-            // 2) we're only interested in obtaining their "id" and "name" properties
+            // 2) we're interested in deserializing them with only their "id" and "name" properties
             var filters = 
                 new Dictionary<Type, Func<Type, object, object, int, Func<object, object>>>
                 {
