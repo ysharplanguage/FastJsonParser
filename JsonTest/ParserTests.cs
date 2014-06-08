@@ -719,6 +719,8 @@ namespace Test
                     }
                 }
             );
+
+            FilteredFatherStreamTestDaughterMaidenNamesFixup();
         }
 
         static void StreamTest(IDictionary<Type, Func<Type, object, object, int, Func<object, object>>> filter)
@@ -828,6 +830,15 @@ namespace Test
         // of their daughters (if any):
         static void FilteredFatherStreamTestDaughterMaidenNamesFixup()
         {
+            Console.Clear();
+            Console.WriteLine("\"Fathers\" Test... streamed AND filtered");
+            Console.WriteLine();
+            Console.WriteLine("(static void FilteredFatherStreamTestDaughterMaidenNamesFixup())");
+            Console.WriteLine();
+            Console.WriteLine("(press a key)");
+            Console.WriteLine();
+            Console.ReadKey();
+
             // Get our parser:
             var parser = new JsonParser();
 
@@ -900,6 +911,7 @@ namespace Test
                         Console.WriteLine("\t\t\t\t(None)");
                 }
             }
+            Console.WriteLine("Press a key...");
             Console.ReadKey();
         }
 
