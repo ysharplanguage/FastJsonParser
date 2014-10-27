@@ -1,8 +1,8 @@
+// On GitHub: https://github.com/ysharplanguage/FastJsonParser
 #define RUN_UNIT_TESTS
-//#define JSON_PARSER_ONLY
-
-// On GitHub:
-// https://github.com/ysharplanguage/FastJsonParser
+#define RUN_BASIC_JSONPATH_TESTS
+//#define RUN_ADVANCED_JSONPATH_TESTS
+#define THIS_JSON_PARSER_ONLY
 
 using System;
 using System.Collections.Generic;
@@ -13,17 +13,26 @@ using System.Text;
 // For the JavaScriptSerializer
 using System.Web.Script.Serialization;
 
+#if !THIS_JSON_PARSER_ONLY
 // JSON.NET 5.0 r8
 using Newtonsoft.Json;
 
 // ServiceStack 3.9.59
 using ServiceStack.Text;
+#endif
 
 // Our stuff
 using System.Text.Json;
 
 namespace Test
 {
+#if RUN_UNIT_TESTS && (RUN_BASIC_JSONPATH_TESTS || RUN_ADVANCED_JSONPATH_TESTS)
+    using JsonPath;
+#if RUN_UNIT_TESTS && RUN_ADVANCED_JSONPATH_TESTS
+    using LambdaCompiler;
+#endif
+#endif
+
     public class E
     {
         public object zero { get; set; }
@@ -80,6 +89,208 @@ namespace Test
         public List<List<List<List<List<List<List<object>>>>>>> i { get; set; }
     }
 
+    public class BoonSmall
+    {
+        public string debug { get; set; }
+        public IList<int> nums { get; set; }
+    }
+
+    public enum Status
+    {
+        Single,
+        Married,
+        Divorced
+    }
+
+    public interface ISomething
+    {
+        int Id { get; set; }
+        // Notice how "Name" isn't introduced here yet, but
+        // instead, only in the implementation class "Stuff"
+        // below:
+    }
+
+    public class Stuff : ISomething
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class StuffHolder
+    {
+        public IList<ISomething> Items { get; set; }
+    }
+
+    public class Asset
+    {
+        public string Name { get; set; }
+        public decimal Price { get; set; }
+    }
+
+    public class Owner : Person
+    {
+        public IList<Asset> Assets { get; set; }
+    }
+
+    public class Owners
+    {
+        public IDictionary<decimal, Owner> OwnerByWealth { get; set; }
+        public IDictionary<Owner, decimal> WealthByOwner { get; set; }
+    }
+
+    public class Person
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+
+        // Both string and integral enum value representations can be parsed:
+        public Status Status { get; set; }
+
+        public string Address { get; set; }
+
+        // Just to be sure we support that one, too:
+        public IEnumerable<int> Scores { get; set; }
+
+        public object Data { get; set; }
+
+        // Generic dictionaries are also supported; e.g.:
+        // '{
+        //    "Name": "F. Bastiat", ...
+        //    "History": [
+        //       { "key": "1801-06-30", "value": "Birth date" }, ...
+        //    ]
+        //  }'
+        public IDictionary<DateTime, string> History { get; set; }
+
+        // 1-char-long strings in the JSON can be deserialized into System.Char:
+        public char Abc { get; set; }
+    }
+
+    public enum SomeKey
+    {
+        Key0, Key1, Key2, Key3, Key4,
+        Key5, Key6, Key7, Key8, Key9
+    }
+
+    public class DictionaryData
+    {
+        public IList<IDictionary<SomeKey, string>> Dictionaries { get; set; }
+    }
+
+    public class DictionaryDataAdaptJsonNetServiceStack
+    {
+        public IList<
+            IList<KeyValuePair<SomeKey, string>>
+        > Dictionaries { get; set; }
+    }
+
+    public class FathersData
+    {
+        public Father[] fathers { get; set; }
+    }
+
+    public class Someone
+    {
+        public string name { get; set; }
+    }
+
+    public class Father : Someone
+    {
+        public int id { get; set; }
+        public bool married { get; set; }
+        // Lists...
+        public List<Son> sons { get; set; }
+        // ... or arrays for collections, that's fine:
+        public Daughter[] daughters { get; set; }
+    }
+
+    public class Child : Someone
+    {
+        public int age { get; set; }
+    }
+
+    public class Son : Child
+    {
+    }
+
+    public class Daughter : Child
+    {
+        public string maidenName { get; set; }
+    }
+
+    public enum VendorID
+    {
+        Vendor0,
+        Vendor1,
+        Vendor2,
+        Vendor3,
+        Vendor4,
+        Vendor5
+    }
+
+    public class SampleConfigItem
+    {
+        public int Id { get; set; }
+        public string Content { get; set; }
+    }
+
+    public class SampleConfigData<TKey>
+    {
+        public Dictionary<TKey, object> ConfigItems { get; set; }
+    }
+
+    #region POCO model for SO question "Json deserializing issue c#" ( http://stackoverflow.com/questions/26426594/json-deserializing-issue-c-sharp )
+    public class From
+    {
+        public string id { get; set; }
+        public string name { get; set; }
+        public string category { get; set; }
+    }
+
+    public class Post
+    {
+        public string id { get; set; }
+        public From from { get; set; }
+        public string message { get; set; }
+        public string picture { get; set; }
+        public Dictionary<string, Like[]> likes { get; set; }
+    }
+
+    public class Like
+    {
+        public string id { get; set; }
+        public string name { get; set; }
+    }
+    #endregion
+
+    #region POCO model for JSONPath Tests (POCO)
+    public class Data
+    {
+        public int dummy { get; set; }
+        public Store store { get; set; }
+    }
+
+    public class Store
+    {
+        public Book[] book { get; set; }
+        public Bicycle bicycle { get; set; }
+    }
+
+    public class Book
+    {
+        public string category { get; set; }
+        public string author { get; set; }
+        public string title { get; set; }
+        public decimal price { get; set; }
+    }
+
+    public class Bicycle
+    {
+        public string color { get; set; }
+        public decimal price { get; set; }
+    }
+    #endregion
+
     class ParserTests
     {
         private static readonly string OJ_TEST_FILE_PATH = string.Format(@"..{0}..{0}TestData{0}_oj-highly-nested.json.txt", Path.DirectorySeparatorChar);
@@ -118,11 +329,99 @@ namespace Test
             if (Console.ReadKey().KeyChar == 27)
                 return;
 
+#if RUN_BASIC_JSONPATH_TESTS || RUN_ADVANCED_JSONPATH_TESTS
+            #region JSONPath Tests ( http://goessner.net/articles/JsonPath/ )
+            string input = @"
+              { ""store"": {
+                    ""book"": [ 
+                      { ""category"": ""reference"",
+                            ""author"": ""Nigel Rees"",
+                            ""title"": ""Sayings of the Century"",
+                            ""price"": 8.95
+                      },
+                      { ""category"": ""fiction"",
+                            ""author"": ""Evelyn Waugh"",
+                            ""title"": ""Sword of Honour"",
+                            ""price"": 12.99
+                      },
+                      { ""category"": ""fiction"",
+                            ""author"": ""Herman Melville"",
+                            ""title"": ""Moby Dick"",
+                            ""isbn"": ""0-553-21311-3"",
+                            ""price"": 8.99
+                      },
+                      { ""category"": ""fiction"",
+                            ""author"": ""J. R. R. Tolkien"",
+                            ""title"": ""The Lord of the Rings"",
+                            ""isbn"": ""0-395-19395-8"",
+                            ""price"": 22.99
+                      }
+                    ],
+                    ""bicycle"": {
+                      ""color"": ""red"",
+                      ""price"": 19.95
+                    }
+              }
+            }
+        ";
+            JsonPathSelection path;
+            JsonPathNode[] nodes;
+
+#if RUN_BASIC_JSONPATH_TESTS
+            var untyped = new JsonParser().Parse(input);
+            path = untyped.JsonPathSelection();
+            nodes = path.SelectNodes("$.store.book[3].title");
+            System.Diagnostics.Debug.Assert
+            (
+                nodes != null &&
+                nodes.Length == 1 &&
+                nodes[0].Value is string &&
+                (string)nodes[0].Value == "The Lord of the Rings"
+            );
+#endif
+
+#if RUN_ADVANCED_JSONPATH_TESTS
+            JsonPathScriptEvaluator evaluator =
+                delegate(string script, object value, string context)
+                {
+                    return
+                    (
+                        ((value is Type) && (context == script))
+                        ?
+                        ExpressionParser.Compile<Func<object, string, object>>(script, ((Type)value).Namespace)
+                        :
+                        null
+                    );
+                };
+
+            var typed = new JsonParser().Parse<Data>(input);
+            path = typed.JsonPathSelection(evaluator);
+            nodes = path.SelectNodes("$.store.book[?(((Book)@).title == \"Moby Dick\")].price");
+            System.Diagnostics.Debug.Assert
+            (
+                nodes != null &&
+                nodes.Length == 1 &&
+                nodes[0].Value is decimal &&
+                (decimal)nodes[0].Value == 8.99m
+            );
+
+            // Yup. This works too.
+            nodes = path.SelectNodes("$.[(@.GetType() == typeof(Store) ? \"book\" : (string)null)]");
+            System.Diagnostics.Debug.Assert
+            (
+                nodes != null &&
+                nodes.Length == 1 &&
+                nodes[0].Value is Book[]
+            );
+#endif
+            #endregion
+#endif
+
             // A few nominal cases
-            obj = UnitTest("null", s => new JsonParser().Parse<object>(s));
+            obj = UnitTest("null", s => new JsonParser().Parse(s));
             System.Diagnostics.Debug.Assert(obj == null);
 
-            obj = UnitTest("true", s => new JsonParser().Parse<object>(s));
+            obj = UnitTest("true", s => new JsonParser().Parse(s));
             System.Diagnostics.Debug.Assert(obj is bool && (bool)obj);
 
             obj = UnitTest(@"""\z""", s => new JsonParser().Parse<char>(s));
@@ -164,7 +463,7 @@ namespace Test
             obj = UnitTest("123.456", s => new JsonParser().Parse<decimal>(s));
             System.Diagnostics.Debug.Assert(obj is decimal && (decimal)obj == 123.456m);
 
-            obj = UnitTest("{\"a\":123,\"b\":true}", s => new JsonParser().Parse<object>(s));
+            obj = UnitTest("{\"a\":123,\"b\":true}", s => new JsonParser().Parse(s));
             System.Diagnostics.Debug.Assert(obj is IDictionary<string, object> && (((IDictionary<string, object>)obj)["a"] as string) == "123" && ((obj = ((IDictionary<string, object>)obj)["b"]) is bool) && (bool)obj);
 
             obj = UnitTest("1", s => new JsonParser().Parse<Status>(s));
@@ -184,11 +483,11 @@ namespace Test
 
             obj = UnitTest(@"{""Items"":[
                 {
-                    ""__type"": ""Test.ParserTests+Stuff, Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
+                    ""__type"": ""Test.Stuff, Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
                     ""Id"": 123, ""Name"": ""Foo""
                 },
                 {
-                    ""__type"": ""Test.ParserTests+Stuff, Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
+                    ""__type"": ""Test.Stuff, Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
                     ""Id"": 456, ""Name"": ""Bar""
                 }]}", s => new JsonParser().Parse<StuffHolder>(s));
             System.Diagnostics.Debug.Assert
@@ -200,12 +499,12 @@ namespace Test
             string configTestInputVendors = @"{
                 ""ConfigItems"": {
                     ""Vendor1"": {
-                        ""__type"": ""Test.ParserTests+SampleConfigItem, Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
+                        ""__type"": ""Test.SampleConfigItem, Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
                         ""Id"": 100,
                         ""Content"": ""config content for vendor 1""
                     },
                     ""Vendor3"": {
-                        ""__type"": ""Test.ParserTests+SampleConfigItem, Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
+                        ""__type"": ""Test.SampleConfigItem, Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
                         ""Id"": 300,
                         ""Content"": ""config content for vendor 3""
                     }
@@ -215,12 +514,12 @@ namespace Test
             string configTestInputIntegers = @"{
                 ""ConfigItems"": {
                     ""123"": {
-                        ""__type"": ""Test.ParserTests+SampleConfigItem, Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
+                        ""__type"": ""Test.SampleConfigItem, Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
                         ""Id"": 123000,
                         ""Content"": ""config content for key 123""
                     },
                     ""456"": {
-                        ""__type"": ""Test.ParserTests+SampleConfigItem, Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
+                        ""__type"": ""Test.SampleConfigItem, Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
                         ""Id"": 456000,
                         ""Content"": ""config content for key 456""
                     }
@@ -280,6 +579,7 @@ namespace Test
                 (owner.Assets[0].Name == "Car")
             );
 
+#if !THIS_JSON_PARSER_ONLY
             // Support for JSON.NET's "$type" pseudo-key (in addition to ServiceStack's "__type"):
             Person jsonNetPerson = new Person { Id = 123, Abc = '#', Name = "Foo", Scores = new[] { 100, 200, 300 } };
 
@@ -297,6 +597,44 @@ namespace Test
                 ((IList<int>)((Person)restoredObject).Scores).Count == 3 &&
                 ((IList<int>)((Person)restoredObject).Scores)[2] == 300
             );
+#endif
+
+            var SO_26426594_input = @"{ ""data"": [
+    {
+      ""id"": ""post 1"", 
+      ""from"": {
+        ""category"": ""Local business"", 
+        ""name"": ""..."", 
+        ""id"": ""...""
+      }, 
+      ""message"": ""..."", 
+      ""picture"": ""..."", 
+      ""likes"": {
+        ""data"": [
+          {
+            ""id"": ""like 1"", 
+            ""name"": ""text 1...""
+          }, 
+          {
+            ""id"": ""like 2"", 
+            ""name"": ""text 2...""
+          }
+        ]
+      }
+    }
+] }";
+            var posts =
+                (
+                    UnitTest(
+                        SO_26426594_input,
+                        FacebookPostDeserialization_SO_26426594
+                    ) as
+                    Dictionary<string, Post[]>
+                );
+            System.Diagnostics.Debug.Assert(posts != null && posts["data"][0].id == "post 1");
+            System.Diagnostics.Debug.Assert(posts != null && posts["data"][0].from.category == "Local business");
+            System.Diagnostics.Debug.Assert(posts != null && posts["data"][0].likes["data"][0].id == "like 1");
+            System.Diagnostics.Debug.Assert(posts != null && posts["data"][0].likes["data"][1].id == "like 2");
 
             // A few error cases
             obj = UnitTest("\"unfinished", s => new JsonParser().Parse<string>(s), true);
@@ -409,257 +747,107 @@ namespace Test
             Console.ReadKey();
         }
 
-        public class BoonSmall
-        {
-            public string debug { get; set; }
-            public IList<int> nums { get; set; }
-        }
-
-        public enum Status
-        {
-            Single,
-            Married,
-            Divorced
-        }
-
-        public interface ISomething
-        {
-            int Id { get; set; }
-            // Notice how "Name" isn't introduced here yet, but
-            // instead, only in the implementation class "Stuff"
-            // below:
-        }
-
-        public class Stuff : ISomething
-        {
-            public int Id { get; set; }
-            public string Name { get; set; }
-        }
-
-        public class StuffHolder
-        {
-            public IList<ISomething> Items { get; set; }
-        }
-
-        public class Asset
-        {
-            public string Name { get; set; }
-            public decimal Price { get; set; }
-        }
-
-        public class Owner : Person
-        {
-            public IList<Asset> Assets { get; set; }
-        }
-
-        public class Owners
-        {
-            public IDictionary<decimal, Owner> OwnerByWealth { get; set; }
-            public IDictionary<Owner, decimal> WealthByOwner { get; set; }
-        }
-
-        public class Person
-        {
-            public int Id { get; set; }
-            public string Name { get; set; }
-
-            // Both string and integral enum value representations can be parsed:
-            public Status Status { get; set; }
-
-            public string Address { get; set; }
-
-            // Just to be sure we support that one, too:
-            public IEnumerable<int> Scores { get; set; }
-
-            public object Data { get; set; }
-
-            // Generic dictionaries are also supported; e.g.:
-            // '{
-            //    "Name": "F. Bastiat", ...
-            //    "History": [
-            //       { "key": "1801-06-30", "value": "Birth date" }, ...
-            //    ]
-            //  }'
-            public IDictionary<DateTime, string> History { get; set; }
-
-            // 1-char-long strings in the JSON can be deserialized into System.Char:
-            public char Abc { get; set; }
-        }
-
-        public enum SomeKey
-        {
-            Key0, Key1, Key2, Key3, Key4,
-            Key5, Key6, Key7, Key8, Key9
-        }
-
-        public class DictionaryData
-        {
-            public IList<IDictionary<SomeKey, string>> Dictionaries { get; set; }
-        }
-
-        public class DictionaryDataAdaptJsonNetServiceStack
-        {
-            public IList<
-                IList<KeyValuePair<SomeKey, string>>
-            > Dictionaries { get; set; }
-        }
-
-        public class FathersData
-        {
-            public Father[] fathers { get; set; }
-        }
-
-        public class Someone
-        {
-            public string name { get; set; }
-        }
-
-        public class Father : Someone
-        {
-            public int id { get; set; }
-            public bool married { get; set; }
-            // Lists...
-            public List<Son> sons { get; set; }
-            // ... or arrays for collections, that's fine:
-            public Daughter[] daughters { get; set; }
-        }
-
-        public class Child : Someone
-        {
-            public int age { get; set; }
-        }
-
-        public class Son : Child
-        {
-        }
-
-        public class Daughter : Child
-        {
-            public string maidenName { get; set; }
-        }
-
-        public enum VendorID
-        {
-            Vendor0,
-            Vendor1,
-            Vendor2,
-            Vendor3,
-            Vendor4,
-            Vendor5
-        }
-
-        public class SampleConfigItem
-        {
-            public int Id { get; set; }
-            public string Content { get; set; }
-        }
-
-        public class SampleConfigData<TKey>
-        {
-            public Dictionary<TKey, object> ConfigItems { get; set; }
-        }
-
         static void SpeedTests()
         {
-#if !JSON_PARSER_ONLY
+#if !THIS_JSON_PARSER_ONLY
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().DeserializeObject, OJ_TEST_FILE_PATH, 10000);
             LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject, OJ_TEST_FILE_PATH, 10000);
             //LoopTest("ServiceStack", new JsonSerializer<object>().DeserializeFromString, OJ_TEST_FILE_PATH, 10000);
 #endif
-            LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<object>, OJ_TEST_FILE_PATH, 10000);
+            LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse, OJ_TEST_FILE_PATH, 10000);
 
-#if !JSON_PARSER_ONLY
+#if !THIS_JSON_PARSER_ONLY
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<HighlyNested>, OJ_TEST_FILE_PATH, 10000);
             LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<HighlyNested>, OJ_TEST_FILE_PATH, 10000);
             LoopTest("ServiceStack", new JsonSerializer<HighlyNested>().DeserializeFromString, OJ_TEST_FILE_PATH, 10000);
 #endif
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<HighlyNested>, OJ_TEST_FILE_PATH, 10000);
 
-#if !JSON_PARSER_ONLY
+#if !THIS_JSON_PARSER_ONLY
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().DeserializeObject, OJ_TEST_FILE_PATH, 100000);
             LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject, OJ_TEST_FILE_PATH, 100000);
             //LoopTest("ServiceStack", new JsonSerializer<object>().DeserializeFromString, OJ_TEST_FILE_PATH, 100000);
 #endif
-            LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<object>, OJ_TEST_FILE_PATH, 100000);
+            LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse, OJ_TEST_FILE_PATH, 100000);
 
-#if !JSON_PARSER_ONLY
+#if !THIS_JSON_PARSER_ONLY
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<HighlyNested>, OJ_TEST_FILE_PATH, 100000);
             LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<HighlyNested>, OJ_TEST_FILE_PATH, 100000);
             LoopTest("ServiceStack", new JsonSerializer<HighlyNested>().DeserializeFromString, OJ_TEST_FILE_PATH, 100000);
 #endif
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<HighlyNested>, OJ_TEST_FILE_PATH, 100000);
 
-#if !JSON_PARSER_ONLY
+#if !THIS_JSON_PARSER_ONLY
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 1000000);
             LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 1000000);
             LoopTest("ServiceStack", new JsonSerializer<BoonSmall>().DeserializeFromString, BOON_SMALL_TEST_FILE_PATH, 1000000);
 #endif
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 1000000);
 
-#if !JSON_PARSER_ONLY
+#if !THIS_JSON_PARSER_ONLY
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 10000000);
             LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 10000000);
             LoopTest("ServiceStack", new JsonSerializer<BoonSmall>().DeserializeFromString, BOON_SMALL_TEST_FILE_PATH, 10000000);
 #endif
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 10000000);
 
-#if !JSON_PARSER_ONLY
+#if !THIS_JSON_PARSER_ONLY
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<Person>, TINY_TEST_FILE_PATH, 10000);
             LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<Person>, TINY_TEST_FILE_PATH, 10000);
             LoopTest("ServiceStack", new JsonSerializer<Person>().DeserializeFromString, TINY_TEST_FILE_PATH, 10000);
 #endif
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<Person>, TINY_TEST_FILE_PATH, 10000);
 
-#if !JSON_PARSER_ONLY
+#if !THIS_JSON_PARSER_ONLY
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<Person>, TINY_TEST_FILE_PATH, 100000);
             LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<Person>, TINY_TEST_FILE_PATH, 100000);
             LoopTest("ServiceStack", new JsonSerializer<Person>().DeserializeFromString, TINY_TEST_FILE_PATH, 100000);
 #endif
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<Person>, TINY_TEST_FILE_PATH, 100000);
 
-#if !JSON_PARSER_ONLY
+#if !THIS_JSON_PARSER_ONLY
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<Person>, TINY_TEST_FILE_PATH, 1000000);
             LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<Person>, TINY_TEST_FILE_PATH, 1000000);
             LoopTest("ServiceStack", new JsonSerializer<Person>().DeserializeFromString, TINY_TEST_FILE_PATH, 1000000);
 #endif
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<Person>, TINY_TEST_FILE_PATH, 1000000);
 
-#if !JSON_PARSER_ONLY
+#if !THIS_JSON_PARSER_ONLY
             //LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<DictionaryDataAdaptJsonNetServiceStack>, DICOS_TEST_FILE_PATH, 10000);//(Can't deserialize properly)
             LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<DictionaryDataAdaptJsonNetServiceStack>, DICOS_TEST_FILE_PATH, 10000);
             LoopTest("ServiceStack", new JsonSerializer<DictionaryDataAdaptJsonNetServiceStack>().DeserializeFromString, DICOS_TEST_FILE_PATH, 10000);
 #endif
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<DictionaryData>, DICOS_TEST_FILE_PATH, 10000);
 
-#if !JSON_PARSER_ONLY
+#if !THIS_JSON_PARSER_ONLY
             //LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<DictionaryDataAdaptJsonNetServiceStack>, DICOS_TEST_FILE_PATH, 100000);//(Can't deserialize properly)
             LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<DictionaryDataAdaptJsonNetServiceStack>, DICOS_TEST_FILE_PATH, 100000);
             LoopTest("ServiceStack", new JsonSerializer<DictionaryDataAdaptJsonNetServiceStack>().DeserializeFromString, DICOS_TEST_FILE_PATH, 100000);
 #endif
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<DictionaryData>, DICOS_TEST_FILE_PATH, 100000);
 
-#if !JSON_PARSER_ONLY
+#if !THIS_JSON_PARSER_ONLY
             //LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<DictionaryDataAdaptJsonNetServiceStack>, DICOS_TEST_FILE_PATH, 1000000);//(Can't deserialize properly)
             LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<DictionaryDataAdaptJsonNetServiceStack>, DICOS_TEST_FILE_PATH, 1000000);
             LoopTest("ServiceStack", new JsonSerializer<DictionaryDataAdaptJsonNetServiceStack>().DeserializeFromString, DICOS_TEST_FILE_PATH, 1000000);
 #endif
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<DictionaryData>, DICOS_TEST_FILE_PATH, 1000000);
 
-#if !JSON_PARSER_ONLY
+#if !THIS_JSON_PARSER_ONLY
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().DeserializeObject, SMALL_TEST_FILE_PATH, 10000);
             LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject, SMALL_TEST_FILE_PATH, 10000);
             //LoopTest("ServiceStack", new JsonSerializer<object>().DeserializeFromString, SMALL_TEST_FILE_PATH, 10000);
 #endif
-            LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<object>, SMALL_TEST_FILE_PATH, 10000);
+            LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse, SMALL_TEST_FILE_PATH, 10000);
 
-#if !JSON_PARSER_ONLY
+#if !THIS_JSON_PARSER_ONLY
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().DeserializeObject, SMALL_TEST_FILE_PATH, 100000);
             LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject, SMALL_TEST_FILE_PATH, 100000);//(JSON.NET: OutOfMemoryException)
             //LoopTest("ServiceStack", new JsonSerializer<object>().DeserializeFromString, SMALL_TEST_FILE_PATH, 100000);
 #endif
-            LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<object>, SMALL_TEST_FILE_PATH, 100000);
+            LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse, SMALL_TEST_FILE_PATH, 100000);
 
-#if !JSON_PARSER_ONLY
+#if !THIS_JSON_PARSER_ONLY
             var msJss = new JavaScriptSerializer() { MaxJsonLength = int.MaxValue };
             Test(typeof(JavaScriptSerializer).FullName, msJss.Deserialize<FathersData>, FATHERS_TEST_FILE_PATH);
             Test("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<FathersData>, FATHERS_TEST_FILE_PATH);
@@ -669,12 +857,12 @@ namespace Test
 
             if (File.Exists(HUGE_TEST_FILE_PATH))
             {
-#if !JSON_PARSER_ONLY
+#if !THIS_JSON_PARSER_ONLY
                 Test(typeof(JavaScriptSerializer).FullName, msJss.DeserializeObject, HUGE_TEST_FILE_PATH);
                 Test("JSON.NET 5.0 r8", JsonConvert.DeserializeObject, HUGE_TEST_FILE_PATH);//(JSON.NET: OutOfMemoryException)
                 //Test("ServiceStack", new JsonSerializer<object>().DeserializeFromString, HUGE_TEST_FILE_PATH);
 #endif
-                Test(typeof(JsonParser).FullName, new JsonParser().Parse<object>, HUGE_TEST_FILE_PATH);
+                Test(typeof(JsonParser).FullName, new JsonParser().Parse, HUGE_TEST_FILE_PATH);
             }
 
             StreamTest(null);
@@ -753,6 +941,11 @@ namespace Test
                 Console.WriteLine();
             }
             Console.ReadKey();
+        }
+
+        static Dictionary<string, Post[]> FacebookPostDeserialization_SO_26426594(string input)
+        {
+            return new JsonParser().Parse<Dictionary<string, Post[]>>(input);
         }
 
         // Existing test (above) simplified for SO question "Deserialize json array stream one item at a time":
