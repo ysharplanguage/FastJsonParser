@@ -369,7 +369,7 @@ namespace Test
 
 #if RUN_BASIC_JSONPATH_TESTS
             var untyped = new JsonParser().Parse(input);
-            path = untyped.JsonPathSelection();
+            path = untyped.JsonPath();
             nodes = path.SelectNodes("$.store.book[3].title");
             System.Diagnostics.Debug.Assert
             (
@@ -395,7 +395,7 @@ namespace Test
                 };
 
             var typed = new JsonParser().Parse<Data>(input);
-            path = typed.JsonPathSelection(evaluator);
+            path = typed.JsonPath(evaluator);
             nodes = path.SelectNodes("$.store.book[?(((Book)@).title == \"Moby Dick\")].price");
             System.Diagnostics.Debug.Assert
             (
