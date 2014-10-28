@@ -364,13 +364,13 @@ namespace Test
               }
             }
         ";
-            JsonPathSelection path;
+            JsonPathSelection scope;
             JsonPathNode[] nodes;
 
 #if RUN_BASIC_JSONPATH_TESTS
             var untyped = new JsonParser().Parse(input); // (object untyped = ...)
-            path = untyped.JsonPath();
-            nodes = path.SelectNodes("$.store.book[3].title"); // Normalized in bracket-notation: $['store']['book'][3]['title']
+            scope = untyped.JsonPath(); // Extension method
+            nodes = scope.SelectNodes("$.store.book[3].title"); // Normalized in bracket-notation: $['store']['book'][3]['title']
             System.Diagnostics.Debug.Assert
             (
                 nodes != null &&
@@ -395,8 +395,8 @@ namespace Test
                 };
 
             var typed = new JsonParser().Parse<Data>(input); // (Data typed = ...)
-            path = typed.JsonPath(evaluator); // Cache the JsonPathSelection and the compiled lambdas created on-demand.
-            nodes = path.SelectNodes("$.store.book[?(((Book)@).title == \"Moby Dick\")].price");
+            scope = typed.JsonPath(evaluator); // Cache the JsonPathSelection and its compiled lambdas created on-demand.
+            nodes = scope.SelectNodes("$.store.book[?(((Book)@).title == \"Moby Dick\")].price");
             System.Diagnostics.Debug.Assert
             (
                 nodes != null &&
@@ -406,7 +406,7 @@ namespace Test
             );
 
             // Yup. This works too.
-            nodes = path.SelectNodes("$.[(@.GetType() == typeof(Store) ? \"book\" : (string)null)]");
+            scope = path.SelectNodes("$.[(@.GetType() == typeof(Store) ? \"book\" : (string)null)]");
             System.Diagnostics.Debug.Assert
             (
                 nodes != null &&
