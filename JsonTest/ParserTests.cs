@@ -370,7 +370,7 @@ namespace Test
 #if RUN_BASIC_JSONPATH_TESTS
             var untyped = new JsonParser().Parse(input); // (object untyped = ...)
             path = untyped.JsonPath();
-            nodes = path.SelectNodes("$.store.book[3].title");
+            nodes = path.SelectNodes("$.store.book[3].title"); // Normalized in bracket-notation: $['store']['book'][3]['title']
             System.Diagnostics.Debug.Assert
             (
                 nodes != null &&
