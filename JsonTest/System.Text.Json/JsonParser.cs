@@ -53,9 +53,9 @@ namespace System.Text.Json
 
     public static class JsonParserExtensions
     {
-        public static JsonPathSelection JsonPathSelection(this object data) { return JsonParser.JsonPath(data); }
+        public static JsonPathSelection JsonPath(this object data) { return JsonParser.JsonPath(data); }
 
-        public static JsonPathSelection JsonPathSelection(this object data, JsonPathScriptEvaluator eval) { return JsonParser.JsonPath(data, eval); }
+        public static JsonPathSelection JsonPath(this object data, JsonPathScriptEvaluator eval) { return JsonParser.JsonPath(data, eval); }
     }
 
     public sealed class JsonParserValueSystem : IJsonPathValueSystem
