@@ -368,7 +368,7 @@ namespace Test
             JsonPathNode[] nodes;
 
 #if RUN_BASIC_JSONPATH_TESTS
-            var untyped = new JsonParser().Parse(input);
+            var untyped = new JsonParser().Parse(input); // (object untyped = ...)
             path = untyped.JsonPath();
             nodes = path.SelectNodes("$.store.book[3].title");
             System.Diagnostics.Debug.Assert
@@ -394,8 +394,8 @@ namespace Test
                     );
                 };
 
-            var typed = new JsonParser().Parse<Data>(input);
-            path = typed.JsonPath(evaluator);
+            var typed = new JsonParser().Parse<Data>(input); // (Data typed = ...)
+            path = typed.JsonPath(evaluator); // Cache the JsonPathSelection and the compiled lambdas created on-demand.
             nodes = path.SelectNodes("$.store.book[?(((Book)@).title == \"Moby Dick\")].price");
             System.Diagnostics.Debug.Assert
             (
