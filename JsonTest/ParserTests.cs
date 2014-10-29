@@ -1,7 +1,7 @@
 // On GitHub: https://github.com/ysharplanguage/FastJsonParser
 #define RUN_UNIT_TESTS
 #define RUN_BASIC_JSONPATH_TESTS
-//#define RUN_ADVANCED_JSONPATH_TESTS
+#define RUN_ADVANCED_JSONPATH_TESTS
 #define THIS_JSON_PARSER_ONLY
 
 using System;
@@ -406,7 +406,7 @@ namespace Test
             );
 
             // Yup. This works too.
-            scope = path.SelectNodes("$.[(@.GetType() == typeof(Store) ? \"book\" : (string)null)]");
+            nodes = scope.SelectNodes("$.[(@.GetType() == typeof(Store) ? \"book\" : (string)null)]");
             System.Diagnostics.Debug.Assert
             (
                 nodes != null &&
