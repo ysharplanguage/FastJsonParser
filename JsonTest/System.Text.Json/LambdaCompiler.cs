@@ -607,59 +607,52 @@ namespace LambdaCompiler
 {
     public static class ExpressionParser
     {
-        public static LambdaExpression Parse(string lambdaCode, params string[] namespaces)
+        public static LambdaExpression Parse(string lambdaCode, params string[] namespaces) { return Parse(lambdaCode, false, namespaces); }
+        public static LambdaExpression Parse(string lambdaCode, bool includeExecutingAssembly, params string[] namespaces)
         {
-            return ExpressionParser.ParseCore<Delegate>(null, lambdaCode, null, false, null, namespaces);
+            return ExpressionParser.ParseCore<Delegate>(null, lambdaCode, null, false, null, includeExecutingAssembly, namespaces);
         }
-        public static LambdaExpression Parse(string lambdaCode, Type defaultInstance, params string[] namespaces)
+        public static LambdaExpression Parse(string lambdaCode, Type defaultInstance, params string[] namespaces) { return Parse(lambdaCode, defaultInstance, false, namespaces); }
+        public static LambdaExpression Parse(string lambdaCode, Type defaultInstance, bool includeExecutingAssembly, params string[] namespaces)
         {
-            return ExpressionParser.ParseCore<Delegate>(null, lambdaCode, defaultInstance, false, null, namespaces);
+            return ExpressionParser.ParseCore<Delegate>(null, lambdaCode, defaultInstance, false, null, includeExecutingAssembly, namespaces);
         }
-        public static LambdaExpression Parse(string lambdaCode, Type defaultInstance, Type[] paramTypes, params string[] namespaces)
+        public static LambdaExpression Parse(string lambdaCode, Type defaultInstance, Type[] paramTypes, params string[] namespaces) { return Parse(lambdaCode, defaultInstance, paramTypes, false, namespaces); }
+        public static LambdaExpression Parse(string lambdaCode, Type defaultInstance, Type[] paramTypes, bool includeExecutingAssembly, params string[] namespaces)
         {
-            return ExpressionParser.ParseCore<Delegate>(null, lambdaCode, defaultInstance, false, paramTypes, namespaces);
+            return ExpressionParser.ParseCore<Delegate>(null, lambdaCode, defaultInstance, false, paramTypes, includeExecutingAssembly, namespaces);
         }
-        public static LambdaExpression Parse(Type delegateType, string lambdaCode, params string[] namespaces)
+        public static LambdaExpression Parse(Type delegateType, string lambdaCode, params string[] namespaces) { return Parse(delegateType, lambdaCode, false, namespaces); }
+        public static LambdaExpression Parse(Type delegateType, string lambdaCode, bool includeExecutingAssembly, params string[] namespaces)
         {
-            return ExpressionParser.ParseCore<Delegate>(delegateType, lambdaCode, null, false, null, namespaces);
+            return ExpressionParser.ParseCore<Delegate>(delegateType, lambdaCode, null, false, null, includeExecutingAssembly, namespaces);
         }
-        public static LambdaExpression Parse(Type delegateType, string lambdaCode, bool firstTypeIsDefaultInstance, params string[] namespaces)
+        public static Expression<TDelegate> Parse<TDelegate>(string lambdaCode, params string[] namespaces) { return Parse<TDelegate>(lambdaCode, false, namespaces); }
+        public static Expression<TDelegate> Parse<TDelegate>(string lambdaCode, bool includeExecutingAssembly, params string[] namespaces)
         {
-            return ExpressionParser.ParseCore<Delegate>(delegateType, lambdaCode, null, firstTypeIsDefaultInstance, null, namespaces);
+            return (Expression<TDelegate>)ExpressionParser.ParseCore<TDelegate>(null, lambdaCode, null, false, null, includeExecutingAssembly, namespaces);
         }
-        public static Expression<TDelegate> Parse<TDelegate>(string lambdaCode, params string[] namespaces)
+        public static Delegate Compile(string lambdaCode, params string[] namespaces) { return Compile(lambdaCode, false, namespaces); }
+        public static Delegate Compile(string lambdaCode, bool includeExecutingAssembly, params string[] namespaces)
         {
-            return (Expression<TDelegate>)ExpressionParser.ParseCore<TDelegate>(null, lambdaCode, null, false, null, namespaces);
+            return ExpressionParser.Parse(lambdaCode, includeExecutingAssembly, namespaces).Compile();
         }
-        public static Expression<TDelegate> Parse<TDelegate>(string lambdaCode, bool firstTypeIsDefaultInstance, params string[] namespaces)
+        public static Delegate Compile(string lambdaCode, Type defaultInstance, params string[] namespaces) { return Compile(lambdaCode, defaultInstance, false, namespaces); }
+        public static Delegate Compile(string lambdaCode, Type defaultInstance, bool includeExecutingAssembly, params string[] namespaces)
         {
-            return (Expression<TDelegate>)ExpressionParser.ParseCore<TDelegate>(null, lambdaCode, null, firstTypeIsDefaultInstance, null, namespaces);
+            return ExpressionParser.Parse(lambdaCode, defaultInstance, includeExecutingAssembly, namespaces).Compile();
         }
-        public static Delegate Compile(string lambdaCode, params string[] namespaces)
+        public static Delegate Compile(Type delegateType, string lambdaCode, params string[] namespaces) { return Compile(delegateType, lambdaCode, false, namespaces); }
+        public static Delegate Compile(Type delegateType, string lambdaCode, bool includeExecutingAssembly, params string[] namespaces)
         {
-            return ExpressionParser.Parse(lambdaCode, namespaces).Compile();
+            return ExpressionParser.Parse(delegateType, lambdaCode, includeExecutingAssembly, namespaces).Compile();
         }
-        public static Delegate Compile(string lambdaCode, Type defaultInstance, params string[] namespaces)
+        public static TDelegate Compile<TDelegate>(string lambdaCode, params string[] namespaces) { return Compile<TDelegate>(lambdaCode, false, namespaces); }
+        public static TDelegate Compile<TDelegate>(string lambdaCode, bool includeExecutingAssembly, params string[] namespaces)
         {
-            return ExpressionParser.Parse(lambdaCode, defaultInstance, namespaces).Compile();
+            return ExpressionParser.Parse<TDelegate>(lambdaCode, includeExecutingAssembly, namespaces).Compile();
         }
-        public static Delegate Compile(Type delegateType, string lambdaCode, params string[] namespaces)
-        {
-            return ExpressionParser.Parse(delegateType, lambdaCode, namespaces).Compile();
-        }
-        public static Delegate Compile(Type delegateType, string lambdaCode, bool firstTypeIsDefaultInstance, params string[] namespaces)
-        {
-            return ExpressionParser.Parse(delegateType, lambdaCode, firstTypeIsDefaultInstance, namespaces).Compile();
-        }
-        public static TDelegate Compile<TDelegate>(string lambdaCode, params string[] namespaces)
-        {
-            return ExpressionParser.Parse<TDelegate>(lambdaCode, namespaces).Compile();
-        }
-        /*public static TDelegate Compile<TDelegate>(string lambdaCode, bool firstTypeIsDefaultInstance, params string[] namespaces)
-        {
-            return ExpressionParser.Parse<TDelegate>(lambdaCode, firstTypeIsDefaultInstance, namespaces).Compile();
-        }*/
-        public static T Exec<T>(object instance, string code, string[] namespaces, params object[] objects)
+        public static T Exec<T>(object instance, string code, bool includeExecutingAssembly, string[] namespaces, params object[] objects)
         {
             object[] array = new object[objects.Length + 1];
             array[0] = instance;
@@ -675,15 +668,15 @@ namespace LambdaCompiler
                 from m in array2
                 select m.GetType()).ToArray<Type>();
             string lambdaCode = string.Format("({0})=>{1}", arg, code);
-            return (T)((object)ExpressionParser.Parse(lambdaCode, instance.GetType(), paramTypes, namespaces).Compile().DynamicInvoke(array2));
+            return (T)((object)ExpressionParser.Parse(lambdaCode, instance.GetType(), paramTypes, includeExecutingAssembly, namespaces).Compile().DynamicInvoke(array2));
         }
-        public static object Exec(object instance, string code, string[] namespaces, params object[] objects)
+        public static object Exec(object instance, string code, bool includeExecutingAssembly, string[] namespaces, params object[] objects)
         {
-            return ExpressionParser.Exec<object>(instance, code, namespaces, objects);
+            return ExpressionParser.Exec<object>(instance, code, includeExecutingAssembly, namespaces, objects);
         }
-        private static LambdaExpression ParseCore<TDelegate>(Type delegateType, string lambdaCode, Type defaultInstanceType, bool firstTypeIsDefaultInstance, Type[] paramTypes, params string[] namespaces)
+        private static LambdaExpression ParseCore<TDelegate>(Type delegateType, string lambdaCode, Type defaultInstanceType, bool firstTypeIsDefaultInstance, Type[] paramTypes, bool includeExecutingAssembly, params string[] namespaces)
         {
-            ExpressionParserCore<TDelegate> expressionParserCore = new ExpressionParserCore<TDelegate>(delegateType, lambdaCode, defaultInstanceType, paramTypes, firstTypeIsDefaultInstance);
+            ExpressionParserCore<TDelegate> expressionParserCore = new ExpressionParserCore<TDelegate>(delegateType, lambdaCode, includeExecutingAssembly, defaultInstanceType, paramTypes, firstTypeIsDefaultInstance);
             if (namespaces != null && namespaces.Length > 0)
             {
                 expressionParserCore.Namespaces.AddRange(namespaces);
@@ -706,6 +699,7 @@ namespace LambdaCompiler
 
         private Type _delegateType;
 
+        private bool _includeExecutingAssembly;
         private Type _defaultInstanceType;
         private ParameterExpression _defaultInstanceParam;
 
@@ -822,7 +816,7 @@ namespace LambdaCompiler
         /// 构造Lambda表达式的解析器
         /// </summary>
         /// <param name="code">lambda表达式代码。如：m=>m.ToString()</param>
-        internal ExpressionParserCore(Type delegateType, string code, Type defaultInstanceType, Type[] paramTypes, bool firstTypeIsDefaultInstance)
+        internal ExpressionParserCore(Type delegateType, string code, bool includeExecutingAssembly, Type defaultInstanceType, Type[] paramTypes, bool firstTypeIsDefaultInstance)
         {
             if (code == null)
             {
@@ -830,6 +824,7 @@ namespace LambdaCompiler
             }
 
             this._codeParser = new CodeParser(code);
+            this._includeExecutingAssembly = includeExecutingAssembly;
             this._defaultInstanceType = defaultInstanceType;
             this._firstTypeIsDefaultInstance = firstTypeIsDefaultInstance;
             this._paramTypes = paramTypes;
@@ -2067,7 +2062,7 @@ namespace LambdaCompiler
             Assembly[] listAssembly = AppDomain.CurrentDomain.GetAssemblies();
             foreach (Assembly assembly in listAssembly)
             {
-                if (assembly != Assembly.GetExecutingAssembly())  // 忽略当前程序集(Zhucai.LambdaParser)
+                if (_includeExecutingAssembly || (assembly != Assembly.GetExecutingAssembly()))  // 忽略当前程序集(Zhucai.LambdaParser)
                 {
                     Type type = assembly.GetType(typeName, false, false);
                     if (type != null)
@@ -2088,19 +2083,19 @@ namespace LambdaCompiler.ObjectDynamicExtension
     {
         public static T E<T>(this object instance, string code, string[] namespaces, params object[] objects) where T : class
         {
-            return ExpressionParser.Exec<T>(instance, code, namespaces, objects);
+            return ExpressionParser.Exec<T>(instance, code, true, namespaces, objects);
         }
         public static T E<T>(this object instance, string code, params object[] objects)
         {
-            return ExpressionParser.Exec<T>(instance, code, null, objects);
+            return ExpressionParser.Exec<T>(instance, code, true, null, objects);
         }
         public static object E(this object instance, string code, string[] namespaces, params object[] objects)
         {
-            return ExpressionParser.Exec(instance, code, namespaces, objects);
+            return ExpressionParser.Exec(instance, code, true, namespaces, objects);
         }
         public static object E(this object instance, string code, params object[] objects)
         {
-            return ExpressionParser.Exec(instance, code, null, objects);
+            return ExpressionParser.Exec(instance, code, true, null, objects);
         }
     }
 }
