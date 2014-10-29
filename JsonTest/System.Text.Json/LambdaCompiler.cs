@@ -2060,18 +2060,24 @@ namespace LambdaCompiler
         private Type GetTypeCore(string typeName)
         {
             Assembly[] listAssembly = AppDomain.CurrentDomain.GetAssemblies();
+            Assembly executing = null;
+            Type type = null;
             foreach (Assembly assembly in listAssembly)
             {
-                if (_includeExecutingAssembly || (assembly != Assembly.GetExecutingAssembly()))  // 忽略当前程序集(Zhucai.LambdaParser)
+                if (_includeExecutingAssembly && (executing == null) && (assembly == Assembly.GetExecutingAssembly()))
                 {
-                    Type type = assembly.GetType(typeName, false, false);
+                    executing = assembly;
+                }
+                if (assembly != executing)
+                {
+                    type = assembly.GetType(typeName, false, false);
                     if (type != null)
                     {
-                        return type;
+                        break;
                     }
                 }
             }
-            return null;
+            return (((type == null) && (executing != null)) ? executing.GetType(typeName, false, false) : type);
         }
 
         #endregion
@@ -2081,19 +2087,23 @@ namespace LambdaCompiler.ObjectDynamicExtension
 {
     public static class ObjectDynamicExtension
     {
-        public static T E<T>(this object instance, string code, string[] namespaces, params object[] objects) where T : class
+        public static T E<T>(this object instance, string code, string[] namespaces, params object[] objects) where T : class { return E<T>(instance, code, false, namespaces, objects); }
+        public static T E<T>(this object instance, string code, bool includeExecutingAssembly, string[] namespaces, params object[] objects) where T : class
         {
-            return ExpressionParser.Exec<T>(instance, code, true, namespaces, objects);
+            return ExpressionParser.Exec<T>(instance, code, includeExecutingAssembly, namespaces, objects);
         }
-        public static T E<T>(this object instance, string code, params object[] objects)
+        public static T E<T>(this object instance, string code, params object[] objects) { return E<T>(instance, code, false, objects); }
+        public static T E<T>(this object instance, string code, bool includeExecutingAssembly, params object[] objects)
         {
             return ExpressionParser.Exec<T>(instance, code, true, null, objects);
         }
-        public static object E(this object instance, string code, string[] namespaces, params object[] objects)
+        public static object E(this object instance, string code, string[] namespaces, params object[] objects) { return E(instance, code, false, namespaces, objects); }
+        public static object E(this object instance, string code, bool includeExecutingAssembly, string[] namespaces, params object[] objects)
         {
             return ExpressionParser.Exec(instance, code, true, namespaces, objects);
         }
-        public static object E(this object instance, string code, params object[] objects)
+        public static object E(this object instance, string code, params object[] objects) { return E(instance, code, false, objects); }
+        public static object E(this object instance, string code, bool includeExecutingAssembly, params object[] objects)
         {
             return ExpressionParser.Exec(instance, code, true, null, objects);
         }
