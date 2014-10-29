@@ -388,7 +388,7 @@ namespace Test
                     (
                         ((value is Type) && (context == script))
                         ?
-                        ExpressionParser.Compile<Func<object, string, object>>(script, ((Type)value).Namespace)
+                        ExpressionParser.Compile<Func<object, string, object>>(script, true, ((Type)value).Namespace)
                         :
                         null
                     );
