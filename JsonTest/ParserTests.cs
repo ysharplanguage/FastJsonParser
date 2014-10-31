@@ -369,7 +369,7 @@ namespace Test
 
 #if RUN_BASIC_JSONPATH_TESTS
             var untyped = new JsonParser().Parse(input); // (object untyped = ...)
-            scope = untyped.JsonPath(); // Extension method
+            scope = untyped.ToJsonPath(); // Extension method
             nodes = scope.SelectNodes("$.store.book[3].title"); // Normalized in bracket-notation: $['store']['book'][3]['title']
             System.Diagnostics.Debug.Assert
             (
@@ -395,7 +395,7 @@ namespace Test
                 };
 
             var typed = new JsonParser().Parse<Data>(input); // (Data typed = ...)
-            scope = typed.JsonPath(evaluator); // Cache the JsonPathSelection and its compiled lambdas created on-demand.
+            scope = typed.ToJsonPath(evaluator); // Cache the JsonPathSelection and its compiled lambdas created on-demand.
             nodes = scope.SelectNodes("$.store.book[?(((Book)@).title == \"Moby Dick\")].price");
             System.Diagnostics.Debug.Assert
             (
