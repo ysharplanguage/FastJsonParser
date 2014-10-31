@@ -53,9 +53,9 @@ namespace System.Text.Json
 
     public static class JsonParserExtensions
     {
-        public static JsonPathSelection JsonPath(this object data) { return JsonParser.JsonPath(data); }
+        public static JsonPathSelection ToJsonPath(this object data) { return JsonParser.ToJsonPath(data); }
 
-        public static JsonPathSelection JsonPath(this object data, JsonPathScriptEvaluator eval) { return JsonParser.JsonPath(data, eval); }
+        public static JsonPathSelection ToJsonPath(this object data, JsonPathScriptEvaluator eval) { return JsonParser.ToJsonPath(data, eval); }
     }
 
     public sealed class JsonParserValueSystem : IJsonPathValueSystem
@@ -950,9 +950,9 @@ namespace System.Text.Json
 
         public static readonly Func<object, object> Skip = null;
 
-        public static JsonPathSelection JsonPath(object data) { return JsonPath(data, null); }
+        public static JsonPathSelection ToJsonPath(object data) { return ToJsonPath(data, null); }
 
-        public static JsonPathSelection JsonPath(object data, JsonPathScriptEvaluator eval)
+        public static JsonPathSelection ToJsonPath(object data, JsonPathScriptEvaluator eval)
         {
             return new JsonPathSelection(new JsonPathContext { ValueSystem = new JsonParserValueSystem(), ScriptEvaluator = eval }, data);
         }
