@@ -413,6 +413,23 @@ namespace Test
                 nodes.Length == 1 &&
                 nodes[0].Value is Book[]
             );
+
+            // And this, as well. To compare with the above '... nodes = scope.SelectNodes("$.store.book[3].title")'
+            nodes = new JsonParser().Parse(input).ToJsonPath().
+                SelectNodes
+                (
+                    "$.[{0}].book[{1}].[{2}]",
+                    (script, value, context) => "store",
+                    (script, value, context) => 3,
+                    (script, value, context) => "title"
+                );
+            System.Diagnostics.Debug.Assert
+            (
+                nodes != null &&
+                nodes.Length == 1 &&
+                nodes[0].Value is string &&
+                (string)nodes[0].Value == "The Lord of the Rings"
+            );
 #endif
             #endregion
 #endif
