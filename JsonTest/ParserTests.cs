@@ -406,7 +406,7 @@ namespace Test
             );
 
             // Yup. This works too.
-            nodes = scope.SelectNodes("$.[(@.GetType() == typeof(Store) ? \"book\" : (string)null)]");
+            nodes = scope.SelectNodes("$.[((@ is Store) ? \"book\" : (string)null)]");
             System.Diagnostics.Debug.Assert
             (
                 nodes != null &&
