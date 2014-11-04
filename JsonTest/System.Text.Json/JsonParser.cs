@@ -48,7 +48,7 @@ namespace System.Text.Json
         public readonly JsonPathContext Context;
         public readonly object Data;
         internal JsonPathSelection(JsonPathContext context, object data) { Context = context; Data = data; }
-        public JsonPathNode[] SelectNodes(string expr) { return Context.SelectNodes(Data, expr); }
+        public JsonPathNode[] SelectNodes(string expr, params JsonPathScriptEvaluator[] lambdas) { return Context.SelectNodes(Data, expr, lambdas); }
     }
 
     public static class JsonParserExtensions
@@ -1171,7 +1171,7 @@ namespace JsonPath
             set { system = value; }
         }
 
-        public void SelectTo(object obj, string expr, JsonPathResultAccumulator output)
+        public void SelectTo(object obj, string expr, JsonPathResultAccumulator output, params JsonPathScriptEvaluator[] lambdas)
         {
             if (obj == null)
                 throw new ArgumentNullException("obj");
@@ -1186,20 +1186,20 @@ namespace JsonPath
             if (expr.Length >= 1 && expr[0] == '$') // ^\$:?
                 expr = expr.Substring(expr.Length >= 2 && expr[1] == ';' ? 2 : 1);
 
-            i.Trace(expr, obj, "$");
+            i.Trace(expr, obj, "$", lambdas, -1);
         }
 
-        public JsonPathNode[] SelectNodes(object obj, string expr)
+        public JsonPathNode[] SelectNodes(object obj, string expr, params JsonPathScriptEvaluator[] lambdas)
         {
             ArrayList list = new ArrayList();
-            SelectNodesTo(obj, expr, list);
+            SelectNodesTo(obj, expr, list, lambdas);
             return (JsonPathNode[])list.ToArray(typeof(JsonPathNode));
         }
 
-        public IList SelectNodesTo(object obj, string expr, IList output)
+        public IList SelectNodesTo(object obj, string expr, IList output, params JsonPathScriptEvaluator[] lambdas)
         {
             ListAccumulator accumulator = new ListAccumulator(output != null ? output : new ArrayList());
-            SelectTo(obj, expr, new JsonPathResultAccumulator(accumulator.Put));
+            SelectTo(obj, expr, new JsonPathResultAccumulator(accumulator.Put), lambdas);
             return output;
         }
 
@@ -1299,7 +1299,7 @@ namespace JsonPath
             private static readonly char[] colon = new char[] { ':' };
             private static readonly char[] semicolon = new char[] { ';' };
 
-            private delegate void WalkCallback(object member, string loc, string expr, object value, string path);
+            private delegate void WalkCallback(object member, string loc, string expr, object value, string path, JsonPathScriptEvaluator[] lambdas, int clambda);
 
             public Interpreter(JsonPathContext bindings, JsonPathResultAccumulator output, IJsonPathValueSystem valueSystem, JsonPathScriptEvaluator eval)
             {
@@ -1310,7 +1310,7 @@ namespace JsonPath
                 this.system = valueSystem != null ? valueSystem : defaultValueSystem;
             }
 
-            public void Trace(string expr, object value, string path)
+            public void Trace(string expr, object value, string path, JsonPathScriptEvaluator[] lambdas, int clambda)
             {
                 if (expr == null || expr.Length == 0)
                 {
@@ -1324,33 +1324,42 @@ namespace JsonPath
 
                 if (value != null && system.HasMember(value, atom))
                 {
-                    Trace(tail, Index(value, atom), path + ";" + atom);
+                    Trace(tail, Index(value, atom), path + ";" + atom, lambdas, -1);
                 }
                 else if (atom == "*")
                 {
-                    Walk(atom, tail, value, path, new WalkCallback(WalkWild));
+                    Walk(atom, tail, value, path, new WalkCallback(WalkWild), lambdas, -1);
                 }
                 else if (atom == "..")
                 {
-                    Trace(tail, value, path);
-                    Walk(atom, tail, value, path, new WalkCallback(WalkTree));
+                    Trace(tail, value, path, lambdas, -1);
+                    Walk(atom, tail, value, path, new WalkCallback(WalkTree), lambdas, -1);
                 }
                 else if (atom.Length > 2 && atom[0] == '(' && atom[atom.Length - 1] == ')') // [(exp)]
                 {
-                    Trace(Eval(atom, value, path.Substring(path.LastIndexOf(';') + 1)) + ";" + tail, value, path);
+                    Trace(Eval(atom, value, path.Substring(path.LastIndexOf(';') + 1)) + ";" + tail, value, path, lambdas, -1);
+                }
+                else if (atom.Length > 2 && atom[0] == '{' && atom[atom.Length - 1] == '}') // [{N}]
+                {
+                    var lambda = lambdas[int.Parse(atom.Substring(1, atom.Length - 2))];
+                    Trace(lambda(atom, value, path.Substring(path.LastIndexOf(';') + 1)) + ";" + tail, value, path, lambdas, -1);
                 }
                 else if (atom.Length > 3 && atom[0] == '?' && atom[1] == '(' && atom[atom.Length - 1] == ')') // [?(exp)]
                 {
-                    Walk(atom, tail, value, path, new WalkCallback(WalkFiltered));
+                    Walk(atom, tail, value, path, new WalkCallback(WalkFiltered), lambdas, -1);
+                }
+                else if (atom.Length > 3 && atom[0] == '?' && atom[1] == '{' && atom[atom.Length - 1] == '}') // [?{N}]
+                {
+                    Walk(atom, tail, value, path, new WalkCallback(WalkFiltered), lambdas, int.Parse(atom.Substring(2, atom.Length - 3)));
                 }
                 else if (RegExp(@"^(-?[0-9]*):(-?[0-9]*):?([0-9]*)$").IsMatch(atom)) // [start:end:step] Phyton slice syntax
                 {
-                    Slice(atom, tail, value, path);
+                    Slice(atom, tail, value, path, lambdas, -1);
                 }
                 else if (atom.IndexOf(',') >= 0) // [name1,name2,...]
                 {
                     foreach (string part in RegExp(@"'?,'?").Split(atom))
-                        Trace(part + ";" + tail, value, path);
+                        Trace(part + ";" + tail, value, path, lambdas, -1);
                 }
             }
 
@@ -1360,7 +1369,7 @@ namespace JsonPath
                     output(value, path.Split(semicolon));
             }
 
-            private void Walk(string loc, string expr, object value, string path, WalkCallback callback)
+            private void Walk(string loc, string expr, object value, string path, WalkCallback callback, JsonPathScriptEvaluator[] lambdas, int clambda)
             {
                 if (system.IsPrimitive(value))
                     return;
@@ -1369,37 +1378,37 @@ namespace JsonPath
                 {
                     IList list = (IList)value;
                     for (int i = 0; i < list.Count; i++)
-                        callback(i, loc, expr, value, path);
+                        callback(i, loc, expr, value, path, lambdas, clambda);
                 }
                 else if (system.IsObject(value))
                 {
                     foreach (string key in system.GetMembers(value))
-                        callback(key, loc, expr, value, path);
+                        callback(key, loc, expr, value, path, lambdas, clambda);
                 }
             }
 
-            private void WalkWild(object member, string loc, string expr, object value, string path)
+            private void WalkWild(object member, string loc, string expr, object value, string path, JsonPathScriptEvaluator[] lambdas, int clambda)
             {
-                Trace(member + ";" + expr, value, path);
+                Trace(member + ";" + expr, value, path, lambdas, -1);
             }
 
-            private void WalkTree(object member, string loc, string expr, object value, string path)
+            private void WalkTree(object member, string loc, string expr, object value, string path, JsonPathScriptEvaluator[] lambdas, int clambda)
             {
                 object result = Index(value, member.ToString());
                 if (result != null && !system.IsPrimitive(result))
-                    Trace("..;" + expr, result, path + ";" + member);
+                    Trace("..;" + expr, result, path + ";" + member, lambdas, -1);
             }
 
-            private void WalkFiltered(object member, string loc, string expr, object value, string path)
+            private void WalkFiltered(object member, string loc, string expr, object value, string path, JsonPathScriptEvaluator[] lambdas, int clambda)
             {
                 string script = RegExp(@"^\?\((.*?)\)$").Replace(loc, "$1");
                 string context = member.ToString();
-                object result = Eval(script, value, context, true);
+                object result = ((clambda < 0) ? Eval(script, value, context, true) : lambdas[clambda](script, value, context));
                 if ((result != null) && Convert.ToBoolean(result.ToString(), CultureInfo.InvariantCulture))
-                    Trace(member + ";" + expr, value, path);
+                    Trace(member + ";" + expr, value, path, lambdas, -1);
             }
 
-            private void Slice(string loc, string expr, object value, string path)
+            private void Slice(string loc, string expr, object value, string path, JsonPathScriptEvaluator[] lambdas, int clambda)
             {
                 IList list = value as IList;
 
@@ -1414,7 +1423,7 @@ namespace JsonPath
                 start = (start < 0) ? Math.Max(0, start + length) : Math.Min(length, start);
                 end = (end < 0) ? Math.Max(0, end + length) : Math.Min(length, end);
                 for (int i = start; i < end; i += step)
-                    Trace(i + ";" + expr, value, path);
+                    Trace(i + ";" + expr, value, path, lambdas, -1);
             }
 
             private object Index(object obj, string member)
