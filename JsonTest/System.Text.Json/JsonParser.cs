@@ -1154,7 +1154,7 @@ namespace JsonPath
     public sealed class JsonPathContext
     {
         public static readonly JsonPathContext Default = new JsonPathContext();
-        public readonly IDictionary<string, Func<object, string, object>> Lambdas = new Dictionary<string, Func<object, string, object>>();
+        public readonly IDictionary<string, JsonPathScriptEvaluator> Lambdas = new Dictionary<string, JsonPathScriptEvaluator>();
 
         private JsonPathScriptEvaluator eval;
         private IJsonPathValueSystem system;
@@ -1428,14 +1428,14 @@ namespace JsonPath
             {
                 object target = (forFilter ? Index(value, context) : value);
                 Type type = ((target != null) ? target.GetType() : typeof(void));
-                Func<object, string, object> func;
+                JsonPathScriptEvaluator func;
                 if (!Bindings.Lambdas.TryGetValue(script, out func))
                 {
-                    string lambda = String.Format("(object value, string context) => (object)({0})", script.Replace("@", "value"));
-                    func = (eval(lambda, type, lambda) as Func<object, string, object>);
+                    string lambda = String.Format("(string script, object value, string context) => (object)({0})", script.Replace("@", "value"));
+                    func = (eval(lambda, type, lambda) as JsonPathScriptEvaluator);
                     if (func != null) Bindings.Lambdas.Add(script, func);
                 }
-                return ((func != null) ? func(target, context) : eval(script, target, context));
+                return ((func != null) ? func(script, target, context) : eval(script, target, context));
             }
 
             private static object NullEval(string expr, object value, string context)
