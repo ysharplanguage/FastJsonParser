@@ -90,6 +90,10 @@ for the generic type argument, as in, e.g.:
 
     parser.Parse<object>(@" [ { ""greetings"": ""hello"" } ] ")
 
+or, equivalently, just:
+
+    parser.Parse(@" [ { ""greetings"": ""hello"" } ] ")
+    
 It will then deserialize the input into a tree made of
 
     Dictionary<string, object>
@@ -106,7 +110,7 @@ The leaves will be from any of these types:
     bool
     string
 
-In this case of, say, "loosely typed" deserialization, one may ask: "But what about the JSON number literals in the input - why deserializing them as *strings*?"
+In this case of, say, "loosely typed" deserialization, you may ask: "But what about the JSON number literals in the input - why deserializing them as *strings*?"
 
 I would then ask - ".... in absence of more specific type information about the deserialization target, *"who"* is likely best placed to decide whether the number after the colon, in
 
