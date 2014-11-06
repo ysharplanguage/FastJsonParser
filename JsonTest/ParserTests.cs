@@ -396,7 +396,7 @@ namespace Test
 
             var typed = new JsonParser().Parse<Data>(input); // (Data typed = ...)
             scope = typed.ToJsonPath(evaluator); // Cache the JsonPathSelection and its lambdas compiled on-demand at run-time.
-            nodes = scope.SelectNodes("$.store.book[?(((Book)@).title == \"Moby Dick\")].price");
+            nodes = scope.SelectNodes("$.store.book[?((@ as Book).title == \"Moby Dick\")].price");
             System.Diagnostics.Debug.Assert
             (
                 nodes != null &&
