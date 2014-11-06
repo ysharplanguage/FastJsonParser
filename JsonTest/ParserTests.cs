@@ -395,7 +395,7 @@ namespace Test
                 };
 
             var typed = new JsonParser().Parse<Data>(input); // (Data typed = ...)
-            scope = typed.ToJsonPath(evaluator); // Cache the JsonPathSelection and its compiled lambdas created on-demand.
+            scope = typed.ToJsonPath(evaluator); // Cache the JsonPathSelection and its lambdas compiled on-demand at run-time.
             nodes = scope.SelectNodes("$.store.book[?(((Book)@).title == \"Moby Dick\")].price");
             System.Diagnostics.Debug.Assert
             (
@@ -418,9 +418,10 @@ namespace Test
             nodes = new JsonParser().Parse(input).ToJsonPath().
                 SelectNodes
                 (
-                    "$.[{0}].book[{1}].[{2}]",
+                    "$.[{0}].[{1}][{2}].[{3}]", // JSONPath expression template, interpolated with these compile-time lambdas:
                     (script, value, context) => "store",
-                    (script, value, context) => 3,
+                    (script, value, context) => "book",
+                    (script, value, context) => 1,
                     (script, value, context) => "title"
                 );
             System.Diagnostics.Debug.Assert
@@ -428,7 +429,7 @@ namespace Test
                 nodes != null &&
                 nodes.Length == 1 &&
                 nodes[0].Value is string &&
-                (string)nodes[0].Value == "The Lord of the Rings"
+                (string)nodes[0].Value == "Sword of Honour"
             );
 #endif
             #endregion
