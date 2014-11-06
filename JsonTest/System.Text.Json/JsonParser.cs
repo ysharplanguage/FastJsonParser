@@ -60,6 +60,34 @@ namespace System.Text.Json
 
     public sealed class JsonParserValueSystem : IJsonPathValueSystem
     {
+        private readonly IDictionary<Type, Tuple<IDictionary<string, System.Reflection.PropertyInfo>, string[]>> cache = new Dictionary<Type, Tuple<IDictionary<string, System.Reflection.PropertyInfo>, string[]>>();
+
+        private Tuple<IDictionary<string, System.Reflection.PropertyInfo>, string[]> GetEntry(Type type)
+        {
+            Tuple<IDictionary<string, System.Reflection.PropertyInfo>, string[]> entry;
+            if (!cache.TryGetValue(type, out entry))
+            {
+                var propertyInfos = type.GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
+                var properties = new Dictionary<string, System.Reflection.PropertyInfo>();
+                foreach (var propertyInfo in propertyInfos)
+                    properties.Add(propertyInfo.Name, propertyInfo);
+                cache.Add(type, entry = new Tuple<IDictionary<string, Reflection.PropertyInfo>, string[]>(properties, properties.Keys.ToArray()));
+            }
+            return entry;
+        }
+
+        private System.Reflection.PropertyInfo GetProperty(Type type, string propertyName)
+        {
+            Tuple<IDictionary<string, System.Reflection.PropertyInfo>, string[]> entry = GetEntry(type);
+            System.Reflection.PropertyInfo propertyInfo;
+            return (entry.Item1.TryGetValue(propertyName, out propertyInfo) ? propertyInfo : null);
+        }
+
+        private string[] GetPropertyNames(Type type)
+        {
+            return GetEntry(type).Item2;
+        }
+
         public bool HasMember(object value, string member)
         {
             if (value != null)
@@ -70,7 +98,7 @@ namespace System.Text.Json
                     return ((index >= 0) && (index < ((IList)value).Count));
                 }
                 else if (IsObject(value))
-                    return ((value is IDictionary) ? ((IDictionary)value).Contains(member) : (value.GetType().GetProperty(member, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public) != null));
+                    return ((value is IDictionary) ? ((IDictionary)value).Contains(member) : (GetProperty(value.GetType(), member) != null));
                 else
                     return false;
             }
@@ -87,7 +115,7 @@ namespace System.Text.Json
                     return (((index >= 0) && (index < ((IList)value).Count)) ? ((IList)value)[index] : null);
                 }
                 else if (IsObject(value))
-                    return ((value is IDictionary) ? ((IDictionary)value)[member] : value.GetType().GetProperty(member, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public).GetValue(value, null));
+                    return ((value is IDictionary) ? ((IDictionary)value)[member] : GetProperty(value.GetType(), member).GetValue(value, null));
                 else
                     return null;
             }
@@ -96,7 +124,7 @@ namespace System.Text.Json
 
         public IEnumerable GetMembers(object value)
         {
-            return ((value is IDictionary) ? ((IDictionary)value).Keys : value.GetType().GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public).Select(prop => prop.Name).ToArray());
+            return ((value is IDictionary) ? ((IDictionary)value).Keys : GetPropertyNames(value.GetType()));
         }
 
         public bool IsObject(object value)
