@@ -1,24 +1,25 @@
 // On GitHub: https://github.com/ysharplanguage/FastJsonParser
+//#define THIS_JSON_PARSER_ONLY
 #define RUN_UNIT_TESTS
 #define RUN_BASIC_JSONPATH_TESTS
 #define RUN_ADVANCED_JSONPATH_TESTS
-#define THIS_JSON_PARSER_ONLY
+//#define RUN_SERVICESTACK_TESTS
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-
 // For the JavaScriptSerializer
 using System.Web.Script.Serialization;
 
 #if !THIS_JSON_PARSER_ONLY
-// JSON.NET 5.0 r8
+// For Json.NET
 using Newtonsoft.Json;
-
-// ServiceStack 3.9.59
+#if RUN_SERVICESTACK_TESTS
+// For ServiceStack
 using ServiceStack.Text;
+#endif
 #endif
 
 // Our stuff
@@ -328,7 +329,6 @@ namespace Test
             Console.WriteLine();
             if (Console.ReadKey().KeyChar == 27)
                 return;
-
 #if RUN_BASIC_JSONPATH_TESTS || RUN_ADVANCED_JSONPATH_TESTS
             #region JSONPath Tests ( http://goessner.net/articles/JsonPath/ )
             string input = @"
@@ -396,7 +396,7 @@ namespace Test
 
             var typed = new JsonParser().Parse<Data>(input); // (Data typed = ...)
             scope = typed.ToJsonPath(evaluator); // Cache the JsonPathSelection and its lambdas compiled on-demand at run-time.
-            nodes = scope.SelectNodes("$.store.book[?((@ as Book).title == \"Moby Dick\")].price");
+            nodes = scope.SelectNodes("$.store.book[?((@ as Book).title == \"Moby Dick\")].price"); // Note we keep relying on static types.
             System.Diagnostics.Debug.Assert
             (
                 nodes != null &&
@@ -598,7 +598,7 @@ namespace Test
             );
 
 #if !THIS_JSON_PARSER_ONLY
-            // Support for JSON.NET's "$type" pseudo-key (in addition to ServiceStack's "__type"):
+            // Support for Json.NET's "$type" pseudo-key (in addition to ServiceStack's "__type"):
             Person jsonNetPerson = new Person { Id = 123, Abc = '#', Name = "Foo", Scores = new[] { 100, 200, 300 } };
 
             // (Expected serialized form shown in next comment)
@@ -724,13 +724,24 @@ namespace Test
 
         static void Test<T>(string parserName, Func<string, T> parseFunc, string testFile)
         {
+            Test<T>(parserName, parseFunc, testFile, null, null, null);
+        }
+
+        static void Test<T>(string parserName, Func<string, T> parseFunc, string testFile, string jsonPathExpression, Func<object, object> jsonPathSelect, Func<object, bool> jsonPathAssert)
+        {
+            var jsonPathTest = !String.IsNullOrWhiteSpace(jsonPathExpression) && (jsonPathSelect != null) && (jsonPathAssert != null);
             Console.Clear();
-            Console.WriteLine("Parser: {0}", parserName);
+            Console.WriteLine("{0}Parser: {1}", (jsonPathTest ? "(With JSONPath selection test) " : String.Empty), parserName);
             Console.WriteLine();
             Console.WriteLine("Test File: {0}", testFile);
             Console.WriteLine();
             Console.WriteLine("Deserialization: {0}", (typeof(T) != typeof(object)) ? "POCO(s)" : "loosely-typed");
             Console.WriteLine();
+            if (jsonPathTest)
+            {
+                Console.WriteLine("JSONPath expression: {0}", jsonPathExpression);
+                Console.WriteLine();
+            }
             Console.WriteLine("Press ESC to skip this test or any other key to start...");
             Console.WriteLine();
             if (Console.ReadKey().KeyChar == 27)
@@ -742,6 +753,12 @@ namespace Test
             var json = System.IO.File.ReadAllText(testFile);
             var st = DateTime.Now;
             var o = parseFunc(json);
+            if (jsonPathTest)
+            {
+                var selection = jsonPathSelect(o);
+                var assertion = jsonPathAssert(selection);
+                System.Diagnostics.Debug.Assert(assertion);
+            }
             var tm = (int)DateTime.Now.Subtract(st).TotalMilliseconds;
 
             System.Threading.Thread.MemoryBarrier();
@@ -769,116 +786,182 @@ namespace Test
         {
 #if !THIS_JSON_PARSER_ONLY
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().DeserializeObject, OJ_TEST_FILE_PATH, 10000);
-            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject, OJ_TEST_FILE_PATH, 10000);
+            LoopTest(GetVersionString(typeof(JsonConvert).Assembly.GetName()), JsonConvert.DeserializeObject, OJ_TEST_FILE_PATH, 10000);
+#if RUN_SERVICESTACK_TESTS
             //LoopTest("ServiceStack", new JsonSerializer<object>().DeserializeFromString, OJ_TEST_FILE_PATH, 10000);
+#endif
 #endif
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse, OJ_TEST_FILE_PATH, 10000);
 
 #if !THIS_JSON_PARSER_ONLY
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<HighlyNested>, OJ_TEST_FILE_PATH, 10000);
-            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<HighlyNested>, OJ_TEST_FILE_PATH, 10000);
+            LoopTest(GetVersionString(typeof(JsonConvert).Assembly.GetName()), JsonConvert.DeserializeObject<HighlyNested>, OJ_TEST_FILE_PATH, 10000);
+#if RUN_SERVICESTACK_TESTS
             LoopTest("ServiceStack", new JsonSerializer<HighlyNested>().DeserializeFromString, OJ_TEST_FILE_PATH, 10000);
+#endif
 #endif
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<HighlyNested>, OJ_TEST_FILE_PATH, 10000);
 
 #if !THIS_JSON_PARSER_ONLY
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().DeserializeObject, OJ_TEST_FILE_PATH, 100000);
-            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject, OJ_TEST_FILE_PATH, 100000);
+            LoopTest(GetVersionString(typeof(JsonConvert).Assembly.GetName()), JsonConvert.DeserializeObject, OJ_TEST_FILE_PATH, 100000);
+#if RUN_SERVICESTACK_TESTS
             //LoopTest("ServiceStack", new JsonSerializer<object>().DeserializeFromString, OJ_TEST_FILE_PATH, 100000);
+#endif
 #endif
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse, OJ_TEST_FILE_PATH, 100000);
 
 #if !THIS_JSON_PARSER_ONLY
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<HighlyNested>, OJ_TEST_FILE_PATH, 100000);
-            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<HighlyNested>, OJ_TEST_FILE_PATH, 100000);
+            LoopTest(GetVersionString(typeof(JsonConvert).Assembly.GetName()), JsonConvert.DeserializeObject<HighlyNested>, OJ_TEST_FILE_PATH, 100000);
+#if RUN_SERVICESTACK_TESTS
             LoopTest("ServiceStack", new JsonSerializer<HighlyNested>().DeserializeFromString, OJ_TEST_FILE_PATH, 100000);
+#endif
 #endif
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<HighlyNested>, OJ_TEST_FILE_PATH, 100000);
 
 #if !THIS_JSON_PARSER_ONLY
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 1000000);
-            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 1000000);
+            LoopTest(GetVersionString(typeof(JsonConvert).Assembly.GetName()), JsonConvert.DeserializeObject<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 1000000);
+#if RUN_SERVICESTACK_TESTS
             LoopTest("ServiceStack", new JsonSerializer<BoonSmall>().DeserializeFromString, BOON_SMALL_TEST_FILE_PATH, 1000000);
+#endif
 #endif
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 1000000);
 
 #if !THIS_JSON_PARSER_ONLY
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 10000000);
-            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 10000000);
+            LoopTest(GetVersionString(typeof(JsonConvert).Assembly.GetName()), JsonConvert.DeserializeObject<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 10000000);
+#if RUN_SERVICESTACK_TESTS
             LoopTest("ServiceStack", new JsonSerializer<BoonSmall>().DeserializeFromString, BOON_SMALL_TEST_FILE_PATH, 10000000);
+#endif
 #endif
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<BoonSmall>, BOON_SMALL_TEST_FILE_PATH, 10000000);
 
 #if !THIS_JSON_PARSER_ONLY
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<Person>, TINY_TEST_FILE_PATH, 10000);
-            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<Person>, TINY_TEST_FILE_PATH, 10000);
+            LoopTest(GetVersionString(typeof(JsonConvert).Assembly.GetName()), JsonConvert.DeserializeObject<Person>, TINY_TEST_FILE_PATH, 10000);
+#if RUN_SERVICESTACK_TESTS
             LoopTest("ServiceStack", new JsonSerializer<Person>().DeserializeFromString, TINY_TEST_FILE_PATH, 10000);
+#endif
 #endif
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<Person>, TINY_TEST_FILE_PATH, 10000);
 
 #if !THIS_JSON_PARSER_ONLY
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<Person>, TINY_TEST_FILE_PATH, 100000);
-            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<Person>, TINY_TEST_FILE_PATH, 100000);
+            LoopTest(GetVersionString(typeof(JsonConvert).Assembly.GetName()), JsonConvert.DeserializeObject<Person>, TINY_TEST_FILE_PATH, 100000);
+#if RUN_SERVICESTACK_TESTS
             LoopTest("ServiceStack", new JsonSerializer<Person>().DeserializeFromString, TINY_TEST_FILE_PATH, 100000);
+#endif
 #endif
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<Person>, TINY_TEST_FILE_PATH, 100000);
 
 #if !THIS_JSON_PARSER_ONLY
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<Person>, TINY_TEST_FILE_PATH, 1000000);
-            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<Person>, TINY_TEST_FILE_PATH, 1000000);
+            LoopTest(GetVersionString(typeof(JsonConvert).Assembly.GetName()), JsonConvert.DeserializeObject<Person>, TINY_TEST_FILE_PATH, 1000000);
+#if RUN_SERVICESTACK_TESTS
             LoopTest("ServiceStack", new JsonSerializer<Person>().DeserializeFromString, TINY_TEST_FILE_PATH, 1000000);
+#endif
 #endif
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<Person>, TINY_TEST_FILE_PATH, 1000000);
 
 #if !THIS_JSON_PARSER_ONLY
             //LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<DictionaryDataAdaptJsonNetServiceStack>, DICOS_TEST_FILE_PATH, 10000);//(Can't deserialize properly)
-            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<DictionaryDataAdaptJsonNetServiceStack>, DICOS_TEST_FILE_PATH, 10000);
+            LoopTest(GetVersionString(typeof(JsonConvert).Assembly.GetName()), JsonConvert.DeserializeObject<DictionaryDataAdaptJsonNetServiceStack>, DICOS_TEST_FILE_PATH, 10000);
+#if RUN_SERVICESTACK_TESTS
             LoopTest("ServiceStack", new JsonSerializer<DictionaryDataAdaptJsonNetServiceStack>().DeserializeFromString, DICOS_TEST_FILE_PATH, 10000);
+#endif
 #endif
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<DictionaryData>, DICOS_TEST_FILE_PATH, 10000);
 
 #if !THIS_JSON_PARSER_ONLY
             //LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<DictionaryDataAdaptJsonNetServiceStack>, DICOS_TEST_FILE_PATH, 100000);//(Can't deserialize properly)
-            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<DictionaryDataAdaptJsonNetServiceStack>, DICOS_TEST_FILE_PATH, 100000);
+            LoopTest(GetVersionString(typeof(JsonConvert).Assembly.GetName()), JsonConvert.DeserializeObject<DictionaryDataAdaptJsonNetServiceStack>, DICOS_TEST_FILE_PATH, 100000);
+#if RUN_SERVICESTACK_TESTS
             LoopTest("ServiceStack", new JsonSerializer<DictionaryDataAdaptJsonNetServiceStack>().DeserializeFromString, DICOS_TEST_FILE_PATH, 100000);
+#endif
 #endif
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<DictionaryData>, DICOS_TEST_FILE_PATH, 100000);
 
 #if !THIS_JSON_PARSER_ONLY
             //LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<DictionaryDataAdaptJsonNetServiceStack>, DICOS_TEST_FILE_PATH, 1000000);//(Can't deserialize properly)
-            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<DictionaryDataAdaptJsonNetServiceStack>, DICOS_TEST_FILE_PATH, 1000000);
+            LoopTest(GetVersionString(typeof(JsonConvert).Assembly.GetName()), JsonConvert.DeserializeObject<DictionaryDataAdaptJsonNetServiceStack>, DICOS_TEST_FILE_PATH, 1000000);
+#if RUN_SERVICESTACK_TESTS
             LoopTest("ServiceStack", new JsonSerializer<DictionaryDataAdaptJsonNetServiceStack>().DeserializeFromString, DICOS_TEST_FILE_PATH, 1000000);
+#endif
 #endif
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse<DictionaryData>, DICOS_TEST_FILE_PATH, 1000000);
 
 #if !THIS_JSON_PARSER_ONLY
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().DeserializeObject, SMALL_TEST_FILE_PATH, 10000);
-            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject, SMALL_TEST_FILE_PATH, 10000);
+            LoopTest(GetVersionString(typeof(JsonConvert).Assembly.GetName()), JsonConvert.DeserializeObject, SMALL_TEST_FILE_PATH, 10000);
+#if RUN_SERVICESTACK_TESTS
             //LoopTest("ServiceStack", new JsonSerializer<object>().DeserializeFromString, SMALL_TEST_FILE_PATH, 10000);
+#endif
 #endif
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse, SMALL_TEST_FILE_PATH, 10000);
 
 #if !THIS_JSON_PARSER_ONLY
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().DeserializeObject, SMALL_TEST_FILE_PATH, 100000);
-            LoopTest("JSON.NET 5.0 r8", JsonConvert.DeserializeObject, SMALL_TEST_FILE_PATH, 100000);//(JSON.NET: OutOfMemoryException)
+            LoopTest(GetVersionString(typeof(JsonConvert).Assembly.GetName()), JsonConvert.DeserializeObject, SMALL_TEST_FILE_PATH, 100000);//(Json.NET: OutOfMemoryException)
+#if RUN_SERVICESTACK_TESTS
             //LoopTest("ServiceStack", new JsonSerializer<object>().DeserializeFromString, SMALL_TEST_FILE_PATH, 100000);
+#endif
 #endif
             LoopTest(typeof(JsonParser).FullName, new JsonParser().Parse, SMALL_TEST_FILE_PATH, 100000);
 
 #if !THIS_JSON_PARSER_ONLY
             var msJss = new JavaScriptSerializer() { MaxJsonLength = int.MaxValue };
             Test(typeof(JavaScriptSerializer).FullName, msJss.Deserialize<FathersData>, FATHERS_TEST_FILE_PATH);
-            Test("JSON.NET 5.0 r8", JsonConvert.DeserializeObject<FathersData>, FATHERS_TEST_FILE_PATH);
+            Test(GetVersionString(typeof(JsonConvert).Assembly.GetName()), JsonConvert.DeserializeObject<FathersData>, FATHERS_TEST_FILE_PATH);
+#if RUN_SERVICESTACK_TESTS
             Test("ServiceStack", new JsonSerializer<FathersData>().DeserializeFromString, FATHERS_TEST_FILE_PATH);
 #endif
+#endif
             Test(typeof(JsonParser).FullName, new JsonParser().Parse<FathersData>, FATHERS_TEST_FILE_PATH);
+
+#if RUN_UNIT_TESTS && RUN_ADVANCED_JSONPATH_TESTS
+            JsonPathScriptEvaluator evaluator =
+                delegate(string script, object value, string context)
+                {
+                    return
+                    (
+                        ((value is Type) && (context == script))
+                        ?
+                        ExpressionParser.Compile<JsonPathScriptEvaluator>(script, true, ((Type)value).Namespace)
+                        :
+                        null
+                    );
+                };
+#if !THIS_JSON_PARSER_ONLY
+            Test // Note: requires Json.NET 6.0+
+            (
+                GetVersionString(typeof(JsonConvert).Assembly.GetName()), Newtonsoft.Json.Linq.JObject.Parse, FATHERS_TEST_FILE_PATH,
+                "$.fathers[?(@.id == 28149)].daughters[?(@.age == 12)]",
+                (parsed) => ((Newtonsoft.Json.Linq.JObject)parsed).SelectToken("$.fathers[?(@.id == 28149)].daughters[?(@.age == 12)]"),
+                (selected) => ((Newtonsoft.Json.Linq.JToken)selected).Value<string>("name") == "Susan"
+            );
+#endif
+            Test
+            (
+                typeof(JsonParser).FullName, new JsonParser().Parse<FathersData>, FATHERS_TEST_FILE_PATH,
+                "$.fathers[?((@ as Father).id == 28149)].daughters[?((@ as Daughter).age == 12)]",
+                (parsed) => parsed.ToJsonPath(evaluator).SelectNodes("$.fathers[?((@ as Father).id == 28149)].daughters[?((@ as Daughter).age == 12)]"),
+                (selected) =>
+                    (selected as JsonPathNode[]).Length > 0 &&
+                    (selected as JsonPathNode[])[0].Value is Daughter &&
+                    ((selected as JsonPathNode[])[0].Value as Daughter).name == "Susan"
+            );
+#endif
 
             if (File.Exists(HUGE_TEST_FILE_PATH))
             {
 #if !THIS_JSON_PARSER_ONLY
                 Test(typeof(JavaScriptSerializer).FullName, msJss.DeserializeObject, HUGE_TEST_FILE_PATH);
-                Test("JSON.NET 5.0 r8", JsonConvert.DeserializeObject, HUGE_TEST_FILE_PATH);//(JSON.NET: OutOfMemoryException)
+                Test(GetVersionString(typeof(JsonConvert).Assembly.GetName()), JsonConvert.DeserializeObject, HUGE_TEST_FILE_PATH);//(Json.NET: OutOfMemoryException)
+#if RUN_SERVICESTACK_TESTS
                 //Test("ServiceStack", new JsonSerializer<object>().DeserializeFromString, HUGE_TEST_FILE_PATH);
+#endif
 #endif
                 Test(typeof(JsonParser).FullName, new JsonParser().Parse, HUGE_TEST_FILE_PATH);
             }
@@ -1124,6 +1207,11 @@ namespace Test
             }
             Console.WriteLine("Press a key...");
             Console.ReadKey();
+        }
+
+        static string GetVersionString(System.Reflection.AssemblyName assemblyName)
+        {
+            return String.Format("{0} {1}.{2}", assemblyName.Name, assemblyName.Version.Major, assemblyName.Version.MajorRevision);
         }
 
         public static void Run()
