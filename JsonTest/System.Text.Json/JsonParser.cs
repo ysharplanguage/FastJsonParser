@@ -1152,8 +1152,6 @@ namespace JsonPath
 
             if (values.Length > 0)
             {
-                Debug.Assert(nodes != null);
-
                 int i = 0;
                 foreach (JsonPathNode node in nodes)
                     values[i++] = node.Value;
@@ -1168,8 +1166,6 @@ namespace JsonPath
 
             if (paths.Length > 0)
             {
-                Debug.Assert(nodes != null);
-
                 int i = 0;
                 foreach (JsonPathNode node in nodes)
                     paths[i++] = node.Path;
@@ -1231,9 +1227,11 @@ namespace JsonPath
             return output;
         }
 
-        private static Regex RegExp(string pattern)
+        private static Regex RegExp(string pattern) { return RegExp(pattern, false); }
+
+        private static Regex RegExp(string pattern, bool compiled)
         {
-            return new Regex(pattern, RegexOptions.ECMAScript);
+            return new Regex(pattern, (compiled ? RegexOptions.Compiled | RegexOptions.ECMAScript : RegexOptions.ECMAScript));
         }
 
         private static string Normalize(string expr)
@@ -1253,16 +1251,12 @@ namespace JsonPath
 
             public string Capture(Match match)
             {
-                Debug.Assert(match != null);
-
                 int index = subx.Add(match.Groups[1].Value);
                 return "[#" + index.ToString(CultureInfo.InvariantCulture) + "]";
             }
 
             public string Yield(Match match)
             {
-                Debug.Assert(match != null);
-
                 int index = int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
                 return (string)subx[index];
             }
@@ -1318,9 +1312,11 @@ namespace JsonPath
         private sealed class Interpreter
         {
             public readonly JsonPathContext Bindings;
+
             private readonly JsonPathResultAccumulator output;
             private readonly JsonPathScriptEvaluator eval;
             private readonly IJsonPathValueSystem system;
+            private readonly Regex filter;
 
             private static readonly IJsonPathValueSystem defaultValueSystem = new BasicValueSystem();
 
@@ -1331,11 +1327,11 @@ namespace JsonPath
 
             public Interpreter(JsonPathContext bindings, JsonPathResultAccumulator output, IJsonPathValueSystem valueSystem, JsonPathScriptEvaluator eval)
             {
-                Debug.Assert(output != null);
-                Bindings = bindings;
+                this.Bindings = bindings;
                 this.output = output;
                 this.eval = eval != null ? eval : new JsonPathScriptEvaluator(NullEval);
                 this.system = valueSystem != null ? valueSystem : defaultValueSystem;
+                this.filter = RegExp(@"^\?\((.*?)\)$", true);
             }
 
             public void Trace(string expr, object value, string path, JsonPathScriptEvaluator[] lambdas, int clambda)
@@ -1429,7 +1425,7 @@ namespace JsonPath
 
             private void WalkFiltered(object member, string loc, string expr, object value, string path, JsonPathScriptEvaluator[] lambdas, int clambda)
             {
-                string script = RegExp(@"^\?\((.*?)\)$").Replace(loc, "$1");
+                string script = filter.Replace(loc, "$1");
                 string context = member.ToString();
                 object result = ((clambda < 0) ? Eval(script, value, context, true) : lambdas[clambda](script, value, context));
                 if ((result != null) && Convert.ToBoolean(result.ToString(), CultureInfo.InvariantCulture))
@@ -1557,8 +1553,6 @@ namespace JsonPath
 
             public ListAccumulator(IList list)
             {
-                Debug.Assert(list != null);
-
                 this.list = list;
             }
 
