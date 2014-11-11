@@ -367,10 +367,36 @@ namespace Test
             JsonPathSelection scope;
             JsonPathNode[] nodes;
 
+#if RUN_BASIC_JSONPATH_TESTS || RUN_ADVANCED_JSONPATH_TESTS
+            JsonPathScriptEvaluator evaluator =
+                delegate(string script, object value, string context)
+                {
+                    return
+                    (
+                        ((value is Type) && (context == script))
+                        ?
+                        ExpressionParser.Parse((Type)value, script, true, "Test").Compile()
+                        :
+                        null
+                    );
+                };
+#endif
+
 #if RUN_BASIC_JSONPATH_TESTS
             var untyped = new JsonParser().Parse(input); // (object untyped = ...)
+
             scope = untyped.ToJsonPath(); // Extension method
             nodes = scope.SelectNodes("$.store.book[3].title"); // Normalized in bracket-notation: $['store']['book'][3]['title']
+            System.Diagnostics.Debug.Assert
+            (
+                nodes != null &&
+                nodes.Length == 1 &&
+                nodes[0].Value is string &&
+                (string)nodes[0].Value == "The Lord of the Rings"
+            );
+
+            scope = untyped.ToJsonPath(evaluator); // Cache the JsonPathSelection and its lambdas compiled on-demand at run-time by the evaluator.
+            nodes = scope.SelectNodes("$.store.book[?(@.ContainsKey(\"isbn\") && (string)@[\"isbn\"] == \"0-395-19395-8\")].title");
             System.Diagnostics.Debug.Assert
             (
                 nodes != null &&
@@ -381,22 +407,9 @@ namespace Test
 #endif
 
 #if RUN_ADVANCED_JSONPATH_TESTS
-            JsonPathScriptEvaluator evaluator =
-                delegate(string script, object value, string context)
-                {
-                    return
-                    (
-                        ((value is Type) && (context == script))
-                        ?
-                        ExpressionParser.Compile<JsonPathScriptEvaluator>(script, true, ((Type)value).Namespace)
-                        :
-                        null
-                    );
-                };
-
             var typed = new JsonParser().Parse<Data>(input); // (Data typed = ...)
-            scope = typed.ToJsonPath(evaluator); // Cache the JsonPathSelection and its lambdas compiled on-demand at run-time.
-            nodes = scope.SelectNodes("$.store.book[?((@ as Book).title == \"Moby Dick\")].price"); // Note we keep relying on static types.
+            scope = typed.ToJsonPath(evaluator);
+            nodes = scope.SelectNodes("$.store.book[?(@.title == \"Moby Dick\")].price");
             System.Diagnostics.Debug.Assert
             (
                 nodes != null &&
@@ -406,12 +419,12 @@ namespace Test
             );
 
             // Yup. This works too.
-            nodes = scope.SelectNodes("$.[((@ is Store) ? \"book\" : (string)null)]");
+            nodes = scope.SelectNodes("$.[((@ is Data) ? \"store\" : (string)null)]"); // Dynamic member (property) selection
             System.Diagnostics.Debug.Assert
             (
                 nodes != null &&
                 nodes.Length == 1 &&
-                nodes[0].Value is Book[]
+                nodes[0].Value is Store
             );
 
             // And this, as well. To compare with the above '... nodes = scope.SelectNodes("$.store.book[3].title")'
@@ -928,25 +941,26 @@ namespace Test
                     (
                         ((value is Type) && (context == script))
                         ?
-                        ExpressionParser.Compile<JsonPathScriptEvaluator>(script, true, ((Type)value).Namespace)
+                        ExpressionParser.Parse((Type)value, script, true, "Test").Compile()
                         :
                         null
                     );
                 };
+            var JSONPATH_SAMPLE_QUERY = "$.fathers[?(@.id == 28149)].daughters[?(@.age == 12)]";
 #if !THIS_JSON_PARSER_ONLY
             Test // Note: requires Json.NET 6.0+
             (
                 GetVersionString(typeof(JsonConvert).Assembly.GetName()), Newtonsoft.Json.Linq.JObject.Parse, FATHERS_TEST_FILE_PATH,
-                "$.fathers[?(@.id == 28149)].daughters[?(@.age == 12)]",
-                (parsed) => ((Newtonsoft.Json.Linq.JObject)parsed).SelectToken("$.fathers[?(@.id == 28149)].daughters[?(@.age == 12)]"),
+                JSONPATH_SAMPLE_QUERY,
+                (parsed) => ((Newtonsoft.Json.Linq.JObject)parsed).SelectToken(JSONPATH_SAMPLE_QUERY),
                 (selected) => ((Newtonsoft.Json.Linq.JToken)selected).Value<string>("name") == "Susan"
             );
 #endif
             Test
             (
                 typeof(JsonParser).FullName, new JsonParser().Parse<FathersData>, FATHERS_TEST_FILE_PATH,
-                "$.fathers[?((@ as Father).id == 28149)].daughters[?((@ as Daughter).age == 12)]",
-                (parsed) => parsed.ToJsonPath(evaluator).SelectNodes("$.fathers[?((@ as Father).id == 28149)].daughters[?((@ as Daughter).age == 12)]"),
+                JSONPATH_SAMPLE_QUERY,
+                (parsed) => parsed.ToJsonPath(evaluator).SelectNodes(JSONPATH_SAMPLE_QUERY),
                 (selected) =>
                     (selected as JsonPathNode[]).Length > 0 &&
                     (selected as JsonPathNode[])[0].Value is Daughter &&
