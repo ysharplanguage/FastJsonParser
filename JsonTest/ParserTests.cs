@@ -10,12 +10,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+
 // For the JavaScriptSerializer
 using System.Web.Script.Serialization;
 
 #if !THIS_JSON_PARSER_ONLY
 // For Json.NET
 using Newtonsoft.Json;
+
 #if RUN_SERVICESTACK_TESTS
 // For ServiceStack
 using ServiceStack.Text;
@@ -29,9 +31,7 @@ namespace Test
 {
 #if RUN_UNIT_TESTS && (RUN_BASIC_JSONPATH_TESTS || RUN_ADVANCED_JSONPATH_TESTS)
     using JsonPath;
-#if RUN_UNIT_TESTS && RUN_ADVANCED_JSONPATH_TESTS
     using LambdaCompiler;
-#endif
 #endif
 
     public class E
@@ -364,10 +364,6 @@ namespace Test
               }
             }
         ";
-            JsonPathSelection scope;
-            JsonPathNode[] nodes;
-
-#if RUN_BASIC_JSONPATH_TESTS || RUN_ADVANCED_JSONPATH_TESTS
             JsonPathScriptEvaluator evaluator =
                 delegate(string script, object value, string context)
                 {
@@ -375,12 +371,13 @@ namespace Test
                     (
                         ((value is Type) && (context == script))
                         ?
-                        ExpressionParser.Parse((Type)value, script, true, "Test").Compile()
+                        ExpressionParser.Parse((Type)value, script, true, typeof(Data).Namespace).Compile()
                         :
                         null
                     );
                 };
-#endif
+            JsonPathSelection scope;
+            JsonPathNode[] nodes;
 
 #if RUN_BASIC_JSONPATH_TESTS
             var untyped = new JsonParser().Parse(input); // (object untyped = ...)
@@ -941,7 +938,7 @@ namespace Test
                     (
                         ((value is Type) && (context == script))
                         ?
-                        ExpressionParser.Parse((Type)value, script, true, "Test").Compile()
+                        ExpressionParser.Parse((Type)value, script, true, typeof(Data).Namespace).Compile()
                         :
                         null
                     );
@@ -1090,7 +1087,7 @@ namespace Test
             // (assuming we somehow have prior knowledge that the total count is 30,000)
             // and for each of them,
             // 2) we're interested in deserializing them with only their "id" and "name" properties
-            var filters = 
+            var filters =
                 new Dictionary<Type, Func<Type, object, object, int, Func<object, object>>>
                 {
                     // We don't care about anything but these 2 properties:
