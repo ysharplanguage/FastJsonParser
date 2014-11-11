@@ -4,6 +4,7 @@ System.Text.Json
 * <a href="#Overview">Overview</a>
 * <a href="#Goal">Goal</a>
 * <a href="#Interface">Public interface</a>
+* <a href="#JSONPath">JSONPath support</a>
 * <a href="#Performance">Performance</a>
     * <a href="#PerfOverview">Speed Tests Results : Overview</a>
     * <a href="#PerfDetailed">Speed Tests Results : Detailed</a>
@@ -133,6 +134,111 @@ should be deserialized into a *System.Single*, a *System.Double*, or a *System.D
 In my opinion, *in that case*, it's the application.
 
 (Also, one can read [this very informative post of Eric Lippert](http://ericlippert.com/2013/07/25/what-is-the-type-of-the-null-literal/) about the so-called "null type".)
+
+
+<a name="JSONPath"></a>
+
+JSONPath support
+----------------
+
+Since version 1.9.9.2, [JSONPath](http://goessner.net/articles/JsonPath) is also supported. E.g., for a classic example in four steps:
+
+#1 :
+
+    public class Data
+    {
+        public int dummy { get; set; }
+        public Store store { get; set; }
+    }
+
+
+    public class Store
+    {
+        public Book[] book { get; set; }
+        public Bicycle bicycle { get; set; }
+    }
+
+
+    public class Book
+    {
+        public string category { get; set; }
+        public string author { get; set; }
+        public string title { get; set; }
+        public decimal price { get; set; }
+    }
+
+
+    public class Bicycle
+    {
+        public string color { get; set; }
+        public decimal price { get; set; }
+    }
+
+#2 :
+
+            string input = @"
+              { ""store"": {
+                    ""book"": [ 
+                      { ""category"": ""reference"",
+                            ""author"": ""Nigel Rees"",
+                            ""title"": ""Sayings of the Century"",
+                            ""price"": 8.95
+                      },
+                      { ""category"": ""fiction"",
+                            ""author"": ""Evelyn Waugh"",
+                            ""title"": ""Sword of Honour"",
+                            ""price"": 12.99
+                      },
+                      { ""category"": ""fiction"",
+                            ""author"": ""Herman Melville"",
+                            ""title"": ""Moby Dick"",
+                            ""isbn"": ""0-553-21311-3"",
+                            ""price"": 8.99
+                      },
+                      { ""category"": ""fiction"",
+                            ""author"": ""J. R. R. Tolkien"",
+                            ""title"": ""The Lord of the Rings"",
+                            ""isbn"": ""0-395-19395-8"",
+                            ""price"": 22.99
+                      }
+                    ],
+                    ""bicycle"": {
+                      ""color"": ""red"",
+                      ""price"": 19.95
+                    }
+              }
+            }
+            ";
+
+#3 :
+
+            JsonPathScriptEvaluator evaluator =
+                delegate(string script, object value, string context)
+                {
+                    return
+                    (
+                        ((value is Type) && (context == script))
+                        ?
+                        ExpressionParser.Parse((Type)value, script, true, typeof(Data).Namespace).Compile()
+                        :
+                        null
+                    );
+                };
+            JsonPathSelection scope;
+            JsonPathNode[] nodes;
+
+#4 :
+
+            var typed = new JsonParser().Parse<Data>(input); // (Data typed = ...)
+            scope = typed.ToJsonPath(evaluator);
+            nodes = scope.SelectNodes("$.store.book[?(@.title == \"Moby Dick\")].price");
+            System.Diagnostics.Debug.Assert
+            (
+                nodes != null &&
+                nodes.Length == 1 &&
+                nodes[0].Value is decimal &&
+                (decimal)nodes[0].Value == 8.99m
+            );
 
 <a name="Performance"></a>
 
