@@ -145,33 +145,33 @@ Since version 1.9.9.2, [JSONPath](http://goessner.net/articles/JsonPath) is also
 
 \#1 :
 
-    public class Data
+    namespace Test
     {
-        public int dummy { get; set; }
-        public Store store { get; set; }
-    }
-
-
-    public class Store
-    {
-        public Book[] book { get; set; }
-        public Bicycle bicycle { get; set; }
-    }
-
-
-    public class Book
-    {
-        public string category { get; set; }
-        public string author { get; set; }
-        public string title { get; set; }
-        public decimal price { get; set; }
-    }
-
-
-    public class Bicycle
-    {
-        public string color { get; set; }
-        public decimal price { get; set; }
+       public class Data
+       {
+           public int dummy { get; set; }
+           public Store store { get; set; }
+       }
+       
+       public class Store
+       {
+           public Book[] book { get; set; }
+           public Bicycle bicycle { get; set; }
+       }
+       
+       public class Book
+       {
+           public string category { get; set; }
+           public string author { get; set; }
+           public string title { get; set; }
+           public decimal price { get; set; }
+       }
+       
+       public class Bicycle
+       {
+           public string color { get; set; }
+           public decimal price { get; set; }
+       }
     }
 
 \#2 :
