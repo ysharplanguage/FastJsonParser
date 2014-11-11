@@ -915,7 +915,7 @@ namespace LambdaCompiler
                             }
                             else
                             {
-                                paramType = GetType(typeName[0]);
+                                paramType = (GetType(typeName[0]) ?? this._paramTypes[i]);
                                 if (paramType == null)
                                 {
                                     throw new ParseUnfindTypeException(typeName[0], this._codeParser.Index);
