@@ -1278,7 +1278,7 @@ namespace JsonPath
                 else
                 {
                     sb.Append('[');
-                    if (RegExp(@"^[0-9*]+$").IsMatch(index))
+                    if (Interpreter.REGEXP_BRACKET.IsMatch(index))
                         sb.Append(index);
                     else
                         sb.Append('\'').Append(index).Append('\'');
@@ -1311,7 +1311,10 @@ namespace JsonPath
 
         private sealed class Interpreter
         {
-            public readonly JsonPathContext Bindings;
+            public static readonly Regex REGEXP_SEGMENTED = RegExp(@"^(-?[0-9]*):(-?[0-9]*):?([0-9]*)$", true);
+            public static readonly Regex REGEXP_ITEMIZED = RegExp(@"'?,'?", true);
+            public static readonly Regex REGEXP_BRACKET = RegExp(@"^[0-9*]+$", true);
+            public static readonly Regex REGEXP_FILTER = RegExp(@"^\?\((.*?)\)$", true);
 
             private readonly JsonPathResultAccumulator output;
             private readonly JsonPathScriptEvaluator eval;
@@ -1325,13 +1328,15 @@ namespace JsonPath
 
             private delegate void WalkCallback(object member, string loc, string expr, object value, string path, JsonPathScriptEvaluator[] lambdas, int clambda);
 
+            public readonly JsonPathContext Bindings;
+
             public Interpreter(JsonPathContext bindings, JsonPathResultAccumulator output, IJsonPathValueSystem valueSystem, JsonPathScriptEvaluator eval)
             {
                 this.Bindings = bindings;
                 this.output = output;
                 this.eval = eval != null ? eval : new JsonPathScriptEvaluator(NullEval);
                 this.system = valueSystem != null ? valueSystem : defaultValueSystem;
-                this.filter = RegExp(@"^\?\((.*?)\)$", true);
+                this.filter = REGEXP_FILTER;
             }
 
             public void Trace(string expr, object value, string path, JsonPathScriptEvaluator[] lambdas, int clambda)
@@ -1376,13 +1381,13 @@ namespace JsonPath
                 {
                     Walk(atom, tail, value, path, new WalkCallback(WalkFiltered), lambdas, int.Parse(atom.Substring(2, atom.Length - 3)));
                 }
-                else if (RegExp(@"^(-?[0-9]*):(-?[0-9]*):?([0-9]*)$").IsMatch(atom)) // [start:end:step] Phyton slice syntax
+                else if (REGEXP_SEGMENTED.IsMatch(atom)) // [start:end:step] Phyton slice syntax
                 {
                     Slice(atom, tail, value, path, lambdas, -1);
                 }
                 else if (atom.IndexOf(',') >= 0) // [name1,name2,...]
                 {
-                    foreach (string part in RegExp(@"'?,'?").Split(atom))
+                    foreach (string part in REGEXP_ITEMIZED.Split(atom))
                         Trace(part + ";" + tail, value, path, lambdas, -1);
                 }
             }
