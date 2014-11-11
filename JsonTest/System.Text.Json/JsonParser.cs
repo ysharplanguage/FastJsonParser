@@ -1178,7 +1178,7 @@ namespace JsonPath
     public sealed class JsonPathContext
     {
         public static readonly JsonPathContext Default = new JsonPathContext();
-        public readonly IDictionary<string, JsonPathScriptEvaluator> Lambdas = new Dictionary<string, JsonPathScriptEvaluator>();
+        public readonly IDictionary<string, Delegate> Lambdas = new Dictionary<string, Delegate>();
 
         private JsonPathScriptEvaluator eval;
         private IJsonPathValueSystem system;
@@ -1326,7 +1326,7 @@ namespace JsonPath
             private static readonly char[] colon = new char[] { ':' };
             private static readonly char[] semicolon = new char[] { ';' };
 
-            private delegate void WalkCallback(object member, string loc, string expr, object value, string path, JsonPathScriptEvaluator[] lambdas, int clambda);
+            private delegate void WalkCallback(object member, string loc, string expr, object value, string path, Delegate[] lambdas, int clambda);
 
             public readonly JsonPathContext Bindings;
 
@@ -1339,7 +1339,7 @@ namespace JsonPath
                 this.filter = REGEXP_FILTER;
             }
 
-            public void Trace(string expr, object value, string path, JsonPathScriptEvaluator[] lambdas, int clambda)
+            public void Trace(string expr, object value, string path, Delegate[] lambdas, int clambda)
             {
                 if (expr == null || expr.Length == 0)
                 {
@@ -1371,7 +1371,7 @@ namespace JsonPath
                 else if (atom.Length > 2 && atom[0] == '{' && atom[atom.Length - 1] == '}') // [{N}]
                 {
                     var lambda = lambdas[int.Parse(atom.Substring(1, atom.Length - 2))];
-                    Trace(lambda(atom, value, path.Substring(path.LastIndexOf(';') + 1)) + ";" + tail, value, path, lambdas, -1);
+                    Trace(lambda.DynamicInvoke(atom, value, path.Substring(path.LastIndexOf(';') + 1)) + ";" + tail, value, path, lambdas, -1);
                 }
                 else if (atom.Length > 3 && atom[0] == '?' && atom[1] == '(' && atom[atom.Length - 1] == ')') // [?(exp)]
                 {
@@ -1398,7 +1398,7 @@ namespace JsonPath
                     output(value, path.Split(semicolon));
             }
 
-            private void Walk(string loc, string expr, object value, string path, WalkCallback callback, JsonPathScriptEvaluator[] lambdas, int clambda)
+            private void Walk(string loc, string expr, object value, string path, WalkCallback callback, Delegate[] lambdas, int clambda)
             {
                 if (system.IsPrimitive(value))
                     return;
@@ -1416,28 +1416,28 @@ namespace JsonPath
                 }
             }
 
-            private void WalkWild(object member, string loc, string expr, object value, string path, JsonPathScriptEvaluator[] lambdas, int clambda)
+            private void WalkWild(object member, string loc, string expr, object value, string path, Delegate[] lambdas, int clambda)
             {
                 Trace(member + ";" + expr, value, path, lambdas, -1);
             }
 
-            private void WalkTree(object member, string loc, string expr, object value, string path, JsonPathScriptEvaluator[] lambdas, int clambda)
+            private void WalkTree(object member, string loc, string expr, object value, string path, Delegate[] lambdas, int clambda)
             {
                 object result = Index(value, member.ToString());
                 if (result != null && !system.IsPrimitive(result))
                     Trace("..;" + expr, result, path + ";" + member, lambdas, -1);
             }
 
-            private void WalkFiltered(object member, string loc, string expr, object value, string path, JsonPathScriptEvaluator[] lambdas, int clambda)
+            private void WalkFiltered(object member, string loc, string expr, object value, string path, Delegate[] lambdas, int clambda)
             {
                 string script = filter.Replace(loc, "$1");
                 string context = member.ToString();
-                object result = ((clambda < 0) ? Eval(script, value, context, true) : lambdas[clambda](script, value, context));
+                object result = ((clambda < 0) ? Eval(script, value, context, true) : lambdas[clambda].DynamicInvoke(script, value, context));
                 if ((result != null) && Convert.ToBoolean(result.ToString(), CultureInfo.InvariantCulture))
                     Trace(member + ";" + expr, value, path, lambdas, -1);
             }
 
-            private void Slice(string loc, string expr, object value, string path, JsonPathScriptEvaluator[] lambdas, int clambda)
+            private void Slice(string loc, string expr, object value, string path, Delegate[] lambdas, int clambda)
             {
                 IList list = value as IList;
 
@@ -1466,14 +1466,15 @@ namespace JsonPath
             {
                 object target = (forFilter ? Index(value, context) : value);
                 Type type = ((target != null) ? target.GetType() : typeof(void));
-                JsonPathScriptEvaluator func;
+                Delegate func;
                 if (!Bindings.Lambdas.TryGetValue(script, out func))
                 {
-                    string lambda = String.Format("(string script, object value, string context) => (object)({0})", script.Replace("@", "value"));
-                    func = (eval(lambda, type, lambda) as JsonPathScriptEvaluator);
+                    string lambda = String.Format("(~ script, ~ value, ~ context) => (object)({0})", script.Replace("@", "value"));
+                    type = typeof(Func<,,,>).MakeGenericType(typeof(string), (forFilter ? type : typeof(object)), typeof(string), typeof(object));
+                    func = (eval(lambda, type, lambda) as Delegate);
                     if (func != null) Bindings.Lambdas.Add(script, func);
                 }
-                return ((func != null) ? func(script, target, context) : eval(script, target, context));
+                return ((func != null) ? func.DynamicInvoke(script, target, context) : eval(script, target, context));
             }
 
             private static object NullEval(string expr, object value, string context)
