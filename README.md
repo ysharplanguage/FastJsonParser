@@ -230,14 +230,14 @@ Since version 1.9.9.2, [JSONPath](http://goessner.net/articles/JsonPath) is also
 \#4 :
 
             var typed = new JsonParser().Parse<Data>(input); // (Data typed = ...)
-            scope = typed.ToJsonPath(evaluator);
-            nodes = scope.SelectNodes("$.store.book[?(@.title == \"Moby Dick\")].price");
+            scope = typed.ToJsonPath(evaluator); // (Extension method)
+            nodes = scope.SelectNodes("$.store.book[?(@.title == \"The Lord of the Rings\")].price");
             System.Diagnostics.Debug.Assert
             (
                 nodes != null &&
                 nodes.Length == 1 &&
                 nodes[0].Value is decimal &&
-                (decimal)nodes[0].Value == 8.99m
+                (decimal)nodes[0].Value == 22.99m
             );
 
 <a name="Performance"></a>
