@@ -143,7 +143,7 @@ JSONPath support
 
 Since version 1.9.9.2, [JSONPath](http://goessner.net/articles/JsonPath) is also supported. E.g., for a classic example in four steps:
 
-#1 :
+\#1 :
 
     public class Data
     {
@@ -174,7 +174,7 @@ Since version 1.9.9.2, [JSONPath](http://goessner.net/articles/JsonPath) is also
         public decimal price { get; set; }
     }
 
-#2 :
+\#2 :
 
             string input = @"
               { ""store"": {
@@ -210,7 +210,7 @@ Since version 1.9.9.2, [JSONPath](http://goessner.net/articles/JsonPath) is also
             }
             ";
 
-#3 :
+\#3 :
 
             JsonPathScriptEvaluator evaluator =
                 delegate(string script, object value, string context)
@@ -227,7 +227,7 @@ Since version 1.9.9.2, [JSONPath](http://goessner.net/articles/JsonPath) is also
             JsonPathSelection scope;
             JsonPathNode[] nodes;
 
-#4 :
+\#4 :
 
             var typed = new JsonParser().Parse<Data>(input); // (Data typed = ...)
             scope = typed.ToJsonPath(evaluator);
