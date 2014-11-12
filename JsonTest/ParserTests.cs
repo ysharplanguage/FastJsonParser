@@ -427,14 +427,14 @@ namespace Test
             );
 
             // And this, as well. To compare with the above '... nodes = scope.SelectNodes("$.store.book[3].title")'
-            nodes = new JsonParser().Parse(input).ToJsonPath().
+            nodes = scope.
                 SelectNodes
                 (
-                    "$.[{0}].[{1}][{2}].[{3}]", // JSONPath expression template, interpolated with these compile-time lambdas:
-                    (script, value, context) => "store",
-                    (script, value, context) => "book",
-                    (script, value, context) => 1,
-                    (script, value, context) => "title"
+                    "$.[{0}].[?{1}][{2}].[{3}]", // JSONPath expression template, interpolated with these compile-time lambdas:
+                    (script, value, context) => "store", // Member selector (by name)
+                    (script, value, context) => ((value is Store) ? "book" : null), // Filter (predicate)
+                    (script, value, context) => 1, // Member selector (by index)
+                    (script, value, context) => "title" // Member selector (by name)
                 );
             System.Diagnostics.Debug.Assert
             (
