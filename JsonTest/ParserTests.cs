@@ -267,7 +267,6 @@ namespace Test
     #region POCO model for JSONPath Tests (POCO)
     public class Data
     {
-        public int dummy { get; set; }
         public Store store { get; set; }
     }
 
@@ -282,6 +281,7 @@ namespace Test
         public string category { get; set; }
         public string author { get; set; }
         public string title { get; set; }
+        public string isbn { get; set; }
         public decimal price { get; set; }
     }
 
@@ -406,7 +406,7 @@ namespace Test
 #if RUN_ADVANCED_JSONPATH_TESTS
             var typed = new JsonParser().Parse<Data>(input); // (Data typed = ...)
             scope = typed.ToJsonPath(evaluator);
-            nodes = scope.SelectNodes("$.store.book[?(@.title == \"Moby Dick\")].price");
+            nodes = scope.SelectNodes("$.store.book[?(@.author == \"Herman Melville\")].price");
             System.Diagnostics.Debug.Assert
             (
                 nodes != null &&
@@ -421,7 +421,9 @@ namespace Test
             (
                 nodes != null &&
                 nodes.Length == 1 &&
-                nodes[0].Value is Store
+                nodes[0].Value is Store &&
+                nodes[0].Value == scope.SelectNodes("$['store']")[0].Value &&
+                nodes[0].Value == scope.SelectNodes("$.store")[0].Value
             );
 
             // And this, as well. To compare with the above '... nodes = scope.SelectNodes("$.store.book[3].title")'
@@ -440,6 +442,50 @@ namespace Test
                 nodes.Length == 1 &&
                 nodes[0].Value is string &&
                 (string)nodes[0].Value == "Sword of Honour"
+            );
+
+            // Some JSONPath expressions from Stefan Gössner's JSONPath examples ( http://goessner.net/articles/JsonPath/#e3 )...
+
+            // Authors of all books in the store
+            System.Diagnostics.Debug.Assert
+            (
+                (nodes = scope.SelectNodes("$.store.book[*].author")).Length == 4
+            );
+
+            // Price of everything in the store
+            System.Diagnostics.Debug.Assert
+            (
+                (nodes = scope.SelectNodes("$.store..price")).Length == 5
+            );
+
+            // Third book
+            System.Diagnostics.Debug.Assert
+            (
+                (nodes = scope.SelectNodes("$..book[2]"))[0].Value is Book && ((Book)nodes[0].Value).isbn == "0-553-21311-3"
+            );
+
+            // Last book in order
+            System.Diagnostics.Debug.Assert
+            (
+                (nodes = scope.SelectNodes("$..book[(@.Length-1)]"))[0].Value == scope.SelectNodes("$..book[-1:]")[0].Value
+            );
+
+            // First two books
+            System.Diagnostics.Debug.Assert
+            (
+                (nodes = scope.SelectNodes("$..book[0,1]")).Length == scope.SelectNodes("$..book[:2]").Length && nodes.Length == 2
+            );
+
+            // All books with isbn number
+            System.Diagnostics.Debug.Assert
+            (
+                (nodes = scope.SelectNodes("$..book[?(@.isbn)]")).Length == 2
+            );
+
+            // All books cheapier than 10
+            System.Diagnostics.Debug.Assert
+            (
+                (nodes = scope.SelectNodes("$..book[?(@.price<10m)]")).Length == 2
             );
 #endif
             #endregion
