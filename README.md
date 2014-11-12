@@ -141,7 +141,7 @@ In my opinion, *in that case*, it's the application.
 JSONPath support
 ----------------
 
-Starting with version 1.9.9.2, [JSONPath](http://goessner.net/articles/JsonPath) is also supported. E.g., for a classic sample, in four steps:
+Starting with [version 1.9.9.2](https://www.nuget.org/packages/System.Text.Json), [JSONPath](http://goessner.net/articles/JsonPath) is also supported. E.g., for a classic sample, in four steps:
 
 \#1 :
 
@@ -252,6 +252,24 @@ corresponding to the actual lambda expression script:
 Notice how the delegate's static return type is System.Object (and not System.Boolean), for uniformity with even more general member selection expression, used as an [alternative to explicit names or indices](http://goessner.net/articles/JsonPath/#e2).
 
 More JSONPath usage examples can be found [here](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L333).
+
+E.g., the following works as expected, in [version 1.9.9.6](https://www.nuget.org/packages/System.Text.Json):
+
+    $.store
+    $['store']
+    $.[((@ is Data) ? \"store\" : (string)null)]
+    $.store.book[3].title
+    $.store.book[?(@.author == \"Herman Melville\")].price
+    $.store.book[*].author
+    $.store..price
+    $..book[2]
+    $..book[(@.Length - 1)]
+    $..book[0,1]
+    $..book[:2]
+    $..book[?(@.isbn)]
+    $..book[?(@.price < 10m)]
+
+( See also: http://goessner.net/articles/JsonPath/#e2 )
 
 <a name="Performance"></a>
 
