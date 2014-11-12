@@ -422,17 +422,19 @@ namespace Test
                 nodes != null &&
                 nodes.Length == 1 &&
                 nodes[0].Value is Store &&
-                nodes[0].Value == scope.SelectNodes("$['store']")[0].Value &&
-                nodes[0].Value == scope.SelectNodes("$.store")[0].Value
+                nodes[0].Value == scope.SelectNodes("$['store']")[0].Value && // Normalized in bracket-notation
+                nodes[0].Value == scope.SelectNodes("$.store")[0].Value // Common dot-notation
             );
 
             // And this, as well. To compare with the above '... nodes = scope.SelectNodes("$.store.book[3].title")'
             nodes = scope.
                 SelectNodes
                 (
-                    "$.[{0}].[?{1}][{2}].[{3}]", // JSONPath expression template, interpolated with these compile-time lambdas:
+                    // JSONPath expression template...
+                    "$.[{0}].[{1}][{2}].[{3}]",
+                    // ... interpolated with these compile-time lambdas:
                     (script, value, context) => "store", // Member selector (by name)
-                    (script, value, context) => ((value is Store) ? "book" : null), // Filter (predicate)
+                    (script, value, context) => "book", // Member selector (by name)
                     (script, value, context) => 1, // Member selector (by index)
                     (script, value, context) => "title" // Member selector (by name)
                 );
