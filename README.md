@@ -248,9 +248,9 @@ In the same example above, the lambda expression delegate which is compiled (and
     
 corresponding to the actual lambda expression script:
 
-    (string script, Book value, string context) => (object)(@.title == "The Lord of the Rings")
+    (string script, Book value, string context) => (object)(value.title == "The Lord of the Rings")
 
-Note: the delegate's static return type is System.Object (and not System.Boolean) for uniformity with even more general member selection expression, used as an [alternative to explicit names or indices](http://goessner.net/articles/JsonPath/#e2).
+Notice how the delegate's static return type is System.Object (and not System.Boolean), for uniformity with even more general member selection expression, used as an [alternative to explicit names or indices](http://goessner.net/articles/JsonPath/#e2).
 
 <a name="Performance"></a>
 
