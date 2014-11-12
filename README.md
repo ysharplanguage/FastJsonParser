@@ -141,7 +141,7 @@ In my opinion, *in that case*, it's the application.
 JSONPath support
 ----------------
 
-Since version 1.9.9.2, [JSONPath](http://goessner.net/articles/JsonPath) is also supported. E.g., for a classic sample, in four steps:
+Starting with version 1.9.9.2, [JSONPath](http://goessner.net/articles/JsonPath) is also supported. E.g., for a classic sample, in four steps:
 
 \#1 :
 
