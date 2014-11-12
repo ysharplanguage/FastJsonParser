@@ -242,7 +242,7 @@ Since version 1.9.9.2, [JSONPath](http://goessner.net/articles/JsonPath) is also
 
 The role of the "evaluator" is to compile on-demand whatever lambda expression delegates are required to implement [JSONPath  filter (or member selection) expressions](http://goessner.net/articles/JsonPath/#e2), such as "?(@.title == \"The Lord of the Rings\")" above.
 
-In the same example above, the lambda expression delegate which is compiled (and cached into the "scope" JsonPathSelection) is of type:
+In this same example, the lambda expression delegate which is compiled (and cached into the "scope" JsonPathSelection) is of type:
 
     Func<string, Book, string, object>
     
