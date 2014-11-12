@@ -240,6 +240,18 @@ Since version 1.9.9.2, [JSONPath](http://goessner.net/articles/JsonPath) is also
                 (decimal)nodes[0].Value == 22.99m
             );
 
+The role of the "evaluator" is to compile on-demand whatever lambda expression delegates are required to implement [JSONPath  filter (or member selection) expressions](http://goessner.net/articles/JsonPath/#e2), such as "?(@.title == \"The Lord of the Rings\")" above.
+
+In the same example above, the lambda expression delegate which is compiled (and cached into the "scope" JsonPathSelection) is of type:
+
+    Func<string, Book, string, object>
+    
+corresponding to the actual lambda expression script:
+
+    (string script, Book value, string context) => (object)(@.title == "The Lord of the Rings")
+
+Note: the delegate's static return type is System.Object (and not System.Boolean) for uniformity with even more general member selection expression, used as an [alternative to explicit names or indices](http://goessner.net/articles/JsonPath/#e2).
+
 <a name="Performance"></a>
 
 Performance
