@@ -149,7 +149,6 @@ Starting with version 1.9.9.2, [JSONPath](http://goessner.net/articles/JsonPath)
     {
        public class Data
        {
-           public int dummy { get; set; }
            public Store store { get; set; }
        }
        
