@@ -1301,7 +1301,7 @@ namespace JsonPath
 
             try
             {
-                return int.Parse(str, NumberStyles.None, CultureInfo.InvariantCulture);
+                return int.Parse(str, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);
             }
             catch (FormatException)
             {
@@ -1433,7 +1433,7 @@ namespace JsonPath
                 string script = filter.Replace(loc, "$1");
                 string context = member.ToString();
                 object result = ((clambda < 0) ? Eval(script, value, context, true) : lambdas[clambda].DynamicInvoke(script, value, context));
-                if ((result != null) && Convert.ToBoolean(result.ToString(), CultureInfo.InvariantCulture))
+                if ((result != null) && ((result is bool) ? (bool)result : ((result is string) ? !String.IsNullOrEmpty((string)result) : true)))
                     Trace(member + ";" + expr, value, path, lambdas, -1);
             }
 
@@ -1465,12 +1465,12 @@ namespace JsonPath
             private object Eval(string script, object value, string context, bool forFilter)
             {
                 object target = (forFilter ? Index(value, context) : value);
-                Type type = ((target != null) ? target.GetType() : typeof(void));
+                Type type = ((target != null) ? target.GetType() : typeof(object));
                 Delegate func;
                 if (!Bindings.Lambdas.TryGetValue(script, out func))
                 {
                     string lambda = String.Format("(~ script, ~ value, ~ context) => (object)({0})", script.Replace("@", "value"));
-                    type = typeof(Func<,,,>).MakeGenericType(typeof(string), (forFilter ? type : typeof(object)), typeof(string), typeof(object));
+                    type = typeof(Func<,,,>).MakeGenericType(typeof(string), (forFilter ? type : (target is IEnumerable ? type : typeof(object))), typeof(string), typeof(object));
                     func = (eval(lambda, type, lambda) as Delegate);
                     if (func != null) Bindings.Lambdas.Add(script, func);
                 }
