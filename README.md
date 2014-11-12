@@ -251,6 +251,8 @@ corresponding to the actual lambda expression script:
 
 Notice how the delegate's static return type is System.Object (and not System.Boolean), for uniformity with even more general member selection expression, used as an [alternative to explicit names or indices](http://goessner.net/articles/JsonPath/#e2).
 
+More JSONPath usage examples can be found [here](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L333).
+
 <a name="Performance"></a>
 
 Performance
