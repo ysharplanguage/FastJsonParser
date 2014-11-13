@@ -145,33 +145,33 @@ Starting with [version 1.9.9.2](https://www.nuget.org/packages/System.Text.Json)
 
 \#1 :
 
-    namespace Test
-    {
-       public class Data
-       {
-           public Store store { get; set; }
-       }
+             namespace Test
+             {
+                public class Data
+                {
+                    public Store store { get; set; }
+                }
        
-       public class Store
-       {
-           public Book[] book { get; set; }
-           public Bicycle bicycle { get; set; }
-       }
+                public class Store
+                {
+                    public Book[] book { get; set; }
+                    public Bicycle bicycle { get; set; }
+                }
        
-       public class Book
-       {
-           public string category { get; set; }
-           public string author { get; set; }
-           public string title { get; set; }
-           public decimal price { get; set; }
-       }
+                public class Book
+                {
+                    public string category { get; set; }
+                    public string author { get; set; }
+                    public string title { get; set; }
+                    public decimal price { get; set; }
+                }
        
-       public class Bicycle
-       {
-           public string color { get; set; }
-           public decimal price { get; set; }
-       }
-    }
+                public class Bicycle
+                {
+                    public string color { get; set; }
+                    public decimal price { get; set; }
+                }
+             }
 
 \#2 :
 
@@ -212,7 +212,7 @@ Starting with [version 1.9.9.2](https://www.nuget.org/packages/System.Text.Json)
 \#3 :
 
             JsonPathScriptEvaluator evaluator =
-               (string script, object value, string context) =>
+               (script, value, context) =>
                   ((value is Type) && (context == script))
                   ?
                   ExpressionParser.Parse((Type)value, script, true, typeof(Data).Namespace).Compile()
@@ -220,6 +220,10 @@ Starting with [version 1.9.9.2](https://www.nuget.org/packages/System.Text.Json)
                   null;
             JsonPathSelection scope;
             JsonPathNode[] nodes;
+
+where JsonPathScriptEvaluator is defined as:
+
+            delegate object JsonPathScriptEvaluator(string script, object value, string context)
 
 \#4 :
 
