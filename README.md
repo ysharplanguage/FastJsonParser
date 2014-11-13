@@ -239,13 +239,15 @@ Starting with [version 1.9.9.2](https://www.nuget.org/packages/System.Text.Json)
                 (decimal)nodes[0].Value == 22.99m
             );
 
+Note that a basic lambda expression parser & compiler ( adapted from Zhucai's "lambda-parser", at http://code.google.com/p/lambda-parser/ ) is provided in the namespace "[LambdaCompiler](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/LambdaCompiler.cs#L13)", as a helper used to implement the above "evaluator".
+
 The role of the "evaluator" is to compile on-demand whatever lambda expression delegates are required to implement [JSONPath  filter (or member selection) expressions](http://goessner.net/articles/JsonPath/#e2), such as "?(@.title == \"The Lord of the Rings\")" above.
 
-In this same example, the lambda expression delegate which is compiled (and cached into the "scope" JsonPathSelection) is of type:
+In this same example, the lambda expression delegate which is compiled by the evaluator (and then cached into the "scope" JsonPathSelection) is of type:
 
     Func<string, Book, string, object>
     
-corresponding to the actual lambda expression script:
+corresponding to the actual lambda expression script prepared behind the scene:
 
     (string script, Book value, string context) => (object)(value.title == "The Lord of the Rings")
 
