@@ -221,7 +221,7 @@ Starting with [version 1.9.9.2](https://www.nuget.org/packages/System.Text.Json)
             JsonPathSelection scope;
             JsonPathNode[] nodes;
 
-where JsonPathScriptEvaluator is defined as:
+where [JsonPathScriptEvaluator](https://code.google.com/p/jsonpath/source/browse/trunk/src/cs/JsonPath.cs?spec=svn56&r=53#57) is defined as:
 
             delegate object JsonPathScriptEvaluator(string script, object value, string context)
 
