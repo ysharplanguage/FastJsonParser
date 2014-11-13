@@ -129,7 +129,7 @@ I would then ask - ".... in absence of more specific type information about the 
 
     "SomeNumber": 123.456
 
-should be deserialized into a *System.Single*, a *System.Double*, or a *System.Decimal* (but obviously not into some integer) - is it this parser, or is it the application?"
+should be deserialized into a *[System.Single]*(http://msdn.microsoft.com/en-us/library/system.single(v=vs.100).aspx), a *System.Double*, or a *System.Decimal* (but obviously not into some integer) - is it this parser, or is it the application?"
 
 In my opinion, *in that case*, it's the application.
 
