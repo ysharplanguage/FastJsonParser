@@ -251,8 +251,10 @@ In this same example, the lambda expression delegate which is compiled by the ev
 corresponding to the actual lambda expression script prepared behind the scene:
 
     (string script, Book value, string context) => (object)(value.title == "The Lord of the Rings")
+    
+There is thus type inference - performed at run-time by [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L46)'s [SelectNodes(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L51) instance method - for the second argument (and only that one, named "value") of the evaluator-produced, cached delegates.
 
-Notice how the evaluator-produced, cached delegate's static return type is in fact [System.Object](http://msdn.microsoft.com/en-us/library/system.object(v=vs.100).aspx) (and not [System.Boolean](http://msdn.microsoft.com/en-us/library/system.boolean(v=vs.100).aspx)), for uniformity with the more general member selector expression, as used as an [alternative to explicit names or indices](http://goessner.net/articles/JsonPath/#e2).
+Finally, notice how those delegates' static return type is in fact [System.Object](http://msdn.microsoft.com/en-us/library/system.object(v=vs.100).aspx) (and not [System.Boolean](http://msdn.microsoft.com/en-us/library/system.boolean(v=vs.100).aspx)), for uniformity with the more general member selector expression, as used as an [alternative to explicit names or indices](http://goessner.net/articles/JsonPath/#e2).
 
 More [JSONPath](http://goessner.net/articles/JsonPath) usage examples (after JSON deserialization by [System.Text.Json.Parser](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs)) can be found [here](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L333).
 
