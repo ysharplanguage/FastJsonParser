@@ -225,7 +225,7 @@ where [JsonPathScriptEvaluator](https://code.google.com/p/jsonpath/source/browse
 
             delegate object JsonPathScriptEvaluator(string script, object value, string context)
 
-Note that a basic lambda expression parser & compiler (adapted from Zhucai's "lambda-parser", at [http://code.google.com/p/lambda-parser](http://code.google.com/p/lambda-parser)) is provided in the namespace "[LambdaCompiler](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/LambdaCompiler.cs#L13)", as a helper used to implement the above "evaluator".
+Note there is a basic lambda expression parser & compiler - [ExpressionParser](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/LambdaCompiler.cs#L608) (adapted from Zhucai's "lambda-parser", at [http://code.google.com/p/lambda-parser](http://code.google.com/p/lambda-parser)) - defined in the namespace "[LambdaCompiler](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/LambdaCompiler.cs#L13)", used as a helper to implement the above "evaluator".
 
 \#4 :
 
