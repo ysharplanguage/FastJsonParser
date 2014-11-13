@@ -141,7 +141,7 @@ In my opinion, *in that case*, it's the application.
 JSONPath support
 ----------------
 
-Starting with [version 1.9.9.2](https://www.nuget.org/packages/System.Text.Json), [JSONPath](http://goessner.net/articles/JsonPath) is also supported. For a classic example, in four steps:
+Starting with [version 1.9.9.2](https://www.nuget.org/packages/System.Text.Json), Stefan Gössner's [JSONPath](http://goessner.net/articles/JsonPath) is also supported. For a classic example, in four steps:
 
 \#1 :
 
@@ -212,17 +212,12 @@ Starting with [version 1.9.9.2](https://www.nuget.org/packages/System.Text.Json)
 \#3 :
 
             JsonPathScriptEvaluator evaluator =
-                delegate(string script, object value, string context)
-                {
-                    return
-                    (
-                        ((value is Type) && (context == script))
-                        ?
-                        ExpressionParser.Parse((Type)value, script, true, typeof(Data).Namespace).Compile()
-                        :
-                        null
-                    );
-                };
+               (string script, object value, string context) =>
+                  ((value is Type) && (context == script))
+                  ?
+                  ExpressionParser.Parse((Type)value, script, true, typeof(Data).Namespace).Compile()
+                  :
+                  null;
             JsonPathSelection scope;
             JsonPathNode[] nodes;
 
