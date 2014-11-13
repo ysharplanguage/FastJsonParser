@@ -141,7 +141,7 @@ In my opinion, *in that case*, it's the application.
 JSONPath support
 ----------------
 
-Starting with [version 1.9.9.2](https://www.nuget.org/packages/System.Text.Json), [JSONPath](http://goessner.net/articles/JsonPath) is also supported. E.g., for a classic sample, in four steps:
+Starting with [version 1.9.9.2](https://www.nuget.org/packages/System.Text.Json), [JSONPath](http://goessner.net/articles/JsonPath) is also supported. For a classic example, in four steps:
 
 \#1 :
 
@@ -243,7 +243,7 @@ Note that a basic lambda expression parser & compiler ( adapted from Zhucai's "l
 
 The purpose of the "evaluator" passed as an optional argument to the [ToJsonPath(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L54) extension method, is to compile on-demand whatever lambda expression delegates are required to implement [JSONPath expressions for member selectors or filter predicates](http://goessner.net/articles/JsonPath/#e2), such as "?(@.title == \"The Lord of the Rings\")" above.
 
-In this same example, the lambda expression delegate which is compiled by the evaluator (and then cached into the "scope" JsonPathSelection) is of type:
+In this same example, the lambda expression delegate which is compiled by the evaluator (and then cached into the "scope" [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L46)) is of type:
 
     Func<string, Book, string, object>
     
@@ -251,11 +251,11 @@ corresponding to the actual lambda expression script prepared behind the scene:
 
     (string script, Book value, string context) => (object)(value.title == "The Lord of the Rings")
 
-Notice how the delegate's static return type is System.Object (and not System.Boolean), for uniformity with the more general member selector expression, as used as an [alternative to explicit names or indices](http://goessner.net/articles/JsonPath/#e2).
+Notice how the delegate's static return type is in fact System.Object (and not System.Boolean), for uniformity with the more general member selector expression, as used as an [alternative to explicit names or indices](http://goessner.net/articles/JsonPath/#e2).
 
-More JSONPath usage examples can be found [here](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L333).
+More [JSONPath](http://goessner.net/articles/JsonPath) usage examples can be found [here](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L333).
 
-E.g., the following works as expected, in [version 1.9.9.6](https://www.nuget.org/packages/System.Text.Json):
+E.g., the following [JSONPath](http://goessner.net/articles/JsonPath) expressions work as expected, in [version 1.9.9.6](https://www.nuget.org/packages/System.Text.Json):
 
     $.store
     $['store']
