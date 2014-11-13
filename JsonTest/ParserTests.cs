@@ -365,17 +365,12 @@ namespace Test
             }
         ";
             JsonPathScriptEvaluator evaluator =
-                delegate(string script, object value, string context)
-                {
-                    return
-                    (
-                        ((value is Type) && (context == script))
-                        ?
-                        ExpressionParser.Parse((Type)value, script, true, typeof(Data).Namespace).Compile()
-                        :
-                        null
-                    );
-                };
+                (script, value, context) =>
+                    ((value is Type) && (context == script))
+                    ?
+                    ExpressionParser.Parse((Type)value, script, true, typeof(Data).Namespace).Compile()
+                    :
+                    null;
             JsonPathSelection scope;
             JsonPathNode[] nodes;
 
@@ -980,17 +975,12 @@ namespace Test
 
 #if RUN_UNIT_TESTS && RUN_ADVANCED_JSONPATH_TESTS
             JsonPathScriptEvaluator evaluator =
-                delegate(string script, object value, string context)
-                {
-                    return
-                    (
-                        ((value is Type) && (context == script))
-                        ?
-                        ExpressionParser.Parse((Type)value, script, true, typeof(Data).Namespace).Compile()
-                        :
-                        null
-                    );
-                };
+                (script, value, context) =>
+                    ((value is Type) && (context == script))
+                    ?
+                    ExpressionParser.Parse((Type)value, script, true, typeof(Data).Namespace).Compile()
+                    :
+                    null;
             var JSONPATH_SAMPLE_QUERY = "$.fathers[?(@.id == 28149)].daughters[?(@.age == 12)]";
 #if !THIS_JSON_PARSER_ONLY
             Test // Note: requires Json.NET 6.0+
