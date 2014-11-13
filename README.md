@@ -225,6 +225,8 @@ where [JsonPathScriptEvaluator](https://code.google.com/p/jsonpath/source/browse
 
             delegate object JsonPathScriptEvaluator(string script, object value, string context)
 
+Note that a basic lambda expression parser & compiler (adapted from Zhucai's "lambda-parser", at [http://code.google.com/p/lambda-parser](http://code.google.com/p/lambda-parser)) is provided in the namespace "[LambdaCompiler](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/LambdaCompiler.cs#L13)", as a helper used to implement the above "evaluator".
+
 \#4 :
 
             var typed = new JsonParser().Parse<Data>(input); // (Data typed = ...)
@@ -237,8 +239,6 @@ where [JsonPathScriptEvaluator](https://code.google.com/p/jsonpath/source/browse
                 nodes[0].Value is decimal &&
                 (decimal)nodes[0].Value == 22.99m
             );
-
-Note that a basic lambda expression parser & compiler (adapted from Zhucai's "lambda-parser", at [http://code.google.com/p/lambda-parser](http://code.google.com/p/lambda-parser)) is provided in the namespace "[LambdaCompiler](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/LambdaCompiler.cs#L13)", as a helper used to implement the above "evaluator".
 
 The purpose of this "evaluator", being passed here as an optional argument to the [ToJsonPath(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L54) extension method, is to compile on-demand whatever lambda expression delegates are required to implement [JSONPath expressions for member selectors or filter predicates](http://goessner.net/articles/JsonPath/#e2), such as "?(@.title == \"The Lord of the Rings\")" above.
 
