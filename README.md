@@ -272,7 +272,7 @@ E.g., the following [JSONPath](http://goessner.net/articles/JsonPath) expression
 
 ***References***
 
-* [JSONPath - XPath for JSON](http://goessner.net/articles/JsonPath), by Stefan Gössner
+* [JSONPath - XPath for JSON](http://goessner.net/articles/JsonPath/#e1) (by Stefan Gössner)
 * [JSONPath expressions](http://goessner.net/articles/JsonPath/#e2)
 * [JSONPath examples](http://goessner.net/articles/JsonPath/#e3)
 
