@@ -238,7 +238,7 @@ where [JsonPathScriptEvaluator](https://code.google.com/p/jsonpath/source/browse
                 (decimal)nodes[0].Value == 22.99m
             );
 
-Note that a basic lambda expression parser & compiler ( adapted from Zhucai's "lambda-parser", at http://code.google.com/p/lambda-parser/ ) is provided in the namespace "[LambdaCompiler](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/LambdaCompiler.cs#L13)", as a helper used to implement the above "evaluator".
+Note that a basic lambda expression parser & compiler (adapted from Zhucai's "lambda-parser", at [http://code.google.com/p/lambda-parser](http://code.google.com/p/lambda-parser)) is provided in the namespace "[LambdaCompiler](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/LambdaCompiler.cs#L13)", as a helper used to implement the above "evaluator".
 
 The purpose of the "evaluator" passed as an optional argument to the [ToJsonPath(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L54) extension method, is to compile on-demand whatever lambda expression delegates are required to implement [JSONPath expressions for member selectors or filter predicates](http://goessner.net/articles/JsonPath/#e2), such as "?(@.title == \"The Lord of the Rings\")" above.
 
@@ -329,7 +329,7 @@ Before you try to run the speed tests against the test data provided, please not
 
 Just for comparison out of curiosity, on the third row of the table below I also give (this one measure only, for a glimpse) the throughput achieved, in the native code realm, by <a href="http://www.ohler.com/oj/">Peter Ohler's "Oj"</a> ("Oj" - *Optimized JSON* : a C extension to Ruby) for 100,000 parses over his own JSON sample that I've reused to prepare this benchmark.
 
-(Refer to [_oj-highly-nested.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/_oj-highly-nested.json.txt), copied from Peter's: http://www.ohler.com/dev/oj_misc/performance_strict.html)
+(Refer to [_oj-highly-nested.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/_oj-highly-nested.json.txt), copied from Peter's: [http://www.ohler.com/dev/oj_misc/performance_strict.html](http://www.ohler.com/dev/oj_misc/performance_strict.html))
 
 <a name="PerfDetailed"></a>
 ***Speed Tests Results : Detailed***
