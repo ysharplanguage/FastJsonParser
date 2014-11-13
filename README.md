@@ -250,7 +250,7 @@ corresponding to the actual lambda expression script prepared behind the scene:
 
     (string script, Book value, string context) => (object)(value.title == "The Lord of the Rings")
 
-Notice how the delegate's static return type is in fact [System.Object](http://msdn.microsoft.com/en-us/library/system.object(v=vs.100).aspx) (and not [System.Boolean](http://msdn.microsoft.com/en-us/library/system.boolean(v=vs.100).aspx)), for uniformity with the more general member selector expression, as used as an [alternative to explicit names or indices](http://goessner.net/articles/JsonPath/#e2).
+Notice how the evaluator-produced, cached delegate's static return type is in fact [System.Object](http://msdn.microsoft.com/en-us/library/system.object(v=vs.100).aspx) (and not [System.Boolean](http://msdn.microsoft.com/en-us/library/system.boolean(v=vs.100).aspx)), for uniformity with the more general member selector expression, as used as an [alternative to explicit names or indices](http://goessner.net/articles/JsonPath/#e2).
 
 More [JSONPath](http://goessner.net/articles/JsonPath) usage examples can be found [here](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L333).
 
