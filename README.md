@@ -271,7 +271,10 @@ E.g., the following [JSONPath](http://goessner.net/articles/JsonPath) expression
     $..book[?(@.price < 10m)]
 
 ***References***
+
+* [JSONPath](http://goessner.net/articles/JsonPath) "XPath for JSON"
 * [JSONPath expressions](http://goessner.net/articles/JsonPath/#e2)
+* [JSONPath examples](http://goessner.net/articles/JsonPath/#e3)
 
 <a name="Performance"></a>
 
