@@ -40,11 +40,11 @@ Goal
 
 This aims at parsing textual JSON data, and to deserialize it into our (strongly typed) [POCO](http://en.wikipedia.org/wiki/Plain_Old_CLR_Object)s, as fast as possible.
 
-For now ( * ), the only tiers of interest for this parser are the desktop/server tiers. There are other JSON librairies with good performance, and already well tested/documented, which *also* support mobile devices that run more limited flavors of .NET ([JSON.NET](http://james.newtonking.com/json) and [ServiceStack](https://github.com/ServiceStack/ServiceStack) come to mind).
+For now ( * ), the only tiers of interest for this parser are the desktop / server tiers. There are other JSON librairies with good performance, and already well tested / documented, which *also* support mobile / handheld devices that run more limited flavors of .NET (e.g., [Json.NET](http://james.newtonking.com/json) and [ServiceStack](https://github.com/ServiceStack/ServiceStack) come to mind).
 
 (* i.e., until it gets stable enough and I hear people's interest for it to run elsewhere)
 
-This JSON parser / deserializer thus aims first at staying "simple", short, fast, and for use by some desktop tooling or server-side code that would require the full .NET anyway, and unlikely to ever be usable on mobile devices (unless those can eventually run the full .NET).
+This JSON parser / deserializer thus aims first at staying "simple", short, fast, and for use by some desktop- or server-side code that would require the full .NET anyway, and unlikely to ever be usable on mobile devices (unless those can eventually run the full .NET).
 
 Nevertheless, [Sami](https://github.com/sami1971) has just recently been able to do a quick performance test on his Android device (as the code could luckily compile for it *as-is*), and came up with a few benchmark results (a dozen or so) which do seem encouraging - i.e., see this thread of Xamarin's Android forum:
 
@@ -124,7 +124,7 @@ The leaves will be from any of these types:
 
 In this case of, say, "loosely typed" deserialization, you may ask: "But what about the JSON number literals in the input - why deserializing them as *strings*?"
 
-I would then ask - ".... in absence of more specific type information about the deserialization target, *"who"* is likely best placed to decide whether the number after the colon, in
+I would then ask - "... in absence of more specific type information about the deserialization target, *"who"* is likely best placed to decide whether the number after the colon, in
 
     "SomeNumber": 123.456
 
@@ -220,13 +220,13 @@ Starting with [version 1.9.9.2](https://www.nuget.org/packages/System.Text.Json)
             JsonPathSelection scope;
             JsonPathNode[] nodes;
 
-where [JsonPathScriptEvaluator](https://code.google.com/p/jsonpath/source/browse/trunk/src/cs/JsonPath.cs?spec=svn56&r=53#57) is defined as:
+where the delegate type [JsonPathScriptEvaluator](https://code.google.com/p/jsonpath/source/browse/trunk/src/cs/JsonPath.cs?spec=svn56&r=53#57) is defined as:
 
             delegate object JsonPathScriptEvaluator(string script, object value, string context)
 
 Note there is a **basic** ( * ) lambda expression parser & compiler - [ExpressionParser](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/LambdaCompilation.cs#L608) (adapted from Zhucai's "lambda-parser", at [http://code.google.com/p/lambda-parser](http://code.google.com/p/lambda-parser)) defined in the namespace "[System.Text.Json.LambdaCompilation](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/LambdaCompilation.cs#L606)" - used here as a helper to implement the above "evaluator".
 
-(* N.B. **not** all of the C\# 4.0+ syntax is supported by [ExpressionParser](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/LambdaCompilation.cs#L608) (e.g., the [Linq Query Comprehension Syntax](http://msdn.microsoft.com/en-us/library/bb397947(v=vs.90).aspx) isn't) - only the most common expression forms, including unary / binary / ternary operators, array & dictionary indexers "[ ]", instance and static method calls, "is", "as", "typeof" type system operators, ... etc. )
+(* N.B. **not** all of the C\# 4.0+ syntax is supported by [ExpressionParser](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/LambdaCompilation.cs#L608) (e.g., the [Linq Query Comprehension Syntax](http://msdn.microsoft.com/en-us/library/bb397947(v=vs.90).aspx) isn't) - only the most common expression forms, including unary / binary / ternary operators, array & dictionary indexers "[ ]", instance and static method calls, "is", "as", "typeof" type system operators, ... etc.)
 
 \#4 :
 
@@ -734,7 +734,7 @@ None really worth of the name for now.
 
 However, one thing I would like to support as soon as I can, is the ability to deserialize into [C#'s anonymous types](http://en.wikipedia.org/wiki/Anonymous_type). I've done it before, but I need to put more thinking into it (vs. [my first, other attempt at it](https://code.google.com/p/ysharp/source/browse/trunk/TestJSONParser/%28System.Text.Json%29Parser.cs)), in order to avoid the potential significant loss in performance I'm aware of.
 
-Another, quite obvious, item on the wish list is to provide some support for custom deserialization. Design-wise, I do have a preference for a [functional approach](http://en.wikipedia.org/wiki/First-class_function#Language_support) which would be based on (more or less) arbitrary "reviver" [delegate types](http://en.wikipedia.org/wiki/Delegate_%28CLI%29#Technical_Implementation_Details), for use by the parser's methods (for typical IoC/callback use cases).
+Another, quite obvious, item on the wish list is to provide some support for custom deserialization. Design-wise, I do have a preference for a [functional approach](http://en.wikipedia.org/wiki/First-class_function#Language_support) which would be based on (more or less) arbitrary "reviver" [delegate types](http://en.wikipedia.org/wiki/Delegate_%28CLI%29#Technical_Implementation_Details), for use by the parser's methods (for typical IoC / callback use cases).
 
 Again, the main implementation challenge will be not drifting too much from the current parsing speed ballpark.
 
