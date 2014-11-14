@@ -484,6 +484,27 @@ namespace Test
             (
                 (nodes = scope.SelectNodes("$..book[?(@.price < 10m)]")).Length == 2
             );
+
+            // Speaks for itself
+            JsonParser parser = new JsonParser();
+            FathersData parsed = parser.Parse<FathersData>(System.IO.File.ReadAllText(FATHERS_TEST_FILE_PATH));
+            JsonPathSelection jsonPath = parsed.ToJsonPath(evaluator);
+            var st = DateTime.Now;
+            var minorSonCount = jsonPath.SelectNodes("$.fathers[*].sons[?(@.age < 18)]").Length;
+            var legalSonCount = jsonPath.SelectNodes("$.fathers[*].sons[?(@.age >= 18)]").Length;
+            var totalSonCount = jsonPath.SelectNodes("$.fathers[*].sons[*]").Length;
+            var tm = (int)DateTime.Now.Subtract(st).TotalMilliseconds;
+            System.Diagnostics.Debug.Assert(totalSonCount == minorSonCount + legalSonCount);
+            Console.WriteLine();
+            Console.WriteLine("\t\t\t$.fathers[*].sons[?(@.age < 18)]\t:\t{0}", minorSonCount);
+            Console.WriteLine("\t\t\t$.fathers[*].sons[?(@.age >= 18)]\t:\t{0}", legalSonCount);
+            Console.WriteLine("\t\t\t$.fathers[*].sons[*]\t\t\t:\t{0}", totalSonCount);
+            Console.WriteLine();
+            Console.WriteLine("\t\t\t... in {0} ms.", tm);
+            Console.WriteLine();
+            Console.WriteLine("Press a key...");
+            Console.WriteLine();
+            Console.ReadKey();
 #endif
             #endregion
 #endif
