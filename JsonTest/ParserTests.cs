@@ -1,5 +1,5 @@
 // On GitHub: https://github.com/ysharplanguage/FastJsonParser
-#define THIS_JSON_PARSER_ONLY
+//#define THIS_JSON_PARSER_ONLY
 #define RUN_UNIT_TESTS
 #define RUN_BASIC_JSONPATH_TESTS
 #define RUN_ADVANCED_JSONPATH_TESTS
