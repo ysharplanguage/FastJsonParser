@@ -1086,7 +1086,7 @@ namespace System.Text.Json
 //
 #endregion
 
-namespace JsonPath
+namespace System.Text.Json.JsonPath
 {
     #region Imports
 
