@@ -55,7 +55,7 @@ Early development status warning
 
 Although it is promisingly fast, lightweight, and easy to use, please note this parser / deserializer is still experimental.
 
-I do *not* recommend it for any use in production, at this point. This may or may not evolve soon, but for one simple thing to begin with, it's in need of more extensive JSON conformance tests.
+I do *not* recommend it for any use in production, at this point. This may or may not evolve soon, but for one simple thing to begin with, it's in need of more comprehensive JSON conformance tests.
 
 That being said, just feel free to [fork / bugfix / augment / improve it](https://github.com/ysharplanguage/FastJsonParser/graphs/contributors) at your own will.
 
