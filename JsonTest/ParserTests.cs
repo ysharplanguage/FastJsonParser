@@ -473,7 +473,7 @@ namespace Test
                 (nodes = scope.SelectNodes("$..book[0,1]")).Length == scope.SelectNodes("$..book[:2]").Length && nodes.Length == 2
             );
 
-            // All books with isbn number
+            // All books with an ISBN
             System.Diagnostics.Debug.Assert
             (
                 (nodes = scope.SelectNodes("$..book[?(@.isbn)]")).Length == 2
