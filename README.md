@@ -2,7 +2,6 @@ System.Text.Json
 ================
 
 * <a href="#Overview">Overview</a>
-* <a href="#Goal">Goal</a>
 * <a href="#Interface">Public interface</a>
 * <a href="#JSONPath">JSONPath support</a>
 * <a href="#Performance">Performance</a>
@@ -54,7 +53,7 @@ http://forums.xamarin.com/discussion/comment/39011/#Comment_39011
 Early development status warning
 --------------------------------
 
-Although it is promisingly fast, lightweight, and easy to use, please note this parser/deserializer is still experimental.
+Although it is promisingly fast, lightweight, and easy to use, please note this parser / deserializer is still experimental.
 
 I do *not* recommend it for any use in production, at this point. This may or may not evolve soon, but for one simple thing to begin with, it's in need of more extensive JSON conformance tests.
 
@@ -62,7 +61,7 @@ That being said, just feel free to [fork / bugfix / augment / improve it](https:
 
 Of course, I welcome your informed input and feedback.
 
-Please read the [LICENSE](https://github.com/ysharplanguage/FastJsonParser/blob/master/LICENSE.md).
+Please read and accept the [LICENSE](https://github.com/ysharplanguage/FastJsonParser/blob/master/LICENSE.md), or else, do not use this library.
 
 <a name="Interface"></a>
 
@@ -111,7 +110,7 @@ It will then deserialize the input into a tree made of
 
     Dictionary<string, object>
    
-instances, for JSON *objects* which are unordered sets of name/value pairs, and of
+instances, for JSON *objects* which are unordered sets of name / value pairs, and of
 
     List<object>
    
@@ -292,7 +291,7 @@ Performance
 
 Following in the table below: a few figures, the outcome *average numbers* (only) that I obtain from the tests provided here.
 
-Consistently enough, I also obtain similar performance ratios for the same 4 parsers/deserializers when compared one-to-one, after I adapt (for this JsonParser doesn't provide object-to-JSON text *serialization*) and I run "the burning monk's" simple speed tester for JSON, which can be found at:
+Consistently enough, I also obtain similar performance ratios for the same 4 parsers / deserializers when compared one-to-one, after I adapt (for this JsonParser doesn't provide object-to-JSON text *serialization*) and I run "the burning monk's" simple speed tester for JSON, which can be found at:
 
 http://theburningmonk.com/2014/09/binary-and-json-benchmarks-updated
 
@@ -754,7 +753,7 @@ Indeed, pure parsing + deserialization speed isn't in fact my *long term* goal, 
 
 From an earlier experiment on that other project, I found out that I will *not* need a *generic* way to solve a *specific* deserialization sub-problem very efficiently (which nobody can really do - as there is "no silver bullet" / "one size fits all" for that matter), but instead I will only need a *specific* way to solve it efficiently, by extending this small parser's functionality only where and how that's exactly needed (while trying to maintain its good performance).
 
-Finally, this parser/deserializer is/was a nice learning opportunity for me with parsing JSON, and to verify by myself once again [what I had read about](http://msdn.microsoft.com/en-us/magazine/cc507639.aspx) and experienced many times before. That is: never try to merely guess about performance, but instead always do your best to measure and to find out *where exactly* the parsing and deserialization slowdowns (and memory consumption costs) *actually* come from.
+Finally, this parser / deserializer is / was a nice learning opportunity for me with parsing JSON, and to verify by myself once again [what I had read about](http://msdn.microsoft.com/en-us/magazine/cc507639.aspx) and experienced many times before. That is: never try to merely guess about performance, but instead always do your best to measure and to find out *where exactly* the parsing and deserialization slowdowns (and memory consumption costs) *actually* come from.
 
 Other questions?
 ----------------
