@@ -464,7 +464,7 @@ namespace Test
             // Last book in order
             System.Diagnostics.Debug.Assert
             (
-                (nodes = scope.SelectNodes("$..book[(@.Length-1)]"))[0].Value == scope.SelectNodes("$..book[-1:]")[0].Value
+                (nodes = scope.SelectNodes("$..book[(@.Length - 1)]"))[0].Value == scope.SelectNodes("$..book[-1:]")[0].Value
             );
 
             // First two books
@@ -482,7 +482,7 @@ namespace Test
             // All books cheapier than 10
             System.Diagnostics.Debug.Assert
             (
-                (nodes = scope.SelectNodes("$..book[?(@.price<10m)]")).Length == 2
+                (nodes = scope.SelectNodes("$..book[?(@.price < 10m)]")).Length == 2
             );
 #endif
             #endregion
