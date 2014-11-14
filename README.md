@@ -17,7 +17,7 @@ System.Text.Json
 "Small is beautiful."
 ---------------------
 
-This is a minimalistic and fast JSON parser/deserializer, for full .NET.
+This is a minimalistic and fast JSON parser / deserializer, for full .NET.
 
 The complete source code of the parser is pretty short (in a [single source file less than 1,500 SLOC-long](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs)) and comes with some speed tests and their sample data, all in the "JsonTest" and "TestData" folders.
 
@@ -41,13 +41,13 @@ Goal
 
 This aims at parsing textual JSON data, and to deserialize it into our (strongly typed) [POCO](http://en.wikipedia.org/wiki/Plain_Old_CLR_Object)s, as fast as possible.
 
-For now(~), the only tiers of interest for this parser are the desktop/server tiers. There are other JSON librairies with good performance, and already well tested/documented, which *also* support mobile devices that run more limited flavors of .NET ([JSON.NET](http://james.newtonking.com/json) and [ServiceStack](https://github.com/ServiceStack/ServiceStack) come to mind).
+For now (*), the only tiers of interest for this parser are the desktop/server tiers. There are other JSON librairies with good performance, and already well tested/documented, which *also* support mobile devices that run more limited flavors of .NET ([JSON.NET](http://james.newtonking.com/json) and [ServiceStack](https://github.com/ServiceStack/ServiceStack) come to mind).
 
-(~ i.e., until it gets stable enough and I hear people's interest for it to run elsewhere)
+(* i.e., until it gets stable enough and I hear people's interest for it to run elsewhere)
 
-This JSON parser/deserializer thus aims first at staying "simple", short, fast, and for use by some desktop tooling or server-side code that would require the full .NET anyway, and unlikely to ever be usable on mobile devices (unless those can eventually run the full .NET).
+This JSON parser / deserializer thus aims first at staying "simple", short, fast, and for use by some desktop tooling or server-side code that would require the full .NET anyway, and unlikely to ever be usable on mobile devices (unless those can eventually run the full .NET).
 
-Nevertheless, [Sami](https://github.com/sami1971) has just recently been able to do a quick performance test on his Android device (as the code could luckily compile for it *as-is*), and came up with a few benchmark results (~ a dozen or so) which do seem encouraging - i.e., see this thread of Xamarin's Android forum:
+Nevertheless, [Sami](https://github.com/sami1971) has just recently been able to do a quick performance test on his Android device (as the code could luckily compile for it *as-is*), and came up with a few benchmark results (a dozen or so) which do seem encouraging - i.e., see this thread of Xamarin's Android forum:
 
 http://forums.xamarin.com/discussion/comment/39011/#Comment_39011
 
@@ -225,9 +225,9 @@ where [JsonPathScriptEvaluator](https://code.google.com/p/jsonpath/source/browse
 
             delegate object JsonPathScriptEvaluator(string script, object value, string context)
 
-Note there is a **basic** ( * ) lambda expression parser & compiler - [ExpressionParser](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/LambdaCompiler.cs#L608) (adapted from Zhucai's "lambda-parser", at [http://code.google.com/p/lambda-parser](http://code.google.com/p/lambda-parser)) defined in the namespace "[LambdaCompiler](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/LambdaCompiler.cs#L606)", used here as a helper to implement the above "evaluator".
+Note there is a **basic** ( * ) lambda expression parser & compiler - [ExpressionParser](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/LambdaCompiler.cs#L608) (adapted from Zhucai's "lambda-parser", at [http://code.google.com/p/lambda-parser](http://code.google.com/p/lambda-parser)) defined in the namespace "[LambdaCompiler](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/LambdaCompiler.cs#L606)" - used here as a helper to implement the above "evaluator".
 
-( * N.B. **not** all of the C\# 4.0+ syntax is supported by [ExpressionParser](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/LambdaCompiler.cs#L608) (e.g., the [Linq Query Comprehension Syntax](http://msdn.microsoft.com/en-us/library/bb397947(v=vs.90).aspx) isn't) - only the most common expression forms, including unary / binary / ternary operators, array & dictionary indexers "[ ]", instance and static method calls, "is", "as", "typeof" type system operators, ... etc. )
+(* N.B. **not** all of the C\# 4.0+ syntax is supported by [ExpressionParser](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/LambdaCompiler.cs#L608) (e.g., the [Linq Query Comprehension Syntax](http://msdn.microsoft.com/en-us/library/bb397947(v=vs.90).aspx) isn't) - only the most common expression forms, including unary / binary / ternary operators, array & dictionary indexers "[ ]", instance and static method calls, "is", "as", "typeof" type system operators, ... etc. )
 
 \#4 :
 
