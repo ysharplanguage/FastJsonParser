@@ -302,7 +302,7 @@ http://theburningmonk.com/2014/09/binary-and-json-benchmarks-updated
 <tr>
 <th><a href="https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs">This<br/>JsonParser</a><br/>versus...</th>
 <th>Microsoft's<br/><a href="http://msdn.microsoft.com/en-us/library/system.web.script.serialization.javascriptserializer%28v=vs.100%29.aspx">JavaScript Serializer</a></th>
-<th>James Newton-King's<br/><a href="http://james.newtonking.com/json">JSON.NET</a></th>
+<th>James Newton-King's<br/><a href="http://james.newtonking.com/json">Json.NET</a></th>
 <th>Demis<br/>Bellot's<br/><a href="https://github.com/ServiceStack/ServiceStack">ServiceStack</a></th>
 <th><a href="https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs">This<br/>JsonParser</a></th>
 <th>Peter Ohler's<br/><a href="http://www.ohler.com/oj/">"Oj"</a><br/>C extension<br/>to Ruby</th>
@@ -326,10 +326,10 @@ Of course, YMMV, so it's always a good idea to make *your own* benchmarks, using
 ***Other libraries, versions used ("the competition")***
 
 * Out-of-the-box .NET 4.0's [JavaScriptSerializer](http://msdn.microsoft.com/en-us/library/system.web.script.serialization.javascriptserializer%28v=vs.100%29.aspx)
-* [JSON.NET](http://james.newtonking.com/json) **v5.0 r8**, and
+* [Json.NET](http://james.newtonking.com/json) **v5.0 r8**, and
 * [ServiceStack](https://github.com/ServiceStack/ServiceStack) **v3.9.59**
 
-Before you try to run the speed tests against the test data provided, please note this repository does **not** include the binaries for the versions of JSON.NET and ServiceStack mentioned (you can obtain those from their respective links above).
+Before you try to run the speed tests against the test data provided, please note this repository does **not** include the binaries for the versions of Json.NET and ServiceStack mentioned (you can obtain those from their respective links above).
 
 ***Executable target, and H/W used***
 
@@ -348,7 +348,7 @@ So, without further ado... (larger figure - # parses per second - means faster)
 <tr>
 <th>Test /<br/>JSON size /<br/># Iterations /<br/>POCO or<br/>loosely-typed?</th>
 <th>Microsoft's<br/><a href="http://msdn.microsoft.com/en-us/library/system.web.script.serialization.javascriptserializer%28v=vs.100%29.aspx">JavaScript<br/>Serializer</a></th>
-<th>James<br/>Newton-<br/>King's<br/><a href="http://james.newtonking.com/json">JSON.NET</a></th>
+<th>James<br/>Newton-<br/>King's<br/><a href="http://james.newtonking.com/json">Json.NET</a></th>
 <th>Demis<br/>Bellot's<br/><a href="https://github.com/ServiceStack/ServiceStack">ServiceStack</a></th>
 <th><a href="https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs">This<br/>JsonParser</a></th>
 <th>Peter<br/>Ohler's <a href="http://www.ohler.com/oj/">"Oj"</a><br/>C extension<br/>to Ruby</th>
@@ -478,12 +478,12 @@ The same, with the test files and timings details:
 * "Loop" Test over Peter's "Oj Strict Mode Performance" sample (deserializing x times the JSON contained in the [_oj-highly-nested.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/_oj-highly-nested.json.txt) file = 257 bytes) - "loosely-typed" deserialization:
     * Performed 10,000 iterations: in ~ 235 milliseconds ( * )
         * vs. JavaScriptSerializer in ~ 875 milliseconds (... **272 %** slower)
-        * vs. JSON.NET in ~ 805 milliseconds (... **242 %** slower)
+        * vs. Json.NET in ~ 805 milliseconds (... **242 %** slower)
         * vs. ServiceStack... N / A
         * ( * Which yields System.Text.Json.JsonParser's throughput : 10,982,905 bytes / second)
     * Performed 100,000 iterations: in ~ 2.71 seconds ( * )
         * vs. JavaScriptSerializer in ~ 9.05 seconds (... **239 %** slower)
-        * vs. JSON.NET in ~ 7.95 seconds (... **193 %** slower)
+        * vs. Json.NET in ~ 7.95 seconds (... **193 %** slower)
         * vs. ServiceStack... N / A
         * ( * Which yields System.Text.Json.JsonParser's throughput : 9,486,895 bytes / second)
     * [_oj-highly-nested.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/_oj-highly-nested.json.txt) comes from Peter's sample and tests, at:
@@ -498,19 +498,19 @@ I find the JSON data sample from Peter interesting for its non-trivial "shape", 
 
 As for that "vs. ServiceStack in... N / A":
 
-unfortunately, quite unfamiliar with ServiceStack, I'm still trying to understand how, in absence of POCOs, to have it deserialize into merely trees of dictionaries + lists or arrays (just as we can do very easily using JSON.NET, or Microsoft's JavaScriptSerializer, or this parser here).
+unfortunately, quite unfamiliar with ServiceStack, I'm still trying to understand how, in absence of POCOs, to have it deserialize into merely trees of dictionaries + lists or arrays (just as we can do very easily using Json.NET, or Microsoft's JavaScriptSerializer, or this parser here).
 
 ***Rick's "Boon" small test***
 
 * Rick's "Boon" small test, slightly modified (deserializing x times the JSON contained in the [boon-small.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/boon-small.json.txt) file = 79 bytes) - with POCO target (1 class):
     * Performed 1,000,000 iterations: in ~ 3.83 seconds ( * )
         * vs. JavaScriptSerializer in ~ 31.5 seconds (... **722 %** slower)
-        * vs. JSON.NET in ~ 7.15 seconds (... **86 %** slower)
+        * vs. Json.NET in ~ 7.15 seconds (... **86 %** slower)
         * vs. ServiceStack in ~ 5.55 seconds (... **45 %** slower)
         * ( * Which yields System.Text.Json.JsonParser's throughput : 20,632,018 bytes / second)
     * Performed 10,000,000 iterations: in ~ 36.9 seconds ( * )
         * vs. JavaScriptSerializer in ~ 302.3 seconds (... **719 %** slower)
-        * vs. JSON.NET in ~ 69.8 seconds (... **89 %** slower)
+        * vs. Json.NET in ~ 69.8 seconds (... **89 %** slower)
         * vs. ServiceStack in ~ 54.8 seconds (... **48 %** slower)
         * ( * Which yields System.Text.Json.JsonParser's throughput : 21,379,664 bytes / second)
 
@@ -525,17 +525,17 @@ Note Rick is one of our fellows from the Java realm - and from [his own comparat
 * "Loop" Test over tiny JSON (deserializing x times the JSON contained in the [tiny.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/tiny.json.txt) file = 127 bytes) - with POCO target (1 class):
     * Performed 10,000 iterations: in ~ 56 milliseconds (pretty good) ( * )
         * vs. JavaScriptSerializer in ~ 550 milliseconds (... **882 %** slower)
-        * vs. JSON.NET in ~ 250 milliseconds (... **346 %** slower)
+        * vs. Json.NET in ~ 250 milliseconds (... **346 %** slower)
         * vs. ServiceStack in ~ 125 milliseconds (... **123 %** slower)
         * ( * Which yields System.Text.Json.JsonParser's throughput : 22,321,428 bytes / second)
     * Performed 100,000 iterations: in ~ 575 milliseconds (not bad) ( * )
         * vs. JavaScriptSerializer in ~ 5.4 seconds (... **839 %** slower)
-        * vs. JSON.NET in ~ 1.1 seconds (... **91 %** slower)
+        * vs. Json.NET in ~ 1.1 seconds (... **91 %** slower)
         * vs. ServiceStack in ~ 750 milliseconds (... **30 %** slower)
         * ( * Which yields System.Text.Json.JsonParser's throughput : 21,865,184 bytes / second)
     * Performed 1,000,000 iterations: in ~ 5.9 seconds (not bad either) ( * )
         * vs. JavaScriptSerializer in 54.5 seconds (... **823 %** slower)
-        * vs. JSON.NET in ~ 9.9 seconds (... **67 %** slower)
+        * vs. Json.NET in ~ 9.9 seconds (... **67 %** slower)
         * vs. ServiceStack in ~ 6.8 seconds (... **15 %** slower)
         * ( * Which yields System.Text.Json.JsonParser's throughput : 21,594,966 bytes / second)
     * [tiny.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/tiny.json.txt)
@@ -547,17 +547,17 @@ Note Rick is one of our fellows from the Java realm - and from [his own comparat
 * "Loop" Test over JSON "dictionaries" (deserializing x times the JSON contained in the [dicos.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/dicos.json.txt) file = 922 bytes) - with POCO target (1 class):
     * Performed 10,000 iterations: in ~ 239 milliseconds (pretty good) ( * )
         * vs. JavaScriptSerializer... N / A
-        * vs. JSON.NET in ~ 1,525 milliseconds (... **538 %** slower)
+        * vs. Json.NET in ~ 1,525 milliseconds (... **538 %** slower)
         * vs. ServiceStack in ~ 600 milliseconds (... **108 %** slower)
         * ( * Which yields System.Text.Json.JsonParser's throughput : 38,661,087 bytes / second)
     * Performed 100,000 iterations: in ~ 2.52 seconds (not bad) ( * )
         * vs. JavaScriptSerializer... N / A
-        * vs. JSON.NET in ~ 14.2 seconds (... **463 %** slower)
+        * vs. Json.NET in ~ 14.2 seconds (... **463 %** slower)
         * vs. ServiceStack in ~ 5.25 seconds (... **108 %** slower)
         * ( * Which yields System.Text.Json.JsonParser's throughput : 36,623,067 bytes / second)
     * Performed 1,000,000 iterations: in ~ 25.8 seconds (not bad either) ( * )
         * vs. JavaScriptSerializer... N / A
-        * vs. JSON.NET in ~ 2 minutes 19 seconds (... **439 %** slower)
+        * vs. Json.NET in ~ 2 minutes 19 seconds (... **439 %** slower)
         * vs. ServiceStack in ~ 53.4 seconds (... **107 %** slower)
         * ( * Which yields System.Text.Json.JsonParser's throughput : 35,788,984 bytes / second)
     * [dicos.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/dicos.json.txt)
@@ -569,12 +569,12 @@ Note: this reads "JavaScriptSerializer... N / A" for this test because I couldn'
 * "Loop" Test over small JSON (deserializing x times the JSON contained in the [small.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/small.json.txt) file ~ 3.5 KB) - "loosely-typed" deserialization:
     * Performed 10,000 iterations: in ~ 1.14 second (pretty good) ( * )
         * vs. JavaScriptSerializer in ~ 6.7 seconds (... **488 %** slower)
-        * vs. JSON.NET in ~ 2.2 seconds (... **93 %** slower)
+        * vs. Json.NET in ~ 2.2 seconds (... **93 %** slower)
         * vs. ServiceStack... N / A
         * ( * Which yields System.Text.Json.JsonParser's throughput : 31,174,408 bytes / second)
     * Performed 100,000 iterations: in ~ 11.7 seconds (not bad) ( * )
         * vs. JavaScriptSerializer in ~ 66.5 seconds (... **468 %** slower)
-        * vs. JSON.NET... OutOfMemoryException
+        * vs. Json.NET... OutOfMemoryException
         * vs. ServiceStack... N / A
         * ( * Which yields System.Text.Json.JsonParser's throughput : 30,318,786 bytes / second)
     * [small.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/small.json.txt) being just a copy of the "{ "web-app": { "servlet": [ ... ] ... } }" sample, at:
@@ -585,7 +585,7 @@ Note: this reads "JavaScriptSerializer... N / A" for this test because I couldn'
 * "Fathers" Test (12 MB JSON file) - with POCO targets (4 distinct classes):
     * Parsed in ~ 285 milliseconds ( * )
         * vs. JavaScriptSerializer in ~ 2.6 seconds (... **812 %** slower)
-        * vs. JSON.NET in ~ 500 milliseconds (... **75 %** slower)
+        * vs. Json.NET in ~ 500 milliseconds (... **75 %** slower)
         * vs. ServiceStack in ~ 575 milliseconds (... **101 %** slower)
         * ( * Which yields System.Text.Json.JsonParser's throughput : 45,494,340 bytes / second)
     * Note: [fathers.json.txt](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/TestData/fathers.json.txt) was generated using this nifty online helper:
@@ -593,14 +593,14 @@ Note: this reads "JavaScriptSerializer... N / A" for this test because I couldn'
 
 The latter, "fathers" test, is the one with the results that intrigued me the most the very first few times I ran it - and it still does. However, I haven't taken the time yet to do more serious profiling to fully explain these timing differences that I didn't expect to be *that significant*.
 
-They are also interesting to notice, if only when comparing JSON.NET vs. ServiceStack.
+They are also interesting to notice, if only when comparing Json.NET vs. ServiceStack.
 
 ***"Huge JSON" test***
 
 * "Huge" Test (180 MB JSON file) - "loosely-typed" deserialization:
     * Parsed in ~ 8.3 seconds ( * )
         * vs. JavaScriptSerializer in ~ 62 seconds (... **646 %** slower)
-        * vs. JSON.NET... OutOfMemoryException
+        * vs. Json.NET... OutOfMemoryException
         * vs. ServiceStack... N / A
         * ( * Which yields System.Text.Json.JsonParser's throughput : 22,798,921 bytes / second)
     * As for huge.json.txt, it is just a copy of this file:
@@ -670,7 +670,7 @@ These are used by some of the above tests:
 
 
         // Used in the "dicos.json" test
-        // (adapted for JSON.NET and ServiceStack to deserialize OK)
+        // (adapted for Json.NET and ServiceStack to deserialize OK)
         public class DictionaryDataAdaptJsonNetServiceStack
         {
             public IList<
@@ -738,18 +738,18 @@ Another, quite obvious, item on the wish list is to provide some support for cus
 
 Again, the main implementation challenge will be not drifting too much from the current parsing speed ballpark.
 
-In any case, I don't plan to make this small JSON deserializer as general-purpose and extensible as JSON.NET or ServiceStack's, I just want to keep it as simple, short, and fast as possible for my present and future needs (read on).
+In any case, I don't plan to make this small JSON deserializer as general-purpose and extensible as Json.NET or ServiceStack's, I just want to keep it as simple, short, and fast as possible for my present and future needs (read on).
 
 <a name="Background"></a>
 
 "But, why this ad-hoc parser, and 'need for speed', anyway?"
 ------------------------------------------------------------
 
-"... Why do you even care, when you already have the excellent, fast, feature-rich [JSON.NET](http://james.newtonking.com/json) and [ServiceStack](https://github.com/ServiceStack/ServiceStack) around?"
+"... Why do you even care, when you already have the excellent, fast, feature-rich [Json.NET](http://james.newtonking.com/json) and [ServiceStack](https://github.com/ServiceStack/ServiceStack) around?"
 
 Indeed, pure parsing + deserialization speed isn't in fact my *long term* goal, or not for any *arbitrary* JSON input, anyway. For another, and broader project - still in design stage - that I have, I plan to use JSON as a "malleable" IR (intermediate representation) for code and meta data transformations that I'll have to make happen in-between a high level source language (e.g., C#, or F#,...) and the target CIL (or some other lower target).
 
-[JSON.NET](http://james.newtonking.com/json)'s deserialization performance is great, and so is [ServiceStack](https://github.com/ServiceStack/ServiceStack)'s - [really, they are, already](http://theburningmonk.com/benchmarks/) - but I would like to have something of my own in my toolbox much smaller/more manageable (in terms of # of SLOC), and simpler to extend, for whatever unforeseen requirements of the deserialization process (from JSON text into CLR types and values) I may have to tackle.
+[Json.NET](http://james.newtonking.com/json)'s deserialization performance is great, and so is [ServiceStack](https://github.com/ServiceStack/ServiceStack)'s - [really, they are, already](http://theburningmonk.com/benchmarks/) - but I would like to have something of my own in my toolbox much smaller/more manageable (in terms of # of SLOC), and simpler to extend, for whatever unforeseen requirements of the deserialization process (from JSON text into CLR types and values) I may have to tackle.
 
 From an earlier experiment on that other project, I found out that I will *not* need a *generic* way to solve a *specific* deserialization sub-problem very efficiently (which nobody can really do - as there is "no silver bullet" / "one size fits all" for that matter), but instead I will only need a *specific* way to solve it efficiently, by extending this small parser's functionality only where and how that's exactly needed (while trying to maintain its good performance).
 
