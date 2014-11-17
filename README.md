@@ -140,7 +140,7 @@ In my opinion, *in that case*, it's the application.
 JSONPath support
 ----------------
 
-Starting with [version 1.9.9.2](https://www.nuget.org/packages/System.Text.Json), Stefan Gössner's [JSONPath](http://goessner.net/articles/JsonPath) is also supported. For a classic example, in four steps:
+Starting with [version 1.9.9.7](https://www.nuget.org/packages/System.Text.Json), Stefan Gössner's [JSONPath](http://goessner.net/articles/JsonPath) is also supported. For a classic example, in four steps:
 
 \#1 :
 
