@@ -241,7 +241,11 @@ Note there is a **basic** ( * ) lambda expression parser & compiler - [Expressio
                 (decimal)nodes[0].Value == 22.99m
             );
 
-The purpose of this "evaluator", passed here as an optional argument to the [ToJsonPath(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L54) extension method, is to compile on-demand whatever lambda expression delegates are required to implement [JSONPath expressions for member selectors or filter predicates](http://goessner.net/articles/JsonPath/#e2), such as "?(@.title == \"The Lord of the Rings\")" above.
+The purpose of this "evaluator", passed here as an optional argument to the [ToJsonPath(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L54) extension method, is to compile on-demand whatever lambda expression delegates are required to implement [JSONPath expressions for member selectors or filter predicates](http://goessner.net/articles/JsonPath/#e2), such as
+
+    ?(@.title == \"The Lord of the Rings\")
+
+above.
 
 In this same example, the lambda expression delegate which is compiled by the evaluator (and then cached into the "scope" [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L46)) is of type:
 
