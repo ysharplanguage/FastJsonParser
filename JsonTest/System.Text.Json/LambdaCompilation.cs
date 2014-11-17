@@ -10,7 +10,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Reflection;
 
-namespace System.Text.Json.LambdaCompilation
+namespace System.Text.Json.JsonPath.LambdaCompilation
 {
     public class CodeParser
     {
@@ -582,13 +582,13 @@ namespace System.Text.Json.LambdaCompilation
         }
     }
 }
-namespace System.Text.Json.LambdaCompilation
+namespace System.Text.Json.JsonPath.LambdaCompilation
 {
     public abstract class CodeParserPosition
     {
     }
 }
-namespace System.Text.Json.LambdaCompilation
+namespace System.Text.Json.JsonPath.LambdaCompilation
 {
     [Serializable]
     public abstract class CompileException : Exception
@@ -603,7 +603,7 @@ namespace System.Text.Json.LambdaCompilation
         }
     }
 }
-namespace System.Text.Json.LambdaCompilation
+namespace System.Text.Json.JsonPath.LambdaCompilation
 {
     public static class ExpressionParser
     {
@@ -685,7 +685,7 @@ namespace System.Text.Json.LambdaCompilation
         }
     }
 }
-namespace System.Text.Json.LambdaCompilation
+namespace System.Text.Json.JsonPath.LambdaCompilation
 {
     /// <summary>
     /// Lambda表达式的解析器核心类
@@ -2083,7 +2083,7 @@ namespace System.Text.Json.LambdaCompilation
         #endregion
     }
 }
-namespace System.Text.Json.LambdaCompilation.ObjectDynamicExtension
+namespace System.Text.Json.JsonPath.LambdaCompilation.ObjectDynamicExtension
 {
     public static class ObjectDynamicExtension
     {
@@ -2109,7 +2109,7 @@ namespace System.Text.Json.LambdaCompilation.ObjectDynamicExtension
         }
     }
 }
-namespace System.Text.Json.LambdaCompilation
+namespace System.Text.Json.JsonPath.LambdaCompilation
 {
     [Serializable]
     public abstract class ParseException : Exception
@@ -2131,7 +2131,7 @@ namespace System.Text.Json.LambdaCompilation
         }
     }
 }
-namespace System.Text.Json.LambdaCompilation
+namespace System.Text.Json.JsonPath.LambdaCompilation
 {
     [Serializable]
     public class ParseNoEndException : ParseException
@@ -2142,7 +2142,7 @@ namespace System.Text.Json.LambdaCompilation
         }
     }
 }
-namespace System.Text.Json.LambdaCompilation
+namespace System.Text.Json.JsonPath.LambdaCompilation
 {
     [Serializable]
     public class ParseUnfindTypeException : ParseException
@@ -2153,7 +2153,7 @@ namespace System.Text.Json.LambdaCompilation
         }
     }
 }
-namespace System.Text.Json.LambdaCompilation
+namespace System.Text.Json.JsonPath.LambdaCompilation
 {
     [Serializable]
     public class ParseUnknownException : ParseException
@@ -2164,7 +2164,7 @@ namespace System.Text.Json.LambdaCompilation
         }
     }
 }
-namespace System.Text.Json.LambdaCompilation
+namespace System.Text.Json.JsonPath.LambdaCompilation
 {
     [Serializable]
     public class ParseUnmatchException : ParseException
@@ -2175,7 +2175,7 @@ namespace System.Text.Json.LambdaCompilation
         }
     }
 }
-namespace System.Text.Json.LambdaCompilation
+namespace System.Text.Json.JsonPath.LambdaCompilation
 {
     [Serializable]
     public class ParseWrongSymbolException : ParseException
