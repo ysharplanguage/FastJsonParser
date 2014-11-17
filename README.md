@@ -259,19 +259,20 @@ More [JSONPath](http://goessner.net/articles/JsonPath) usage examples (after JSO
 
 E.g., the following [JSONPath](http://goessner.net/articles/JsonPath) expressions work as expected, in [version 1.9.9.6](https://www.nuget.org/packages/System.Text.Json):
 
-    $.store
-    $['store']
-    $.[((@ is Data) ? \"store\" : (string)null)]
-    $.store.book[3].title
-    $.store.book[?(@.author == \"Herman Melville\")].price
-    $.store.book[*].author
-    $.store..price
-    $..book[2]
-    $..book[(@.Length - 1)]
-    $..book[0,1]
-    $..book[:2]
-    $..book[?(@.isbn)]
-    $..book[?(@.price < 10m)]
+    $.store // The store
+    $['store'] // The store
+    $.[((@ is Data) ? \"store\" : (string)null)] // The store
+    $.store.book[3].title // Title of the fourth book
+    $.store.book[?(@.author == \"Herman Melville\")].price // Price of Herman Melville's book
+    $.store.book[*].author // Authors of all books in the store
+    $.store..price // Price of everything in the store
+    $..book[2] // Third book
+    $..book[(@.Length - 1)] // Last book in order
+    $..book[-1:] // Last book in order
+    $..book[0,1] // First two books
+    $..book[:2] // First two books
+    $..book[?(@.isbn)] // All books with an ISBN
+    $..book[?(@.price < 10m)] // All books cheapier than 10
 
 ***References***
 
@@ -749,7 +750,7 @@ In any case, I don't plan to make this small JSON deserializer as general-purpos
 
 Indeed, pure parsing + deserialization speed isn't in fact my *long term* goal, or not for any *arbitrary* JSON input, anyway. For another, and broader project - still in design stage - that I have, I plan to use JSON as a "malleable" IR (intermediate representation) for code and meta data transformations that I'll have to make happen in-between a high level source language (e.g., C#, or F#,...) and the target CIL (or some other lower target).
 
-[Json.NET](http://james.newtonking.com/json)'s deserialization performance is great, and so is [ServiceStack](https://github.com/ServiceStack/ServiceStack)'s - [really, they are, already](http://theburningmonk.com/benchmarks/) - but I would like to have something of my own in my toolbox much smaller/more manageable (in terms of # of SLOC), and simpler to extend, for whatever unforeseen requirements of the deserialization process (from JSON text into CLR types and values) I may have to tackle.
+[Json.NET](http://james.newtonking.com/json)'s deserialization performance is great, and so is [ServiceStack](https://github.com/ServiceStack/ServiceStack)'s - [really, they are, already](http://theburningmonk.com/benchmarks/) - but I would like to have something of my own in my toolbox much smaller / more manageable (in terms of # of SLOC), and simpler to extend, for whatever unforeseen requirements of the deserialization process (from JSON text into CLR types and values) I may have to tackle.
 
 From an earlier experiment on that other project, I found out that I will *not* need a *generic* way to solve a *specific* deserialization sub-problem very efficiently (which nobody can really do - as there is "no silver bullet" / "one size fits all" for that matter), but instead I will only need a *specific* way to solve it efficiently, by extending this small parser's functionality only where and how that's exactly needed (while trying to maintain its good performance).
 
