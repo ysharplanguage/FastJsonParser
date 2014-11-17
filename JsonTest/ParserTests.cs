@@ -31,7 +31,7 @@ namespace Test
 {
 #if RUN_UNIT_TESTS && (RUN_BASIC_JSONPATH_TESTS || RUN_ADVANCED_JSONPATH_TESTS)
     using System.Text.Json.JsonPath;
-    using System.Text.Json.LambdaCompilation;
+    using System.Text.Json.JsonPath.LambdaCompilation;
 #endif
 
     public class E
