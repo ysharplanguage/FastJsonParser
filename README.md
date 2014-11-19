@@ -802,11 +802,11 @@ Roadmap
 
 None really worth of the name for now.
 
-<s>However, one thing I would like to support as soon as I can, is the ability to deserialize into [C#'s anonymous types](http://en.wikipedia.org/wiki/Anonymous_type). I've done it before, but I need to put more thinking into it (vs. [my first, other attempt at it](https://code.google.com/p/ysharp/source/browse/trunk/TestJSONParser/%28System.Text.Json%29Parser.cs)), in order to avoid the potential significant loss in performance I'm aware of.
+<s>However, one thing I would like to support as soon as I can, is the ability to deserialize into [C#'s anonymous types](http://en.wikipedia.org/wiki/Anonymous_type). I've done it before, but I need to put more thinking into it (vs. [my first, other attempt at it](https://code.google.com/p/ysharp/source/browse/trunk/TestJSONParser/%28System.Text.Json%29Parser.cs)), in order to avoid the potential significant loss in performance I'm aware of.</s>
 
-Another, quite obvious, item on the wish list is to provide some support for custom deserialization. Design-wise, I do have a preference for a [functional approach](http://en.wikipedia.org/wiki/First-class_function#Language_support) which would be based on (more or less) arbitrary "reviver" [delegate types](http://en.wikipedia.org/wiki/Delegate_%28CLI%29#Technical_Implementation_Details), for use by the parser's methods (for typical IoC / callback use cases).
+<s>Another, quite obvious, item on the wish list is to provide some support for custom deserialization. Design-wise, I do have a preference for a [functional approach](http://en.wikipedia.org/wiki/First-class_function#Language_support) which would be based on (more or less) arbitrary "reviver" [delegate types](http://en.wikipedia.org/wiki/Delegate_%28CLI%29#Technical_Implementation_Details), for use by the parser's methods (for typical IoC / callback use cases).</s>
 
-Again, the main implementation challenge will be not drifting too much from the current parsing speed ballpark.</s>
+<s>Again, the main implementation challenge will be not drifting too much from the current parsing speed ballpark.</s>
 
 In any case, I don't plan to make this small JSON deserializer as general-purpose and extensible as Json.NET or ServiceStack's, I just want to keep it as simple, short, and fast as possible for my present and future needs (read on).
 
