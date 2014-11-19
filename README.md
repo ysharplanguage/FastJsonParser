@@ -289,7 +289,7 @@ E.g., the following [JSONPath](http://goessner.net/articles/JsonPath) expression
 * [JSONPath Expression Tester](http://jsonpath.curiousconcept.com/) (by Curious Concept)
 * [JSONPath Online Evaluator](http://ashphy.com/JSONPathOnlineEvaluator) (by Kazuki Hamasaki)
 
-<a name="JSONPath"></a>
+<a name="AnonymousTypes"></a>
 
 Anonymous types support
 -----------------------
