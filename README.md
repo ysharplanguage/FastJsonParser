@@ -4,6 +4,7 @@ System.Text.Json
 * <a href="#Overview">Overview</a>
 * <a href="#Interface">Public interface</a>
 * <a href="#JSONPath">JSONPath support</a>
+* <a href="#AnonymousTypes">Anonymous types support</a>
 * <a href="#Performance">Performance</a>
     * <a href="#PerfOverview">Speed Tests Results : Overview</a>
     * <a href="#PerfDetailed">Speed Tests Results : Detailed</a>
@@ -133,7 +134,6 @@ should be deserialized into a [System.Single](http://msdn.microsoft.com/en-us/li
 In my opinion, *in that case*, it's the application.
 
 (Also, one can read [this very informative post of Eric Lippert](http://ericlippert.com/2013/07/25/what-is-the-type-of-the-null-literal/) about the so-called "null type".)
-
 
 <a name="JSONPath"></a>
 
@@ -289,7 +289,72 @@ E.g., the following [JSONPath](http://goessner.net/articles/JsonPath) expression
 * [JSONPath Expression Tester](http://jsonpath.curiousconcept.com/) (by Curious Concept)
 * [JSONPath Online Evaluator](http://ashphy.com/JSONPathOnlineEvaluator) (by Kazuki Hamasaki)
 
-<a name="Performance"></a>
+<a name="JSONPath"></a>
+
+Anonymous types support
+-----------------------
+
+Starting with [version 1.9.9.8](https://www.nuget.org/packages/System.Text.Json), the deserialization into anonymous types instances is also supported. Here is an example to get started:
+
+            var OBJECT_MODEL = new // anonymous object model shape
+            {
+                country = new // anonymous country
+                {
+                    name = default(string),
+                    people = new[] // array of...
+                    {
+                        new // anonymous person
+                        {
+                            initials = default(string),
+                            DOB = default(DateTime),
+                            citizen = default(bool),
+                            status = default(Status)
+                        }
+                    }
+                }
+            };
+            
+            var anonymous = new JsonParser().Parse(OBJECT_MODEL,
+            @"{
+                ""country"": {
+                    ""name"": ""USA"",
+                    ""people"": [
+                        {
+                            ""initials"": ""VAV"",
+                            ""citizen"": true,
+                            ""DOB"": ""1970-03-28"",
+                            ""status"": ""Married""
+                        },
+                        {
+                            ""DOB"": ""1970-05-10"",
+                            ""initials"": ""CJJ""
+                        },
+                        {
+                            ""initials"": ""REP"",
+                            ""DOB"": ""1935-08-20"",
+                            ""status"": ""Married"",
+                            ""citizen"": true
+                        }
+                    ]
+                }
+            }");
+            
+            foreach (var person in anonymous.country.people)
+                System.Diagnostics.Debug.Assert
+                (
+                    person.initials.Length == 3 &&
+                    person.DOB > new DateTime(1901, 1, 1)
+                );
+                
+            scope = anonymous.ToJsonPath(evaluator);
+            
+            System.Diagnostics.Debug.Assert
+            (
+                (nodes = scope.SelectNodes(@"$..people[?(!@.citizen)]")).Length == 1 &&
+                nodes[0].As(OBJECT_MODEL.country.people[0]).DOB == new DateTime(1970, 5, 10)
+            );
+
+where the "evaluator" is the same as the one defined in the [JSONPath section](#JSONPath).
 
 Performance
 -----------
