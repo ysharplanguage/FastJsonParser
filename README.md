@@ -241,7 +241,7 @@ Note there is a **basic** ( * ) lambda expression parser & compiler - [Expressio
                 (decimal)nodes[0].Value == 22.99m
             );
 
-The purpose of this "evaluator", passed here as an optional argument to the [ToJsonPath(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L54) extension method, is to compile on-demand whatever lambda expression delegates are required to implement [JSONPath expressions for member selectors or filter predicates](http://goessner.net/articles/JsonPath/#e2), such as
+The purpose of this "evaluator", passed here as an optional argument to the [ToJsonPath(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L54) extension method, is for the [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L46)::[SelectNodes(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L51) method afterwards to be able to compile on-demand whatever lambda expression delegates are required to implement [JSONPath expressions for member selectors or filter predicates](http://goessner.net/articles/JsonPath/#e2), such as
 
     ?(@.title == \"The Lord of the Rings\")
 
@@ -255,7 +255,7 @@ corresponding to the actual lambda expression script prepared behind the scene:
 
     (string script, Book value, string context) => (object)(value.title == "The Lord of the Rings")
     
-There is thus type inference - performed at run-time by [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L46)'s [SelectNodes(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L51) instance method - for the second argument (and only that one, named "value") of the evaluator-produced, cached delegates.
+There is thus type inference - performed at run-time by the [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L46)::[SelectNodes(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L51) method - on the second argument (and only that one, named "value") of the evaluator-produced, cached delegates.
 
 Finally, notice how those delegates' static return type is in fact [System.Object](http://msdn.microsoft.com/en-us/library/system.object(v=vs.100).aspx) (and not [System.Boolean](http://msdn.microsoft.com/en-us/library/system.boolean(v=vs.100).aspx)), for uniformity with the more general member selector expression, as used as an [alternative to explicit names or indices](http://goessner.net/articles/JsonPath/#e2).
 
