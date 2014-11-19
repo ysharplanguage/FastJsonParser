@@ -841,7 +841,7 @@ namespace System.Text.Json
                                 Val(0);
                         }
                         else
-                            atargs[prop.Atm] = (types[keyed = Entry(prop.Type)].Type.IsValueType ? types[keyed].Parse(this, keyed) : Val(keyed));
+                            atargs[prop.Atm] = (types[keyed = prop.Outer].Type.IsValueType ? types[keyed].Parse(this, keyed) : Val(keyed));
                     }
                     else
                         Val(0);
