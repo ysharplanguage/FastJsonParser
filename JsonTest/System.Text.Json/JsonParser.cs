@@ -196,6 +196,7 @@ namespace System.Text.Json
             internal Type Type;
             internal int Outer;
             internal int Len;
+            internal int Atm;
         }
 
         internal class TypeInfo
@@ -209,8 +210,10 @@ namespace System.Text.Json
             internal ItemInfo[] Props;
             internal ItemInfo Dico;
             internal ItemInfo List;
+            internal bool IsAnonymous;
             internal bool IsStruct;
             internal bool IsEnum;
+            internal bool Closed;
             internal Type EType;
             internal Type Type;
             internal int Inner;
@@ -359,22 +362,31 @@ namespace System.Text.Json
             {
                 var props = ((self > 2) ? type.GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public) : new System.Reflection.PropertyInfo[] { });
                 var infos = new Dictionary<string, ItemInfo>();
+                IsAnonymous = ((eType == null) && (type.Name[0] == '<') && type.IsSealed);
                 IsStruct = type.IsValueType;
                 IsEnum = type.IsEnum;
                 EType = eType;
                 Type = type;
                 T = self;
-                Ctor = (((kType != null) && (vType != null)) ? GetCtor(Type, kType, vType) : GetCtor((EType ?? Type), (EType != null)));
-                for (var i = 0; i < props.Length; i++)
+                if (!IsAnonymous)
                 {
-                    System.Reflection.PropertyInfo pi;
-                    System.Reflection.MethodInfo set;
-                    if ((pi = props[i]).CanWrite && ((set = pi.GetSetMethod()).GetParameters().Length == 1))
-                        infos.Add(pi.Name, GetItemInfo(pi.PropertyType, pi.Name, set));
+                    Ctor = (((kType != null) && (vType != null)) ? GetCtor(Type, kType, vType) : GetCtor((EType ?? Type), (EType != null)));
+                    for (var i = 0; i < props.Length; i++)
+                    {
+                        System.Reflection.PropertyInfo pi;
+                        System.Reflection.MethodInfo set;
+                        if ((pi = props[i]).CanWrite && ((set = pi.GetSetMethod()).GetParameters().Length == 1))
+                            infos.Add(pi.Name, GetItemInfo(pi.PropertyType, pi.Name, set));
+                    }
+                    Dico = (((kType != null) && (vType != null)) ? GetItemInfo(Type, kType, vType, typeof(Dictionary<,>).MakeGenericType(kType, vType).GetMethod("Add", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public)) : null);
+                    List = ((EType != null) ? GetItemInfo(EType, String.Empty, typeof(List<>).MakeGenericType(EType).GetMethod("Add", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public)) : null);
+                    Enums = (IsEnum ? GetEnumInfos(Type) : null);
                 }
-                Dico = (((kType != null) && (vType != null)) ? GetItemInfo(Type, kType, vType, typeof(Dictionary<,>).MakeGenericType(kType, vType).GetMethod("Add", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public)) : null);
-                List = ((EType != null) ? GetItemInfo(EType, String.Empty, typeof(List<>).MakeGenericType(EType).GetMethod("Add", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public)) : null);
-                Enums = (IsEnum ? GetEnumInfos(Type) : null);
+                else
+                {
+                    var args = type.GetConstructors()[0].GetParameters();
+                    for (var i = 0; i < args.Length; i++) infos.Add(args[i].Name, new ItemInfo { Type = args[i].ParameterType, Name = args[i].Name, Atm = i, Len = args[i].Name.Length });
+                }
                 Props = infos.OrderBy(pair => pair.Key).Select(pair => pair.Value).ToArray();
             }
         }
@@ -756,11 +768,23 @@ namespace System.Text.Json
 
         private object Str(int outer) { var s = ParseString(0); if ((outer != 2) || ((s != null) && (s.Length == 1))) return ((outer == 2) ? (object)s[0] : s); else throw Error("Bad character"); }
 
+        private object Cta(TypeInfo atinfo, object[] atargs)
+        {
+            for (var i = 0; i < atinfo.Props.Length; i++)
+            {
+                var prop = atinfo.Props[i];
+                if (prop.Type.IsValueType && (atargs[prop.Atm] == null))
+                    atargs[prop.Atm] = Activator.CreateInstance(prop.Type);
+            }
+            return Activator.CreateInstance(atinfo.Type, atargs);
+        }
+
         private object Obj(int outer)
         {
-            var cached = types[outer]; var hash = types[cached.Key]; var select = cached.Select; var ctor = cached.Ctor;
+            var cached = types[outer]; var isAnon = cached.IsAnonymous; var hash = types[cached.Key]; var select = cached.Select; var ctor = cached.Ctor;
+            var atargs = (isAnon ? new object[cached.Props.Length] : null);
             var mapper = (null as Func<object, object>);
-            var typed = ((outer > 0) && (cached.Dico == null) && (ctor != null));
+            var typed = ((outer > 0) && (cached.Dico == null) && ((ctor != null) || isAnon));
             var parse = hash.Parse;
             var keyed = hash.T;
             var ch = chr;
@@ -772,7 +796,7 @@ namespace System.Text.Json
                 if (ch == '}')
                 {
                     Read();
-                    return ctor();
+                    return (isAnon ? Cta(cached, atargs) : ctor());
                 }
                 obj = null;
                 while (ch < EOF)
@@ -792,7 +816,7 @@ namespace System.Text.Json
                             {
                                 if ((key != null) && ((String.Compare(key, TypeTag1) == 0) || (String.Compare(key, TypeTag2) == 0)))
                                 {
-                                    obj = (((key = (val as string)) != null) ? (cached = types[Entry(Type.GetType(key, true), null)]).Ctor() : ctor());
+                                    obj = (((key = (val as string)) != null) ? (cached = types[Entry(Type.GetType(key, true))]).Ctor() : ctor());
                                     typed = !(obj is IDictionary);
                                 }
                                 else
@@ -806,13 +830,18 @@ namespace System.Text.Json
                     }
                     else if (prop != null)
                     {
-                        if ((select == null) || ((read = select(cached.Type, obj, prop.Name, -1)) != null))
+                        if (!isAnon)
                         {
-                            obj = (obj ?? ctor());
-                            prop.Set(obj, this, prop.Outer, 0);
+                            if ((select == null) || ((read = select(cached.Type, obj, prop.Name, -1)) != null))
+                            {
+                                obj = (obj ?? ctor());
+                                prop.Set(obj, this, prop.Outer, 0);
+                            }
+                            else
+                                Val(0);
                         }
                         else
-                            Val(0);
+                            atargs[prop.Atm] = (types[keyed = Entry(prop.Type)].Type.IsValueType ? types[keyed].Parse(this, keyed) : Val(keyed));
                     }
                     else
                         Val(0);
@@ -822,7 +851,7 @@ namespace System.Text.Json
                     {
                         mapper = (mapper ?? Identity);
                         Read();
-                        return mapper(obj ?? ctor());
+                        return mapper(isAnon ? Cta(cached, atargs) : (obj ?? ctor()));
                     }
                     Next(',');
                     ch = Space();
@@ -932,10 +961,16 @@ namespace System.Text.Json
 
         private int Closure(int outer, IDictionary<Type, Func<Type, object, object, int, Func<object, object>>> filter)
         {
-            var prop = types[outer].Props;
-            for (var i = 0; i < prop.Length; i++) prop[i].Outer = Entry(prop[i].Type, filter);
+            if (!types[outer].Closed)
+            {
+                var prop = types[outer].Props;
+                types[outer].Closed = true;
+                for (var i = 0; i < prop.Length; i++) prop[i].Outer = Entry(prop[i].Type, filter);
+            }
             return outer;
         }
+
+        private int Entry(Type type) { return Entry(type, null); }
 
         private int Entry(Type type, IDictionary<Type, Func<Type, object, object, int, Func<object, object>>> filter)
         {
@@ -992,9 +1027,9 @@ namespace System.Text.Json
             parse['5'] = parse['6'] = parse['7'] = parse['8'] = parse['9'] =
             parse['-'] = Num; parse['"'] = Str; parse['{'] = Obj; parse['['] = Arr;
             for (var input = 0; input < 128; input++) parse[input] = (parse[input] ?? Error);
-            Entry(typeof(object), null);
-            Entry(typeof(List<object>), null);
-            Entry(typeof(char), null);
+            Entry(typeof(object));
+            Entry(typeof(List<object>));
+            Entry(typeof(char));
         }
 
         public object Parse(string input) { return Parse<object>(input); }
@@ -1013,29 +1048,45 @@ namespace System.Text.Json
 
         public object Parse(Stream input, Encoding encoding, IDictionary<Type, Func<Type, object, object, int, Func<object, object>>> mappers) { return Parse<object>(input, encoding, mappers); }
 
-        public T Parse<T>(string input) { return Parse<T>(input, null); }
+        public T Parse<T>(string input) { return Parse<T>(default(T), input); }
 
-        public T Parse<T>(string input, IDictionary<Type, Func<Type, object, object, int, Func<object, object>>> mappers)
+        public T Parse<T>(T prototype, string input) { return Parse<T>(input, null); }
+
+        public T Parse<T>(string input, IDictionary<Type, Func<Type, object, object, int, Func<object, object>>> mappers) { return Parse<T>(default(T), input, mappers); }
+
+        public T Parse<T>(T prototype, string input, IDictionary<Type, Func<Type, object, object, int, Func<object, object>>> mappers)
         {
             if (input == null) throw new ArgumentNullException("input", "cannot be null");
             return DoParse<T>(input, mappers);
         }
 
-        public T Parse<T>(TextReader input) { return Parse<T>(input, null); }
+        public T Parse<T>(TextReader input) { return Parse<T>(default(T), input); }
 
-        public T Parse<T>(TextReader input, IDictionary<Type, Func<Type, object, object, int, Func<object, object>>> mappers)
+        public T Parse<T>(T prototype, TextReader input) { return Parse<T>(input, null); }
+
+        public T Parse<T>(TextReader input, IDictionary<Type, Func<Type, object, object, int, Func<object, object>>> mappers) { return Parse<T>(default(T), input, mappers); }
+
+        public T Parse<T>(T prototype, TextReader input, IDictionary<Type, Func<Type, object, object, int, Func<object, object>>> mappers)
         {
             if (input == null) throw new ArgumentNullException("input", "cannot be null");
             return DoParse<T>(input, mappers);
         }
 
-        public T Parse<T>(Stream input) { return Parse<T>(input, null as Encoding); }
+        public T Parse<T>(Stream input) { return Parse<T>(default(T), input); }
 
-        public T Parse<T>(Stream input, Encoding encoding) { return Parse<T>(input, encoding, null); }
+        public T Parse<T>(T prototype, Stream input) { return Parse<T>(input, null as Encoding); }
 
-        public T Parse<T>(Stream input, IDictionary<Type, Func<Type, object, object, int, Func<object, object>>> mappers) { return Parse<T>(input, null, mappers); }
+        public T Parse<T>(Stream input, Encoding encoding) { return Parse<T>(default(T), input, encoding); }
 
-        public T Parse<T>(Stream input, Encoding encoding, IDictionary<Type, Func<Type, object, object, int, Func<object, object>>> mappers)
+        public T Parse<T>(T prototype, Stream input, Encoding encoding) { return Parse<T>(input, encoding, null); }
+
+        public T Parse<T>(Stream input, IDictionary<Type, Func<Type, object, object, int, Func<object, object>>> mappers) { return Parse<T>(default(T), input, mappers); }
+
+        public T Parse<T>(T prototype, Stream input, IDictionary<Type, Func<Type, object, object, int, Func<object, object>>> mappers) { return Parse<T>(input, null, mappers); }
+
+        public T Parse<T>(Stream input, Encoding encoding, IDictionary<Type, Func<Type, object, object, int, Func<object, object>>> mappers) { return Parse<T>(default(T), input, encoding, mappers); }
+
+        public T Parse<T>(T prototype, Stream input, Encoding encoding, IDictionary<Type, Func<Type, object, object, int, Func<object, object>>> mappers)
         {
             if (input == null) throw new ArgumentNullException("input", "cannot be null");
             return DoParse<T>((encoding != null) ? new StreamReader(input, encoding) : new StreamReader(input), mappers);
@@ -1140,6 +1191,10 @@ namespace System.Text.Json.JsonPath
         {
             get { return path; }
         }
+
+        public T As<T>() { return As(default(T)); }
+
+        public T As<T>(T prototype) { return (T)Value; }
 
         public override string ToString()
         {
