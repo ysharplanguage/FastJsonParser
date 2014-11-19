@@ -348,7 +348,8 @@ namespace Test
                             ""author"": ""Herman Melville"",
                             ""title"": ""Moby Dick"",
                             ""isbn"": ""0-553-21311-3"",
-                            ""price"": 8.99
+                            ""price"": 8.99,
+                            ""status"": ""Married""
                       },
                       { ""category"": ""fiction"",
                             ""author"": ""J. R. R. Tolkien"",
@@ -505,6 +506,60 @@ namespace Test
             Console.WriteLine("Press a key...");
             Console.WriteLine();
             Console.ReadKey();
+
+            var OBJECT_MODEL = new // anonymous object model shape
+            {
+                country = new // anonymous country
+                {
+                    name = default(string),
+                    people = new[] // array of...
+                    {
+                        new // anonymous person
+                        {
+                            initials = default(string),
+                            DOB = default(DateTime),
+                            citizen = default(bool),
+                            status = default(Status)
+                        }
+                    }
+                }
+            };
+            var anonymous = new JsonParser().Parse(OBJECT_MODEL,
+            @"{
+                ""country"": {
+                    ""name"": ""USA"",
+                    ""people"": [
+                        {
+                            ""initials"": ""VAV"",
+                            ""citizen"": true,
+                            ""DOB"": ""1970-03-28"",
+                            ""status"": ""Married""
+                        },
+                        {
+                            ""DOB"": ""1970-05-10"",
+                            ""initials"": ""CJJ""
+                        },
+                        {
+                            ""initials"": ""REP"",
+                            ""DOB"": ""1935-08-20"",
+                            ""status"": ""Married"",
+                            ""citizen"": true
+                        }
+                    ]
+                }
+            }");
+            foreach (var person in anonymous.country.people)
+                System.Diagnostics.Debug.Assert
+                (
+                    person.initials.Length == 3 &&
+                    person.DOB > new DateTime(1901, 1, 1)
+                );
+            scope = anonymous.ToJsonPath(evaluator);
+            System.Diagnostics.Debug.Assert
+            (
+                (nodes = scope.SelectNodes(@"$..people[?(!@.citizen)]")).Length == 1 &&
+                nodes[0].As(OBJECT_MODEL.country.people[0]).DOB == new DateTime(1970, 5, 10)
+            );
 #endif
             #endregion
 #endif
