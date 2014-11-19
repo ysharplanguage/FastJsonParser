@@ -294,7 +294,7 @@ E.g., the following [JSONPath](http://goessner.net/articles/JsonPath) expression
 Anonymous types support
 -----------------------
 
-Starting with [version 1.9.9.8](https://www.nuget.org/packages/System.Text.Json), the deserialization into anonymous types instances is also supported. Here is an example to get started:
+Starting with [version 1.9.9.8](https://www.nuget.org/packages/System.Text.Json), the deserialization into anonymous types instances is also supported. [Here is an example](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L510) to get started:
 
             var OBJECT_MODEL = new // anonymous object model shape
             {
