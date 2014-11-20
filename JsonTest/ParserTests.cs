@@ -378,37 +378,37 @@ namespace Test
 #if RUN_BASIC_JSONPATH_TESTS
             var untyped = new JsonParser().Parse(input); // (object untyped = ...)
 
-            scope = untyped.ToJsonPath(); // Extension method
+            scope = new JsonPathSelection(untyped); // Cache the JsonPathSelection.
             nodes = scope.SelectNodes("$.store.book[3].title"); // Normalized in bracket-notation: $['store']['book'][3]['title']
             System.Diagnostics.Debug.Assert
             (
                 nodes != null &&
                 nodes.Length == 1 &&
                 nodes[0].Value is string &&
-                (string)nodes[0].Value == "The Lord of the Rings"
+                nodes.ArrayOf(default(string))[0] == "The Lord of the Rings"
             );
 
-            scope = untyped.ToJsonPath(evaluator); // Cache the JsonPathSelection and its lambdas compiled on-demand at run-time by the evaluator.
+            scope = new JsonPathSelection(untyped, evaluator); // Cache the JsonPathSelection and its lambdas compiled on-demand (at run-time) by the evaluator.
             nodes = scope.SelectNodes("$.store.book[?(@.ContainsKey(\"isbn\") && (string)@[\"isbn\"] == \"0-395-19395-8\")].title");
             System.Diagnostics.Debug.Assert
             (
                 nodes != null &&
                 nodes.Length == 1 &&
                 nodes[0].Value is string &&
-                (string)nodes[0].Value == "The Lord of the Rings"
+                nodes.ArrayOf(default(string))[0] == "The Lord of the Rings"
             );
 #endif
 
 #if RUN_ADVANCED_JSONPATH_TESTS
             var typed = new JsonParser().Parse<Data>(input); // (Data typed = ...)
-            scope = typed.ToJsonPath(evaluator);
+            scope = new JsonPathSelection(typed, evaluator);
             nodes = scope.SelectNodes("$.store.book[?(@.author == \"Herman Melville\")].price");
             System.Diagnostics.Debug.Assert
             (
                 nodes != null &&
                 nodes.Length == 1 &&
                 nodes[0].Value is decimal &&
-                (decimal)nodes[0].Value == 8.99m
+                nodes.ArrayOf(default(decimal))[0] == 8.99m
             );
 
             // Yup. This works too.
@@ -418,8 +418,8 @@ namespace Test
                 nodes != null &&
                 nodes.Length == 1 &&
                 nodes[0].Value is Store &&
-                nodes[0].Value == scope.SelectNodes("$['store']")[0].Value && // Normalized in bracket-notation
-                nodes[0].Value == scope.SelectNodes("$.store")[0].Value // Common dot-notation
+                nodes[0].As<Store>() == scope.SelectNodes("$['store']")[0].As<Store>() && // Normalized in bracket-notation
+                nodes[0].As<Store>() == scope.SelectNodes("$.store")[0].As<Store>() // Common dot-notation
             );
 
             // And this, as well. To compare with the above '... nodes = scope.SelectNodes("$.store.book[3].title")'
@@ -439,7 +439,7 @@ namespace Test
                 nodes != null &&
                 nodes.Length == 1 &&
                 nodes[0].Value is string &&
-                (string)nodes[0].Value == "Sword of Honour"
+                nodes[0].As<string>() == "Sword of Honour"
             );
 
             // Some JSONPath expressions from Stefan Gössner's JSONPath examples ( http://goessner.net/articles/JsonPath/#e3 )...
@@ -459,7 +459,7 @@ namespace Test
             // Third book
             System.Diagnostics.Debug.Assert
             (
-                (nodes = scope.SelectNodes("$..book[2]"))[0].Value is Book && ((Book)nodes[0].Value).isbn == "0-553-21311-3"
+                (nodes = scope.SelectNodes("$..book[2]"))[0].Value is Book && nodes[0].As<Book>().isbn == "0-553-21311-3"
             );
 
             // Last book in order
@@ -487,9 +487,9 @@ namespace Test
             );
 
             // Speaks for itself
-            JsonParser parser = new JsonParser();
-            FathersData parsed = parser.Parse<FathersData>(System.IO.File.ReadAllText(FATHERS_TEST_FILE_PATH));
-            JsonPathSelection jsonPath = parsed.ToJsonPath(evaluator);
+            var parser = new JsonParser();
+            var parsed = parser.Parse<FathersData>(System.IO.File.ReadAllText(FATHERS_TEST_FILE_PATH));
+            var jsonPath = new JsonPathSelection(parsed, evaluator);
             var st = DateTime.Now;
             var minorSonCount = jsonPath.SelectNodes("$.fathers[*].sons[?(@.age < 18)]").Length;
             var legalSonCount = jsonPath.SelectNodes("$.fathers[*].sons[?(@.age >= 18)]").Length;
@@ -507,14 +507,16 @@ namespace Test
             Console.WriteLine();
             Console.ReadKey();
 
-            var OBJECT_MODEL = new // anonymous object model shape
+            // Anonymous type instance prototype of the target object model,
+            // used for static type inference by the C# compiler (see below)
+            var OBJECT_MODEL = new
             {
-                country = new // anonymous country
+                country = new // (Anonymous) country
                 {
                     name = default(string),
-                    people = new[] // array of...
+                    people = new[] // (Array of...)
                     {
-                        new // anonymous person
+                        new // (Anonymous) person
                         {
                             initials = default(string),
                             DOB = default(DateTime),
@@ -524,47 +526,60 @@ namespace Test
                     }
                 }
             };
-            var anonymous = new JsonParser().Parse(OBJECT_MODEL,
-            @"{
-                ""country"": {
-                    ""name"": ""USA"",
-                    ""people"": [
-                        {
-                            ""initials"": ""VAV"",
-                            ""citizen"": true,
-                            ""DOB"": ""1970-03-28"",
-                            ""status"": ""Married""
-                        },
-                        {
-                            ""DOB"": ""1970-05-10"",
-                            ""initials"": ""CJJ""
-                        },
-                        {
-                            ""initials"": ""REP"",
-                            ""DOB"": ""1935-08-20"",
-                            ""status"": ""Married"",
-                            ""citizen"": true
-                        }
-                    ]
-                }
-            }");
+
+            var anonymous = new JsonParser().Parse
+            (
+                // Anonymous type instance prototype
+                OBJECT_MODEL,
+
+                // Input
+                @"{
+                    ""country"": {
+                        ""name"": ""USA"",
+                        ""people"": [
+                            {
+                                ""initials"": ""VV"",
+                                ""citizen"": true,
+                                ""DOB"": ""1970-03-28"",
+                                ""status"": ""Married""
+                            },
+                            {
+                                ""DOB"": ""1970-05-10"",
+                                ""initials"": ""CJ""
+                            },
+                            {
+                                ""initials"": ""RP"",
+                                ""DOB"": ""1935-08-20"",
+                                ""status"": ""Married"",
+                                ""citizen"": true
+                            }
+                        ]
+                    }
+                }"
+            );
+
+            System.Diagnostics.Debug.Assert(anonymous.country.people.Length == 3);
+
             foreach (var person in anonymous.country.people)
                 System.Diagnostics.Debug.Assert
                 (
-                    person.initials.Length == 3 &&
+                    person.initials.Length == 2 &&
                     person.DOB > new DateTime(1901, 1, 1)
                 );
-            scope = anonymous.ToJsonPath(evaluator);
+
+            scope = new JsonPathSelection(anonymous, evaluator);
+
             System.Diagnostics.Debug.Assert
             (
                 (nodes = scope.SelectNodes(@"$..people[?(!@.citizen)]")).Length == 1 &&
-                nodes[0].As(OBJECT_MODEL.country.people[0]).DOB == new DateTime(1970, 5, 10)
+                nodes.ArrayOf(OBJECT_MODEL.country.people[0])[0].DOB == new DateTime(1970, 5, 10) &&
+                nodes.ArrayOf(OBJECT_MODEL.country.people[0])[0].status == Status.Single
             );
 #endif
             #endregion
 #endif
 
-            // A few nominal cases
+            // A few nominal cases[]
             obj = UnitTest("null", s => new JsonParser().Parse(s));
             System.Diagnostics.Debug.Assert(obj == null);
 
@@ -1071,11 +1086,11 @@ namespace Test
             (
                 typeof(JsonParser).FullName, new JsonParser().Parse<FathersData>, FATHERS_TEST_FILE_PATH,
                 JSONPATH_SAMPLE_QUERY,
-                (parsed) => parsed.ToJsonPath(evaluator).SelectNodes(JSONPATH_SAMPLE_QUERY),
+                (parsed) => new JsonPathSelection(parsed, evaluator).SelectNodes(JSONPATH_SAMPLE_QUERY),
                 (selected) =>
                     (selected as JsonPathNode[]).Length > 0 &&
                     (selected as JsonPathNode[])[0].Value is Daughter &&
-                    ((selected as JsonPathNode[])[0].Value as Daughter).name == "Susan"
+                    (selected as JsonPathNode[])[0].As<Daughter>().name == "Susan"
             );
 #endif
 
