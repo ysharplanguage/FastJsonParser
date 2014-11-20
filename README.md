@@ -372,6 +372,9 @@ Starting with [version 1.9.9.8](https://www.nuget.org/packages/System.Text.Json)
 
 where the "evaluator" is the same as the one defined in the [JSONPath section](#JSONPath) of this document.
 
+<a name="Performance"></a>
+<a name="Performances"></a>
+
 Performance
 -----------
 
