@@ -1153,7 +1153,7 @@ namespace System.Text.Json
 //
 #endregion
 
-namespace System.Text.Json.JsonPath
+namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPath/ and http://code.google.com/p/jsonpath/ )
 {
     #region Imports
 
