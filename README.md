@@ -243,7 +243,7 @@ Note there is a **basic** ( * ) lambda expression parser & compiler - [Expressio
                 nodes != null &&
                 nodes.Length == 1 &&
                 nodes[0].Value is decimal &&
-                nodes.ArrayOf(default(decimal))[0] == 22.99m
+                nodes.ArrayOf<decimal>()[0] == 22.99m
             );
 
 The purpose of this "evaluator", passed here as an optional argument to the [JsonPathSelection constructor](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L55), is for the SELECT method afterwards to be able to compile on-demand whatever lambda expression delegates are required to implement [JSONPath expressions for member selectors or filter predicates](http://goessner.net/articles/JsonPath/#e2), such as
