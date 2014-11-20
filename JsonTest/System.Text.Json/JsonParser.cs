@@ -39,26 +39,25 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace System.Text.Json
+namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPath/ and http://code.google.com/p/jsonpath/ )
 {
-    using JsonPath; // ( See http://goessner.net/articles/JsonPath/ and http://code.google.com/p/jsonpath/ )
+    public static class JsonPathExtensions
+    {
+        public static T[] ArrayOf<T>(this JsonPathNode[] source, T prototype) { return source.Select(node => node.As<T>()).ToArray(); }
+    }
 
     public sealed class JsonPathSelection
     {
         public readonly JsonPathContext Context;
         public readonly object Data;
-        internal JsonPathSelection(JsonPathContext context, object data) { Context = context; Data = data; }
-        public JsonPathNode[] SelectNodes(string expr, params JsonPathScriptEvaluator[] lambdas) { return Context.SelectNodes(Data, expr, lambdas); }
+        public JsonPathSelection(object data) : this(data, null as IJsonPathValueSystem) { }
+        public JsonPathSelection(object data, IJsonPathValueSystem valueSystem) : this(data, valueSystem, null) { }
+        public JsonPathSelection(object data, JsonPathScriptEvaluator evaluator) : this(data, null, evaluator) { }
+        public JsonPathSelection(object data, IJsonPathValueSystem valueSystem, JsonPathScriptEvaluator evaluator) { Context = new JsonPathContext((valueSystem ?? new JsonPathValueSystem()), evaluator); Data = data; }
+        public JsonPathNode[] SelectNodes(string expression, params JsonPathScriptEvaluator[] lambdas) { return Context.SelectNodes(Data, expression, lambdas); }
     }
 
-    public static class JsonParserExtensions
-    {
-        public static JsonPathSelection ToJsonPath(this object data) { return JsonParser.ToJsonPath(data); }
-
-        public static JsonPathSelection ToJsonPath(this object data, JsonPathScriptEvaluator eval) { return JsonParser.ToJsonPath(data, eval); }
-    }
-
-    public sealed class JsonParserValueSystem : IJsonPathValueSystem
+    internal class JsonPathValueSystem : IJsonPathValueSystem
     {
         private readonly IDictionary<Type, Tuple<IDictionary<string, System.Reflection.PropertyInfo>, string[]>> cache = new Dictionary<Type, Tuple<IDictionary<string, System.Reflection.PropertyInfo>, string[]>>();
 
@@ -148,6 +147,20 @@ namespace System.Text.Json
             return int.TryParse(s, out result) ? result : defaultValue;
         }
     }
+}
+
+namespace System.Text.Json
+{
+    public sealed class JsonParserOptions
+    {
+        internal bool Validate()
+        {
+            return ((TypeCacheCapacity > 3) && (InputBufferSize > 0));
+        }
+
+        public int TypeCacheCapacity { get; set; }
+        public int InputBufferSize { get; set; }
+    }
 
     public class JsonParser
     {
@@ -161,22 +174,24 @@ namespace System.Text.Json
         private static readonly bool[] IDN = new bool[128];
         private const int EOF = (char.MaxValue + 1);
         private const int ANY = 0;
-        private const int LBS = 128;
-        private const int TDS = 128;
+        private const int LBS = 512;
+        private const int TDS = 256;
 
         private IDictionary<Type, int> rtti = new Dictionary<Type, int>();
-        private TypeInfo[] types = new TypeInfo[TDS];
+        private TypeInfo[] types;
 
         private Func<int, object>[] parse = new Func<int, object>[128];
         private StringBuilder lsb = new StringBuilder();
-        private char[] lbf = new char[LBS];
         private char[] stc = new char[1];
+        private char[] lbf;
         private TextReader str;
         private Func<int, int> Char;
         private Action<int> Next;
         private Func<int> Read;
         private Func<int> Space;
         private string txt;
+        private int lbs;
+        private int tds;
         private int len;
         private int lln;
         private int chr;
@@ -439,7 +454,7 @@ namespace System.Text.Json
         private void StreamNext(int ch) { if (chr != ch) throw Error("Unexpected character"); chr = ((str.Read(stc, 0, 1) > 0) ? stc[0] : EOF); }
         private int StreamChar(int ch)
         {
-            if (lln >= LBS)
+            if (lln >= lbs)
             {
                 if (lsb.Length == 0)
                     lsb.Append(new string(lbf, 0, lln));
@@ -455,7 +470,7 @@ namespace System.Text.Json
         private void StringNext(int ch) { if (chr != ch) throw Error("Unexpected character"); chr = ((++at < len) ? txt[at] : EOF); }
         private int StringChar(int ch)
         {
-            if (lln >= LBS)
+            if (lln >= lbs)
             {
                 if (lsb.Length == 0)
                     lsb.Append(new string(lbf, 0, lln));
@@ -1013,20 +1028,21 @@ namespace System.Text.Json
 
         public static readonly Func<object, object> Skip = null;
 
-        public static JsonPathSelection ToJsonPath(object data) { return ToJsonPath(data, null); }
+        public JsonParser() : this(null) { }
 
-        public static JsonPathSelection ToJsonPath(object data, JsonPathScriptEvaluator eval)
+        public JsonParser(JsonParserOptions options)
         {
-            return new JsonPathSelection(new JsonPathContext { ValueSystem = new JsonParserValueSystem(), ScriptEvaluator = eval }, data);
-        }
-
-        public JsonParser()
-        {
+            options = (options ?? new JsonParserOptions { TypeCacheCapacity = TDS, InputBufferSize = LBS });
+            if (!options.Validate()) throw new ArgumentException("Invalid JSON parser options", "options");
+            tds = options.TypeCacheCapacity;
+            lbs = options.InputBufferSize;
             parse['n'] = Null; parse['f'] = False; parse['t'] = True;
             parse['0'] = parse['1'] = parse['2'] = parse['3'] = parse['4'] =
             parse['5'] = parse['6'] = parse['7'] = parse['8'] = parse['9'] =
             parse['-'] = Num; parse['"'] = Str; parse['{'] = Obj; parse['['] = Arr;
             for (var input = 0; input < 128; input++) parse[input] = (parse[input] ?? Error);
+            types = new TypeInfo[tds];
+            lbf = new char[lbs];
             Entry(typeof(object));
             Entry(typeof(List<object>));
             Entry(typeof(char));
@@ -1238,19 +1254,23 @@ namespace System.Text.Json.JsonPath
         private JsonPathScriptEvaluator eval;
         private IJsonPathValueSystem system;
 
+        public JsonPathContext() : this(null) { }
+        public JsonPathContext(IJsonPathValueSystem system) : this(system, null) { }
+        public JsonPathContext(IJsonPathValueSystem system, JsonPathScriptEvaluator eval) { ValueSystem = system; ScriptEvaluator = eval; }
+
         public JsonPathScriptEvaluator ScriptEvaluator
         {
             get { return eval; }
-            set { eval = value; }
+            private set { eval = value; }
         }
 
         public IJsonPathValueSystem ValueSystem
         {
             get { return system; }
-            set { system = value; }
+            private set { system = value; }
         }
 
-        public void SelectTo(object obj, string expr, JsonPathResultAccumulator output, params JsonPathScriptEvaluator[] lambdas)
+        public void SelectTo(object obj, string expression, JsonPathResultAccumulator output, params JsonPathScriptEvaluator[] lambdas)
         {
             if (obj == null)
                 throw new ArgumentNullException("obj");
@@ -1260,25 +1280,25 @@ namespace System.Text.Json.JsonPath
 
             Interpreter i = new Interpreter(this, output, ValueSystem, ScriptEvaluator);
 
-            expr = Normalize(expr);
+            expression = Normalize(expression);
 
-            if (expr.Length >= 1 && expr[0] == '$') // ^\$:?
-                expr = expr.Substring(expr.Length >= 2 && expr[1] == ';' ? 2 : 1);
+            if (expression.Length >= 1 && expression[0] == '$') // ^\$:?
+                expression = expression.Substring(expression.Length >= 2 && expression[1] == ';' ? 2 : 1);
 
-            i.Trace(expr, obj, "$", lambdas, -1);
+            i.Trace(expression, obj, "$", lambdas, -1);
         }
 
-        public JsonPathNode[] SelectNodes(object obj, string expr, params JsonPathScriptEvaluator[] lambdas)
+        public JsonPathNode[] SelectNodes(object obj, string expression, params JsonPathScriptEvaluator[] lambdas)
         {
             ArrayList list = new ArrayList();
-            SelectNodesTo(obj, expr, list, lambdas);
+            SelectNodesTo(obj, expression, list, lambdas);
             return (JsonPathNode[])list.ToArray(typeof(JsonPathNode));
         }
 
-        public IList SelectNodesTo(object obj, string expr, IList output, params JsonPathScriptEvaluator[] lambdas)
+        public IList SelectNodesTo(object obj, string expression, IList output, params JsonPathScriptEvaluator[] lambdas)
         {
             ListAccumulator accumulator = new ListAccumulator(output != null ? output : new ArrayList());
-            SelectTo(obj, expr, new JsonPathResultAccumulator(accumulator.Put), lambdas);
+            SelectTo(obj, expression, new JsonPathResultAccumulator(accumulator.Put), lambdas);
             return output;
         }
 
@@ -1394,17 +1414,17 @@ namespace System.Text.Json.JsonPath
                 this.filter = REGEXP_FILTER;
             }
 
-            public void Trace(string expr, object value, string path, Delegate[] lambdas, int clambda)
+            public void Trace(string expression, object value, string path, Delegate[] lambdas, int clambda)
             {
-                if (expr == null || expr.Length == 0)
+                if (expression == null || expression.Length == 0)
                 {
                     Store(path, value);
                     return;
                 }
 
-                int i = expr.IndexOf(';');
-                string atom = i >= 0 ? expr.Substring(0, i) : expr;
-                string tail = i >= 0 ? expr.Substring(i + 1) : string.Empty;
+                int i = expression.IndexOf(';');
+                string atom = i >= 0 ? expression.Substring(0, i) : expression;
+                string tail = i >= 0 ? expression.Substring(i + 1) : String.Empty;
 
                 if (value != null && system.HasMember(value, atom))
                 {
@@ -1453,7 +1473,7 @@ namespace System.Text.Json.JsonPath
                     output(value, path.Split(semicolon));
             }
 
-            private void Walk(string loc, string expr, object value, string path, WalkCallback callback, Delegate[] lambdas, int clambda)
+            private void Walk(string loc, string expression, object value, string path, WalkCallback callback, Delegate[] lambdas, int clambda)
             {
                 if (system.IsPrimitive(value))
                     return;
@@ -1462,37 +1482,37 @@ namespace System.Text.Json.JsonPath
                 {
                     IList list = (IList)value;
                     for (int i = 0; i < list.Count; i++)
-                        callback(i, loc, expr, value, path, lambdas, clambda);
+                        callback(i, loc, expression, value, path, lambdas, clambda);
                 }
                 else if (system.IsObject(value))
                 {
                     foreach (string key in system.GetMembers(value))
-                        callback(key, loc, expr, value, path, lambdas, clambda);
+                        callback(key, loc, expression, value, path, lambdas, clambda);
                 }
             }
 
-            private void WalkWild(object member, string loc, string expr, object value, string path, Delegate[] lambdas, int clambda)
+            private void WalkWild(object member, string loc, string expression, object value, string path, Delegate[] lambdas, int clambda)
             {
-                Trace(member + ";" + expr, value, path, lambdas, -1);
+                Trace(member + ";" + expression, value, path, lambdas, -1);
             }
 
-            private void WalkTree(object member, string loc, string expr, object value, string path, Delegate[] lambdas, int clambda)
+            private void WalkTree(object member, string loc, string expression, object value, string path, Delegate[] lambdas, int clambda)
             {
                 object result = Index(value, member.ToString());
                 if (result != null && !system.IsPrimitive(result))
-                    Trace("..;" + expr, result, path + ";" + member, lambdas, -1);
+                    Trace("..;" + expression, result, path + ";" + member, lambdas, -1);
             }
 
-            private void WalkFiltered(object member, string loc, string expr, object value, string path, Delegate[] lambdas, int clambda)
+            private void WalkFiltered(object member, string loc, string expression, object value, string path, Delegate[] lambdas, int clambda)
             {
                 string script = filter.Replace(loc, "$1");
                 string context = member.ToString();
                 object result = ((clambda < 0) ? Eval(script, value, context, true) : lambdas[clambda].DynamicInvoke(script, value, context));
                 if ((result != null) && ((result is bool) ? (bool)result : ((result is string) ? !String.IsNullOrEmpty((string)result) : true)))
-                    Trace(member + ";" + expr, value, path, lambdas, -1);
+                    Trace(member + ";" + expression, value, path, lambdas, -1);
             }
 
-            private void Slice(string loc, string expr, object value, string path, Delegate[] lambdas, int clambda)
+            private void Slice(string loc, string expression, object value, string path, Delegate[] lambdas, int clambda)
             {
                 IList list = value as IList;
 
@@ -1507,7 +1527,7 @@ namespace System.Text.Json.JsonPath
                 start = (start < 0) ? Math.Max(0, start + length) : Math.Min(length, start);
                 end = (end < 0) ? Math.Max(0, end + length) : Math.Min(length, end);
                 for (int i = start; i < end; i += step)
-                    Trace(i + ";" + expr, value, path, lambdas, -1);
+                    Trace(i + ";" + expression, value, path, lambdas, -1);
             }
 
             private object Index(object obj, string member)
@@ -1532,14 +1552,14 @@ namespace System.Text.Json.JsonPath
                 return ((func != null) ? func.DynamicInvoke(script, target, context) : eval(script, target, context));
             }
 
-            private static object NullEval(string expr, object value, string context)
+            private static object NullEval(string expression, object value, string context)
             {
                 //
-                // @ symbol in expr must be interpreted specially to resolve
+                // @ symbol in expression must be interpreted specially to resolve
                 // to value. In JavaScript, the implementation would look 
                 // like:
                 //
-                // return obj && value && eval(expr.replace(/@/g, "value"));
+                // return obj && value && eval(expression.replace(/@/g, "value"));
                 //
 
                 return null;
