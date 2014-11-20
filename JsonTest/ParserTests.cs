@@ -385,7 +385,7 @@ namespace Test
                 nodes != null &&
                 nodes.Length == 1 &&
                 nodes[0].Value is string &&
-                nodes.ArrayOf(default(string))[0] == "The Lord of the Rings"
+                nodes.ArrayOf<string>()[0] == "The Lord of the Rings"
             );
 
             scope = new JsonPathSelection(untyped, evaluator); // Cache the JsonPathSelection and its lambdas compiled on-demand (at run-time) by the evaluator.
@@ -395,7 +395,7 @@ namespace Test
                 nodes != null &&
                 nodes.Length == 1 &&
                 nodes[0].Value is string &&
-                nodes.ArrayOf(default(string))[0] == "The Lord of the Rings"
+                nodes.ArrayOf<string>()[0] == "The Lord of the Rings"
             );
 #endif
 
@@ -408,7 +408,7 @@ namespace Test
                 nodes != null &&
                 nodes.Length == 1 &&
                 nodes[0].Value is decimal &&
-                nodes.ArrayOf(default(decimal))[0] == 22.99m
+                nodes.ArrayOf<decimal>()[0] == 22.99m
             );
 
             // Yup. This works too.
@@ -426,9 +426,9 @@ namespace Test
             nodes = scope.
                 SelectNodes
                 (
-                    // JSONPath expression template...
+                // JSONPath expression template...
                     "$.[{0}].[{1}][{2}].[{3}]",
-                    // ... interpolated with these compile-time lambdas:
+                // ... interpolated with these compile-time lambdas:
                     (script, value, context) => "store", // Member selector (by name)
                     (script, value, context) => "book", // Member selector (by name)
                     (script, value, context) => 1, // Member selector (by index)
