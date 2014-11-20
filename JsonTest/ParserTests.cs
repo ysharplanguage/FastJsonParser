@@ -401,14 +401,14 @@ namespace Test
 
 #if RUN_ADVANCED_JSONPATH_TESTS
             var typed = new JsonParser().Parse<Data>(input); // (Data typed = ...)
-            scope = new JsonPathSelection(typed, evaluator);
-            nodes = scope.SelectNodes("$.store.book[?(@.author == \"Herman Melville\")].price");
+            scope = new JsonPathSelection(typed, evaluator); // Cache the JsonPathSelection and its lambdas compiled on-demand (at run-time) by the evaluator.
+            nodes = scope.SelectNodes("$.store.book[?(@.title == \"The Lord of the Rings\")].price");
             System.Diagnostics.Debug.Assert
             (
                 nodes != null &&
                 nodes.Length == 1 &&
                 nodes[0].Value is decimal &&
-                nodes.ArrayOf(default(decimal))[0] == 8.99m
+                nodes.ArrayOf(default(decimal))[0] == 22.99m
             );
 
             // Yup. This works too.
