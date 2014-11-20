@@ -19,9 +19,9 @@ System.Text.Json
 
 This is a minimalistic and fast JSON parser / deserializer, for full .NET.
 
-The complete source code of the parser is pretty short (in a [single source file less than 1,500 SLOC-long](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs)) and comes with some speed tests and their sample data, all in the "JsonTest" and "TestData" folders.
+The complete source code of the parser is pretty short (in a [single source file less than 1,500 SLOC-long](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs)) and comes with some speed tests and their sample data, all in the "JsonTest" and "TestData" folders.
 
-The console test program includes a few unit tests (for both nominal cases vs. error cases), and it will attempt to execute them before the speed tests - see [ParserTests.cs](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs).
+The console test program includes a few unit tests (for both nominal cases vs. error cases), and it will attempt to execute them before the speed tests - see [ParserTests.cs](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/ParserTests.cs).
 
 Do not hesitate to add more of the former (i.e., unit tests) and to raise here whatever issues you may find.
 
@@ -231,23 +231,28 @@ Note there is a **basic** ( * ) lambda expression parser & compiler - [Expressio
 \#4 :
 
             var typed = new JsonParser().Parse<Data>(input); // (Data typed = ...)
-            scope = typed.ToJsonPath(evaluator); // (Extension method)
-            nodes = scope.SelectNodes("$.store.book[?(@.title == \"The Lord of the Rings\")].price");
+            
+            // Cache the JsonPathSelection and its lambdas compiled on-demand (at run-time)
+            // by the evaluator.
+            scope = new JsonPathSelection(typed, evaluator);
+            
+            nodes = scope.SelectNodes("$.store.book[?(@.author == \"The Lord of the Rings\")].price");
+            
             System.Diagnostics.Debug.Assert
             (
                 nodes != null &&
                 nodes.Length == 1 &&
                 nodes[0].Value is decimal &&
-                (decimal)nodes[0].Value == 22.99m
+                nodes.ArrayOf(default(decimal))[0] == 22.99m
             );
 
-The purpose of this "evaluator", passed here as an optional argument to the [ToJsonPath(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L54) extension method, is for the [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L46)::[SelectNodes(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L51) method afterwards to be able to compile on-demand whatever lambda expression delegates are required to implement [JSONPath expressions for member selectors or filter predicates](http://goessner.net/articles/JsonPath/#e2), such as
+The purpose of this "evaluator", passed here as an optional argument to the CTOR method, is for the SELECT method afterwards to be able to compile on-demand whatever lambda expression delegates are required to implement [JSONPath expressions for member selectors or filter predicates](http://goessner.net/articles/JsonPath/#e2), such as
 
     ?(@.title == \"The Lord of the Rings\")
 
 above.
 
-In this same example, the lambda expression delegate which is compiled by the evaluator (and then cached into the "scope" [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L46)) is of type:
+In this same example, the lambda expression delegate which is compiled by the evaluator (and then cached into the "scope" SELECT is of type:
 
     Func<string, Book, string, object>
     
@@ -255,11 +260,11 @@ corresponding to the actual lambda expression script prepared behind the scene:
 
     (string script, Book value, string context) => (object)(value.title == "The Lord of the Rings")
     
-There is thus type inference - performed at run-time by the [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L46)::[SelectNodes(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L51) method - on the second argument (and only that one, named "value") of the evaluator-produced, cached delegates.
+There is thus type inference - performed at run-time by the SELECT::SELECT method - on the second argument (and only that one, named "value") of the evaluator-produced, cached delegates.
 
 Finally, notice how those delegates' static return type is in fact [System.Object](http://msdn.microsoft.com/en-us/library/system.object(v=vs.100).aspx) (and not [System.Boolean](http://msdn.microsoft.com/en-us/library/system.boolean(v=vs.100).aspx)), for uniformity with the more general member selector expression, as used as an [alternative to explicit names or indices](http://goessner.net/articles/JsonPath/#e2).
 
-More [JSONPath](http://goessner.net/articles/JsonPath) usage examples (after JSON deserialization by [System.Text.Json.JsonParser](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs)) can be found [here](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L333).
+More [JSONPath](http://goessner.net/articles/JsonPath) usage examples (after JSON deserialization by [System.Text.Json.JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs)) can be found [here](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L333).
 
 E.g., the following [JSONPath](http://goessner.net/articles/JsonPath) expressions work as expected, in [version 1.9.9.7](https://www.nuget.org/packages/System.Text.Json) and up:
 
@@ -296,14 +301,16 @@ Anonymous types support
 
 Starting with [version 1.9.9.8](https://www.nuget.org/packages/System.Text.Json), the deserialization into anonymous types instances is also supported. [Here is an example](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L510) to get started:
 
-            var OBJECT_MODEL = new // anonymous object model shape
+            // Anonymous type instance prototype of the target object model,
+            // used for static type inference by the C# compiler (see below)
+            var OBJECT_MODEL = new
             {
-                country = new // anonymous country
+                country = new // (Anonymous) country
                 {
                     name = default(string),
-                    people = new[] // array of...
+                    people = new[] // (Array of...)
                     {
-                        new // anonymous person
+                        new // (Anonymous) person
                         {
                             initials = default(string),
                             DOB = default(DateTime),
@@ -314,47 +321,56 @@ Starting with [version 1.9.9.8](https://www.nuget.org/packages/System.Text.Json)
                 }
             };
             
-            var anonymous = new JsonParser().Parse(OBJECT_MODEL,
-            @"{
-                ""country"": {
-                    ""name"": ""USA"",
-                    ""people"": [
-                        {
-                            ""initials"": ""VAV"",
-                            ""citizen"": true,
-                            ""DOB"": ""1970-03-28"",
-                            ""status"": ""Married""
-                        },
-                        {
-                            ""DOB"": ""1970-05-10"",
-                            ""initials"": ""CJJ""
-                        },
-                        {
-                            ""initials"": ""REP"",
-                            ""DOB"": ""1935-08-20"",
-                            ""status"": ""Married"",
-                            ""citizen"": true
-                        }
-                    ]
-                }
-            }");
+            var anonymous = new JsonParser().Parse
+            (
+                // Anonymous type instance prototype
+                OBJECT_MODEL,
+                
+                // Input
+                @"{
+                    ""country"": {
+                        ""name"": ""USA"",
+                        ""people"": [
+                            {
+                                ""initials"": ""VV"",
+                                ""citizen"": true,
+                                ""DOB"": ""1970-03-28"",
+                                ""status"": ""Married""
+                            },
+                            {
+                                ""DOB"": ""1970-05-10"",
+                                ""initials"": ""CJ""
+                            },
+                            {
+                                ""initials"": ""RP"",
+                                ""DOB"": ""1935-08-20"",
+                                ""status"": ""Married"",
+                                ""citizen"": true
+                            }
+                        ]
+                    }
+                }"
+            );
+            
+            System.Diagnostics.Debug.Assert(anonymous.country.people.Length == 3);
             
             foreach (var person in anonymous.country.people)
                 System.Diagnostics.Debug.Assert
                 (
-                    person.initials.Length == 3 &&
+                    person.initials.Length == 2 &&
                     person.DOB > new DateTime(1901, 1, 1)
                 );
                 
-            scope = anonymous.ToJsonPath(evaluator);
+            scope = new JsonPathSelection(anonymous, evaluator);
             
             System.Diagnostics.Debug.Assert
             (
                 (nodes = scope.SelectNodes(@"$..people[?(!@.citizen)]")).Length == 1 &&
-                nodes[0].As(OBJECT_MODEL.country.people[0]).DOB == new DateTime(1970, 5, 10)
+                nodes.ArrayOf(OBJECT_MODEL.country.people[0])[0].DOB == new DateTime(1970, 5, 10) &&
+                nodes.ArrayOf(OBJECT_MODEL.country.people[0])[0].status == Status.Single
             );
 
-where the "evaluator" is the same as the one defined in the [JSONPath section](#JSONPath).
+where the "evaluator" is the same as the one defined in the [JSONPath section](#JSONPath) of this document.
 
 Performance
 -----------
