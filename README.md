@@ -410,7 +410,7 @@ http://theburningmonk.com/2014/09/binary-and-json-benchmarks-updated
 
 Note such figures (either the "burning monk's", or the following) can always - potentially - be much dependent on the test data at hand, and/or the way testing is performed.
 
-Of course, YMMV, so it's always a good idea to make *your own* benchmarks, using *your test data*, in the data "shape" you're interested in, and that you expect to encounter with *a good probability* in your domain.
+Of course, YMMV, so it's always a good idea to make *your own* benchmarks, using *your own test data*, especially in the data "shape" you're interested in, and that you expect to encounter with *a good probability* in your application domain.
 
 ***Other libraries, versions used ("the competition")***
 
