@@ -236,7 +236,7 @@ Note there is a **basic** ( * ) lambda expression parser & compiler - [Expressio
             // by the evaluator.
             scope = new JsonPathSelection(typed, evaluator);
             
-            nodes = scope.SelectNodes("$.store.book[?(@.author == \"The Lord of the Rings\")].price");
+            nodes = scope.SelectNodes("$.store.book[?(@.title == \"The Lord of the Rings\")].price");
             
             System.Diagnostics.Debug.Assert
             (
