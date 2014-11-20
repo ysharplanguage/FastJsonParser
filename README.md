@@ -3,8 +3,8 @@ System.Text.Json
 
 * <a href="#Overview">Overview</a>
 * <a href="#Interface">Public interface</a>
-* <a href="#JSONPath">JSONPath support</a>
-* <a href="#AnonymousTypes">Anonymous types support</a>
+* <a href="#JSONPath">JSONPath support</a> (&gt;= 1.9.9.7)
+* <a href="#AnonymousTypes">Anonymous types support</a> (&gt;= 1.9.9.8)
 * <a href="#Performance">Performance</a>
     * <a href="#PerfOverview">Speed Tests Results : Overview</a>
     * <a href="#PerfDetailed">Speed Tests Results : Detailed</a>
