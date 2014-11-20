@@ -31,7 +31,6 @@ from Cyril Jandia.
 Inquiries : ysharp {dot} design {at} gmail {dot} com
  *
  */
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -43,6 +42,7 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
 {
     public static class JsonPathExtensions
     {
+        public static T[] ArrayOf<T>(this JsonPathNode[] source) { return ArrayOf(source, default(T)); }
         public static T[] ArrayOf<T>(this JsonPathNode[] source, T prototype) { return source.Select(node => node.As<T>()).ToArray(); }
     }
 
