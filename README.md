@@ -264,7 +264,7 @@ corresponding to the actual lambda expression script prepared behind the scene:
     
 There is thus type inference - performed at run-time by the [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49)'s [SelectNodes(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L57) method - on the second argument (and only that one, named "value") of the evaluator-produced, cached delegates.
 
-Finally, notice how those delegates' static return type is in fact [System.Object](http://msdn.microsoft.com/en-us/library/system.object(v=vs.100).aspx) (and not [System.Boolean](http://msdn.microsoft.com/en-us/library/system.boolean(v=vs.100).aspx)), for uniformity with the more general member selector expression, as used as an [alternative to explicit names or indices](http://goessner.net/articles/JsonPath/#e2).
+Finally, notice how those delegates' static return type is in fact [System.Object](http://msdn.microsoft.com/en-us/library/System.Object.aspx) (and not [System.Boolean](http://msdn.microsoft.com/en-us/library/System.Boolean.aspx)), for uniformity with the more general member selector expression, as used as an [alternative to explicit names or indices](http://goessner.net/articles/JsonPath/#e2).
 
 More [JSONPath](http://goessner.net/articles/JsonPath) usage examples (after JSON deserialization by [System.Text.Json.JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs)) can be found [here](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L333).
 
@@ -396,7 +396,7 @@ Starting with [version 2.0.0.0](https://www.nuget.org/packages/System.Text.Json)
 Miscellaneous types support
 ---------------------------
 
-* Starting with [version 2.0.0.1](https://www.nuget.org/packages/System.Text.Json), [System.Guid](http://msdn.microsoft.com/en-us/library/vstudio/System.Guid.aspx) is supported.
+* Starting with [version 2.0.0.1](https://www.nuget.org/packages/System.Text.Json), [System.Guid](http://msdn.microsoft.com/en-us/library/System.Guid.aspx) is supported.
 
 <a name="Performance"></a>
 <a name="Performances"></a>
