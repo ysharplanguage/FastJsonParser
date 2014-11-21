@@ -6,6 +6,7 @@ System.Text.Json
 * <a href="#JSONPath">JSONPath support</a> (&gt;= 1.9.9.7)
 * <a href="#AnonymousTypes">Anonymous types support</a> (&gt;= 1.9.9.8)
 * <a href="#IntegralTypes">Integral types support</a> (&gt;= 2.0.0.0)
+* <a href="#MiscellaneousTypes">Miscellaneous types support</a>
 * <a href="#Performance">Performance</a>
     * <a href="#PerfOverview">Speed Tests Results : Overview</a>
     * <a href="#PerfDetailed">Speed Tests Results : Detailed</a>
@@ -389,6 +390,13 @@ Starting with [version 2.0.0.0](https://www.nuget.org/packages/System.Text.Json)
 * [System.UInt32 (aka "uint")](http://msdn.microsoft.com/en-us/library/System.UInt32.aspx)
 * [System.Int64 (aka "long")](http://msdn.microsoft.com/en-us/library/System.Int64.aspx)
 * [System.UInt64 (aka "ulong")](http://msdn.microsoft.com/en-us/library/System.UInt64.aspx)
+
+<a name="MiscellaneousTypes"></a>
+
+Miscellaneous types support
+---------------------------
+
+* Starting with [version 2.0.0.1](https://www.nuget.org/packages/System.Text.Json), [System.Guid](http://msdn.microsoft.com/en-us/library/vstudio/System.Guid.aspx) is supported.
 
 <a name="Performance"></a>
 <a name="Performances"></a>
