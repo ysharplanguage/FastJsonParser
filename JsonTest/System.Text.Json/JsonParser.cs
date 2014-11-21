@@ -250,6 +250,7 @@ namespace System.Text.Json
                 WellKnown.Add(typeof(float));
                 WellKnown.Add(typeof(double));
                 WellKnown.Add(typeof(decimal));
+                WellKnown.Add(typeof(Guid));
                 WellKnown.Add(typeof(DateTime));
                 WellKnown.Add(typeof(DateTimeOffset));
                 WellKnown.Add(typeof(string));
@@ -778,21 +779,28 @@ namespace System.Text.Json
             return decimal.Parse(s);
         }
 
-        private void PastKey()
+        private Guid ParseGuid(int outer)
         {
-            var ch = Space();
-            var e = false;
-            if (ch == '"')
-            {
-                Read();
-                while (true)
-                {
-                    if ((ch = chr) == '"') { Read(); return; }
-                    if (e = (ch == '\\')) ch = Read();
-                    if (ch < EOF) { if (!e || (ch >= 128)) Read(); else { Esc(ch); e = false; } } else break;
-                }
-            }
-            throw Error("Bad key");
+            var s = ParseString(0);
+            if (!String.IsNullOrWhiteSpace(s))
+                return new Guid(s);
+            throw Error("Bad GUID");
+        }
+
+        private DateTime ParseDateTime(int outer)
+        {
+            DateTime dateTime;
+            if (!DateTime.TryParse(ParseString(0), System.Globalization.CultureInfo.CurrentCulture, System.Globalization.DateTimeStyles.RoundtripKind, out dateTime))
+                throw Error("Bad date/time");
+            return dateTime;
+        }
+
+        private DateTimeOffset ParseDateTimeOffset(int outer)
+        {
+            DateTimeOffset dateTimeOffset;
+            if (!DateTimeOffset.TryParse(ParseString(0), System.Globalization.CultureInfo.CurrentCulture, System.Globalization.DateTimeStyles.RoundtripKind, out dateTimeOffset))
+                throw Error("Bad date/time offset");
+            return dateTimeOffset;
         }
 
         private string ParseString(int outer)
@@ -815,20 +823,21 @@ namespace System.Text.Json
             throw Error((outer >= 0) ? "Bad string" : "Bad key");
         }
 
-        private DateTimeOffset ParseDateTimeOffset(int outer)
+        private void PastKey()
         {
-            DateTimeOffset dateTimeOffset;
-            if (!DateTimeOffset.TryParse(ParseString(0), System.Globalization.CultureInfo.CurrentCulture, System.Globalization.DateTimeStyles.RoundtripKind, out dateTimeOffset))
-                throw Error("Bad date/time offset");
-            return dateTimeOffset;
-        }
-
-        private DateTime ParseDateTime(int outer)
-        {
-            DateTime dateTime;
-            if (!DateTime.TryParse(ParseString(0), System.Globalization.CultureInfo.CurrentCulture, System.Globalization.DateTimeStyles.RoundtripKind, out dateTime))
-                throw Error("Bad date/time");
-            return dateTime;
+            var ch = Space();
+            var e = false;
+            if (ch == '"')
+            {
+                Read();
+                while (true)
+                {
+                    if ((ch = chr) == '"') { Read(); return; }
+                    if (e = (ch == '\\')) ch = Read();
+                    if (ch < EOF) { if (!e || (ch >= 128)) Read(); else { Esc(ch); e = false; } } else break;
+                }
+            }
+            throw Error("Bad key");
         }
 
         private ItemInfo GetPropInfo(TypeInfo type)
