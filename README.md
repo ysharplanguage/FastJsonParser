@@ -382,6 +382,8 @@ Integral types support
 
 Starting with [version 2.0.0.0](https://www.nuget.org/packages/System.Text.Json), the following integral types are supported (including as possible [underlying types](http://msdn.microsoft.com/en-us/library/system.enum.getunderlyingtype(v=vs.110).aspx) of [enumeration types](http://msdn.microsoft.com/en-us/library/system.enum(v=vs.110).aspx)):
 
+([example](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L647))
+
 * [System.SByte (aka "sbyte" in C#)](http://msdn.microsoft.com/en-us/library/System.SByte.aspx)
 * [System.Byte (aka "byte")](http://msdn.microsoft.com/en-us/library/System.Byte.aspx)
 * [System.Int16 (aka "short")](http://msdn.microsoft.com/en-us/library/System.Int16.aspx)
@@ -406,7 +408,7 @@ Performance
 
 Following in the table below: a few figures, the outcome *average numbers* (only) that I obtain from the tests provided here.
 
-Consistently enough, I also obtain similar performance ratios for the same 4 parsers / deserializers when compared one-to-one, after I adapt (for this JsonParser doesn't provide object-to-JSON text *serialization*) and I run "the burning monk's" simple speed tester for JSON, which can be found at:
+Consistently enough, I also obtain similar performance ratios for the same 4 parsers / deserializers when compared one-to-one, after I adapt (for this [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) doesn't provide object-to-JSON text *serialization*) and I run "the burning monk's" simple speed tester for JSON, which can be found at:
 
 http://theburningmonk.com/2014/09/binary-and-json-benchmarks-updated
 
