@@ -200,7 +200,7 @@ namespace System.Text.Json
         internal class EnumInfo
         {
             internal string Name;
-            internal long Value;
+            internal object Value;
             internal int Len;
         }
 
@@ -239,10 +239,14 @@ namespace System.Text.Json
             {
                 WellKnown.Add(typeof(bool));
                 WellKnown.Add(typeof(char));
+                WellKnown.Add(typeof(sbyte));
                 WellKnown.Add(typeof(byte));
                 WellKnown.Add(typeof(short));
+                WellKnown.Add(typeof(ushort));
                 WellKnown.Add(typeof(int));
+                WellKnown.Add(typeof(uint));
                 WellKnown.Add(typeof(long));
+                WellKnown.Add(typeof(ulong));
                 WellKnown.Add(typeof(float));
                 WellKnown.Add(typeof(double));
                 WellKnown.Add(typeof(decimal));
@@ -281,7 +285,7 @@ namespace System.Text.Json
             {
                 var einfo = new Dictionary<string, EnumInfo>();
                 foreach (var name in System.Enum.GetNames(type))
-                    einfo.Add(name, new EnumInfo { Name = name, Value = Convert.ToInt64(System.Enum.Parse(type, name)), Len = name.Length });
+                    einfo.Add(name, new EnumInfo { Name = name, Value = System.Enum.Parse(type, name), Len = name.Length });
                 return einfo.OrderBy(pair => pair.Key).Select(pair => pair.Value).ToArray();
             }
 
@@ -555,6 +559,28 @@ namespace System.Text.Json
             throw Error("Bad character");
         }
 
+        private short ParseSByte(int outer)
+        {
+            sbyte it = 1, n = 0;
+            bool b = false, k;
+            int ch = Space();
+            TypeInfo t;
+            if (k = ((outer > 0) && (ch == '"')))
+            {
+                ch = Read();
+                if ((t = types[outer]).IsEnum && (ch != '-') && ((ch < '0') || (ch > '9')))
+                {
+                    var e = GetEnumInfo(t);
+                    if (e == null) throw Error(System.String.Format("Bad enum value ({0})", t.Type.FullName));
+                    return (sbyte)e.Value;
+                }
+            }
+            if (ch == '-') { ch = Read(); it = (sbyte)-it; }
+            while ((ch >= '0') && (ch <= '9') && (b = true)) { checked { n *= 10; n += (sbyte)(it * (ch - 48)); } ch = Read(); }
+            if (!b) throw Error("Bad number (sbyte)"); if (k) Next('"');
+            return n;
+        }
+
         private byte ParseByte(int outer)
         {
             bool b = false, k;
@@ -593,9 +619,30 @@ namespace System.Text.Json
                 }
             }
             if (ch == '-') { ch = Read(); it = (short)-it; }
-            while ((ch >= '0') && (ch <= '9') && (b = true)) { checked { n *= 10; n += (short)(ch - 48); } ch = Read(); }
+            while ((ch >= '0') && (ch <= '9') && (b = true)) { checked { n *= 10; n += (short)(it * (ch - 48)); } ch = Read(); }
             if (!b) throw Error("Bad number (short)"); if (k) Next('"');
-            return (short)checked(it * n);
+            return n;
+        }
+
+        private ushort ParseUInt16(int outer)
+        {
+            bool b = false, k;
+            int ch = Space();
+            ushort n = 0;
+            TypeInfo t;
+            if (k = ((outer > 0) && (ch == '"')))
+            {
+                ch = Read();
+                if ((t = types[outer]).IsEnum && ((ch < '0') || (ch > '9')))
+                {
+                    var e = GetEnumInfo(t);
+                    if (e == null) throw Error(System.String.Format("Bad enum value ({0})", t.Type.FullName));
+                    return (ushort)e.Value;
+                }
+            }
+            while ((ch >= '0') && (ch <= '9') && (b = true)) { checked { n *= 10; n += (ushort)(ch - 48); } ch = Read(); }
+            if (!b) throw Error("Bad number (ushort)"); if (k) Next('"');
+            return n;
         }
 
         private int ParseInt32(int outer)
@@ -615,9 +662,30 @@ namespace System.Text.Json
                 }
             }
             if (ch == '-') { ch = Read(); it = -it; }
-            while ((ch >= '0') && (ch <= '9') && (b = true)) { checked { n *= 10; n += (ch - 48); } ch = Read(); }
+            while ((ch >= '0') && (ch <= '9') && (b = true)) { checked { n *= 10; n += (it * (ch - 48)); } ch = Read(); }
             if (!b) throw Error("Bad number (int)"); if (k) Next('"');
-            return checked(it * n);
+            return n;
+        }
+
+        private uint ParseUInt32(int outer)
+        {
+            bool b = false, k;
+            int ch = Space();
+            uint n = 0;
+            TypeInfo t;
+            if (k = ((outer > 0) && (ch == '"')))
+            {
+                ch = Read();
+                if ((t = types[outer]).IsEnum && ((ch < '0') || (ch > '9')))
+                {
+                    var e = GetEnumInfo(t);
+                    if (e == null) throw Error(System.String.Format("Bad enum value ({0})", t.Type.FullName));
+                    return (uint)e.Value;
+                }
+            }
+            while ((ch >= '0') && (ch <= '9') && (b = true)) { checked { n *= 10; n += (uint)(ch - 48); } ch = Read(); }
+            if (!b) throw Error("Bad number (uint)"); if (k) Next('"');
+            return n;
         }
 
         private long ParseInt64(int outer)
@@ -633,13 +701,34 @@ namespace System.Text.Json
                 {
                     var e = GetEnumInfo(t);
                     if (e == null) throw Error(System.String.Format("Bad enum value ({0})", t.Type.FullName));
-                    return e.Value;
+                    return (long)e.Value;
                 }
             }
             if (ch == '-') { ch = Read(); it = -it; }
-            while ((ch >= '0') && (ch <= '9') && (b = true)) { checked { n *= 10; n += (ch - 48); } ch = Read(); }
+            while ((ch >= '0') && (ch <= '9') && (b = true)) { checked { n *= 10; n += (long)(it * (ch - 48)); } ch = Read(); }
             if (!b) throw Error("Bad number (long)"); if (k) Next('"');
-            return checked(it * n);
+            return n;
+        }
+
+        private ulong ParseUInt64(int outer)
+        {
+            bool b = false, k;
+            int ch = Space();
+            ulong n = 0;
+            TypeInfo t;
+            if (k = ((outer > 0) && (ch == '"')))
+            {
+                ch = Read();
+                if ((t = types[outer]).IsEnum && ((ch < '0') || (ch > '9')))
+                {
+                    var e = GetEnumInfo(t);
+                    if (e == null) throw Error(System.String.Format("Bad enum value ({0})", t.Type.FullName));
+                    return (ulong)e.Value;
+                }
+            }
+            while ((ch >= '0') && (ch <= '9') && (b = true)) { checked { n *= 10; n += (ulong)(ch - 48); } ch = Read(); }
+            if (!b) throw Error("Bad number (ulong)"); if (k) Next('"');
+            return n;
         }
 
         private float ParseSingle(int outer)
