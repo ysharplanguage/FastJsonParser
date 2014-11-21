@@ -396,7 +396,7 @@ Starting with [version 2.0.0.0](https://www.nuget.org/packages/System.Text.Json)
 Miscellaneous types support
 ---------------------------
 
-* Starting with [version 2.0.0.1](https://www.nuget.org/packages/System.Text.Json), [System.Guid](http://msdn.microsoft.com/en-us/library/System.Guid.aspx) is supported.
+* Starting with [version 2.0.0.1](https://www.nuget.org/packages/System.Text.Json), [System.Guid](http://msdn.microsoft.com/en-us/library/System.Guid.aspx) is supported ([example](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L647))
 
 <a name="Performance"></a>
 <a name="Performances"></a>
