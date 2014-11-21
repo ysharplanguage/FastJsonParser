@@ -105,16 +105,16 @@ namespace Test
 
     public interface ISomething
     {
+        // Notice how "Name" isn't introduced here yet, but only in the implementation class "Stuff"
         int Id { get; set; }
-        // Notice how "Name" isn't introduced here yet, but
-        // instead, only in the implementation class "Stuff"
-        // below:
     }
 
     public class Stuff : ISomething
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public ulong LargeUInt { get; set; }
+        public sbyte SmallInt1 { get; set; } public sbyte SmallInt2 { get; set; }
     }
 
     public class StuffHolder
@@ -651,12 +651,18 @@ namespace Test
                 },
                 {
                     ""__type"": ""Test.Stuff, Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
-                    ""Id"": 456, ""Name"": ""Bar""
+                    ""Id"": 456, ""Name"": ""Bar"",
+                    ""LargeUInt"": 18446744073709551615,
+                    ""SmallInt1"": 127,
+                    ""SmallInt2"": -128
                 }]}", s => new JsonParser().Parse<StuffHolder>(s));
             System.Diagnostics.Debug.Assert
             (
                 obj is StuffHolder && ((StuffHolder)obj).Items.Count == 2 &&
-                ((Stuff)((StuffHolder)obj).Items[1]).Name == "Bar"
+                ((Stuff)((StuffHolder)obj).Items[1]).Name == "Bar" &&
+                ((Stuff)((StuffHolder)obj).Items[1]).LargeUInt == ulong.MaxValue &&
+                ((Stuff)((StuffHolder)obj).Items[1]).SmallInt1 == sbyte.MaxValue &&
+                ((Stuff)((StuffHolder)obj).Items[1]).SmallInt2 == sbyte.MinValue
             );
 
             string configTestInputVendors = @"{
