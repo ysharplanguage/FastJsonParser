@@ -480,7 +480,7 @@ namespace Test
                 (nodes = scope.SelectNodes("$..book[?(@.isbn)]")).Length == 2
             );
 
-            // All books cheapier than 10
+            // All books cheaper than 10
             System.Diagnostics.Debug.Assert
             (
                 (nodes = scope.SelectNodes("$..book[?(@.price < 10m)]")).Length == 2
@@ -579,7 +579,7 @@ namespace Test
             #endregion
 #endif
 
-            // A few nominal cases[]
+            // A few nominal cases
             obj = UnitTest("null", s => new JsonParser().Parse(s));
             System.Diagnostics.Debug.Assert(obj == null);
 
