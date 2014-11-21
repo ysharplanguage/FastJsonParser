@@ -390,11 +390,11 @@ http://theburningmonk.com/2014/09/binary-and-json-benchmarks-updated
 
 <table border="1" width="100%">
 <tr>
-<th><a href="https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs">This<br/>JsonParser</a><br/>versus...</th>
+<th><a href="https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs">This<br/>JsonParser</a><br/>versus...</th>
 <th>Microsoft's<br/><a href="http://msdn.microsoft.com/en-us/library/system.web.script.serialization.javascriptserializer%28v=vs.100%29.aspx">JavaScript Serializer</a></th>
 <th>James Newton-King's<br/><a href="http://james.newtonking.com/json">Json.NET</a></th>
 <th>Demis<br/>Bellot's<br/><a href="https://github.com/ServiceStack/ServiceStack">ServiceStack</a></th>
-<th><a href="https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs">This<br/>JsonParser</a></th>
+<th><a href="https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs">This<br/>JsonParser</a></th>
 <th>Peter Ohler's<br/><a href="http://www.ohler.com/oj/">"Oj"</a><br/>C extension<br/>to Ruby</th>
 </tr>
 <tr>
@@ -440,7 +440,7 @@ So, without further ado... (larger figure - # parses per second - means faster)
 <th>Microsoft's<br/><a href="http://msdn.microsoft.com/en-us/library/system.web.script.serialization.javascriptserializer%28v=vs.100%29.aspx">JavaScript<br/>Serializer</a></th>
 <th>James<br/>Newton-<br/>King's<br/><a href="http://james.newtonking.com/json">Json.NET</a></th>
 <th>Demis<br/>Bellot's<br/><a href="https://github.com/ServiceStack/ServiceStack">ServiceStack</a></th>
-<th><a href="https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs">This<br/>JsonParser</a></th>
+<th><a href="https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs">This<br/>JsonParser</a></th>
 <th>Peter<br/>Ohler's <a href="http://www.ohler.com/oj/">"Oj"</a><br/>C extension<br/>to Ruby</th>
 </tr>
 <tr>
