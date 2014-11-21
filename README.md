@@ -379,7 +379,7 @@ where the "evaluator" is the same as the one defined in the [JSONPath section](#
 Integral types support
 ----------------------
 
-Starting with [version 2.0.0.0](https://www.nuget.org/packages/System.Text.Json), the following integral types are supported (including as possible underlying types of [enumeration types](http://msdn.microsoft.com/en-us/library/system.enum(v=vs.110).aspx)):
+Starting with [version 2.0.0.0](https://www.nuget.org/packages/System.Text.Json), the following integral types are supported (including as possible [underlying types](http://msdn.microsoft.com/en-us/library/system.enum.getunderlyingtype(v=vs.110).aspx) of [enumeration types](http://msdn.microsoft.com/en-us/library/system.enum(v=vs.110).aspx)):
 
 * [System.SByte (aka "sbyte" in C#)](http://msdn.microsoft.com/en-us/library/System.SByte.aspx)
 * [System.Byte (aka "byte")](http://msdn.microsoft.com/en-us/library/System.Byte.aspx)
