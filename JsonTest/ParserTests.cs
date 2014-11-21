@@ -529,7 +529,8 @@ namespace Test
 
             var anonymous = new JsonParser().Parse
             (
-                // Anonymous type instance prototype
+                // Anonymous type instance prototype, passed in
+                // solely for type inference by the C# compiler
                 OBJECT_MODEL,
 
                 // Input
