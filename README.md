@@ -131,7 +131,7 @@ I would then ask - "... in absence of more specific type information about the d
 
     "SomeNumber": 123.456
 
-should be deserialized into a [System.Single](http://msdn.microsoft.com/en-us/library/system.single(v=vs.100).aspx), a [System.Double](http://msdn.microsoft.com/en-us/library/system.double(v=vs.100).aspx), or a [System.Decimal](http://msdn.microsoft.com/en-us/library/system.decimal(v=vs.100).aspx) (but obviously not into some integer) - is it this parser, or is it the application?"
+should be deserialized into a [System.Single](http://msdn.microsoft.com/en-us/library/System.Single.aspx), a [System.Double](http://msdn.microsoft.com/en-us/library/System.Double.aspx), or a [System.Decimal](http://msdn.microsoft.com/en-us/library/System.Decimal.aspx) (but obviously not into some integer) - is it this parser, or is it the application?"
 
 In my opinion, *in that case*, it's the application.
 
