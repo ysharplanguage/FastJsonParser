@@ -281,7 +281,7 @@ E.g., the following [JSONPath](http://goessner.net/articles/JsonPath) expression
     $..book[0,1] // First two books
     $..book[:2] // First two books
     $..book[?(@.isbn)] // All books with an ISBN
-    $..book[?(@.price < 10m)] // All books cheapier than 10
+    $..book[?(@.price < 10m)] // All books cheaper than 10
 
 ***References***
 
@@ -323,7 +323,8 @@ Starting with [version 1.9.9.8](https://www.nuget.org/packages/System.Text.Json)
             
             var anonymous = new JsonParser().Parse
             (
-                // Anonymous type instance prototype
+                // Anonymous type instance prototype, passed in
+                // solely for type inference by the C# compiler
                 OBJECT_MODEL,
                 
                 // Input
@@ -849,4 +850,4 @@ Other questions?
 
 Let yourself go:
 
-ysharp {dot} design {at} gmail {dot} com
+ysharp (dot) design (at) gmail (dot) com
