@@ -5,6 +5,7 @@ System.Text.Json
 * <a href="#Interface">Public interface</a>
 * <a href="#JSONPath">JSONPath support</a> (&gt;= 1.9.9.7)
 * <a href="#AnonymousTypes">Anonymous types support</a> (&gt;= 1.9.9.8)
+* <a href="#IntegralTypes">Integral types support</a> (&gt;= 2.0.0.0)
 * <a href="#Performance">Performance</a>
     * <a href="#PerfOverview">Speed Tests Results : Overview</a>
     * <a href="#PerfDetailed">Speed Tests Results : Detailed</a>
@@ -372,6 +373,22 @@ Starting with [version 1.9.9.8](https://www.nuget.org/packages/System.Text.Json)
             );
 
 where the "evaluator" is the same as the one defined in the [JSONPath section](#JSONPath) of this document.
+
+<a name="IntegralTypes"></a>
+
+Integral types support
+----------------------
+
+Starting with [version 2.0.0.0](https://www.nuget.org/packages/System.Text.Json), the following integral types are supported (including as possible underlying types of [enumeration types](http://msdn.microsoft.com/en-us/library/system.enum(v=vs.110).aspx)):
+
+* [System.SByte (aka "sbyte" in C#)](http://msdn.microsoft.com/en-us/library/System.SByte.aspx)
+* [System.Byte (aka "byte")](http://msdn.microsoft.com/en-us/library/System.Byte.aspx)
+* [System.Int16 (aka "short")](http://msdn.microsoft.com/en-us/library/System.Int16.aspx)
+* [System.UInt16 (aka "ushort")](http://msdn.microsoft.com/en-us/library/System.UInt16.aspx)
+* [System.Int32 (aka "int")](http://msdn.microsoft.com/en-us/library/System.Int32.aspx)
+* [System.UInt32 (aka "uint")](http://msdn.microsoft.com/en-us/library/System.UInt32.aspx)
+* [System.Int64 (aka "long")](http://msdn.microsoft.com/en-us/library/System.Int64.aspx)
+* [System.UInt64 (aka "ulong")](http://msdn.microsoft.com/en-us/library/System.UInt64.aspx)
 
 <a name="Performance"></a>
 <a name="Performances"></a>
