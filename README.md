@@ -866,7 +866,7 @@ These are used by some of the above tests:
 Known limitations / caveats
 ---------------------------
 
-* The current [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) implementation is **neither** thread-safe or reentrant
+* The current [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) implementation is **neither** thread-safe or reentrant.
 
 <a name="Roadmap"></a>
 
