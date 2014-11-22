@@ -382,7 +382,7 @@ where the "evaluator" is the same as the one defined in the [JSONPath section](#
 Integral types support
 ----------------------
 
-Starting with [version 2.0.0.0](https://www.nuget.org/packages/System.Text.Json), the following integral types are supported (including as possible [underlying types](http://msdn.microsoft.com/en-us/library/system.enum.getunderlyingtype(v=vs.110).aspx) of [enumeration types](http://msdn.microsoft.com/en-us/library/system.enum(v=vs.110).aspx)):
+Starting with [version 2.0.0.0](https://www.nuget.org/packages/System.Text.Json), the following integral types are supported (including as possible [underlying types](http://msdn.microsoft.com/en-us/library/system.enum.getunderlyingtype(v=vs.110).aspx) of programmer-defined [enumeration types](http://msdn.microsoft.com/en-us/library/system.enum(v=vs.110).aspx)):
 
 ([example](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L647))
 
@@ -418,7 +418,7 @@ Miscellaneous types support
     * Guid?
     * DateTime?
     * DateTimeOffset?
-    * (as well as any programmer-defined nullable [enumeration type](http://msdn.microsoft.com/en-us/library/system.enum(v=vs.110).aspx))
+    * ... as well as any programmer-defined nullable [enumeration type](http://msdn.microsoft.com/en-us/library/system.enum(v=vs.110).aspx).
 
 <a name="Performance"></a>
 <a name="Performances"></a>
