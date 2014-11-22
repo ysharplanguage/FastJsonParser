@@ -1653,7 +1653,7 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
                 Delegate func;
                 if (!Bindings.Lambdas.TryGetValue(script, out func))
                 {
-                    string lambda = String.Format("(~ script, ~ value, ~ context) => (object)({0})", script.Replace("@", "value"));
+                    string lambda = String.Format("(string script, ~ value, string context) => (object)({0})", script.Replace("@", "value"));
                     type = typeof(Func<,,,>).MakeGenericType(typeof(string), (forFilter ? type : (target is IEnumerable ? type : typeof(object))), typeof(string), typeof(object));
                     func = (eval(lambda, type, lambda) as Delegate);
                     if (func != null) Bindings.Lambdas.Add(script, func);
