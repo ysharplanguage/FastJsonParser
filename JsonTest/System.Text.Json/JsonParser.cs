@@ -284,15 +284,17 @@ namespace System.Text.Json
 
             private EnumInfo[] GetEnumInfos(Type type)
             {
+                var actual = (type.IsGenericType && (type.GetGenericTypeDefinition() == typeof(Nullable<>)) ? type.GetGenericArguments()[0] : type);
                 var einfo = new Dictionary<string, EnumInfo>();
-                foreach (var name in System.Enum.GetNames(type))
-                    einfo.Add(name, new EnumInfo { Name = name, Value = System.Enum.Parse(type, name), Len = name.Length });
+                foreach (var name in System.Enum.GetNames(actual))
+                    einfo.Add(name, new EnumInfo { Name = name, Value = System.Enum.Parse(actual, name), Len = name.Length });
                 return einfo.OrderBy(pair => pair.Key).Select(pair => pair.Value).ToArray();
             }
 
             private ItemInfo GetItemInfo(Type type, string name, System.Reflection.MethodInfo setter)
             {
                 var method = new System.Reflection.Emit.DynamicMethod("Set" + name, null, new Type[] { typeof(object), typeof(JsonParser), typeof(int), typeof(int) }, typeof(string), true);
+                var nType = (type.IsGenericType && (type.GetGenericTypeDefinition() == typeof(Nullable<>)) ? new Type[] { type.GetGenericArguments()[0] } : null);
                 var parse = GetParserParse(GetParseName(type));
                 var il = method.GetILGenerator();
                 il.Emit(System.Reflection.Emit.OpCodes.Ldarg_0);
@@ -303,6 +305,8 @@ namespace System.Text.Json
                     il.Emit(System.Reflection.Emit.OpCodes.Unbox_Any, type);
                 if (parse.ReturnType.IsValueType && (type == typeof(object)))
                     il.Emit(System.Reflection.Emit.OpCodes.Box, parse.ReturnType);
+                if (nType != null)
+                    il.Emit(System.Reflection.Emit.OpCodes.Newobj, typeof(Nullable<>).MakeGenericType(nType).GetConstructor(nType));
                 il.Emit(System.Reflection.Emit.OpCodes.Callvirt, setter);
                 il.Emit(System.Reflection.Emit.OpCodes.Ret);
                 return new ItemInfo { Type = type, Name = name, Set = (Action<object, JsonParser, int, int>)method.CreateDelegate(typeof(Action<object, JsonParser, int, int>)), Len = name.Length };
@@ -315,6 +319,8 @@ namespace System.Text.Json
                 var eBrace = typeof(JsonParser).GetMethod("EBrace", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
                 var kColon = typeof(JsonParser).GetMethod("KColon", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
                 var sComma = typeof(JsonParser).GetMethod("SComma", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                var vnType = (value.IsGenericType && (value.GetGenericTypeDefinition() == typeof(Nullable<>)) ? new Type[] { value.GetGenericArguments()[0] } : null);
+                var knType = (value.IsGenericType && (key.GetGenericTypeDefinition() == typeof(Nullable<>)) ? new Type[] { key.GetGenericArguments()[0] } : null);
                 var vParse = GetParserParse(GetParseName(value));
                 var kParse = GetParserParse(GetParseName(key));
                 var il = method.GetILGenerator();
@@ -334,6 +340,8 @@ namespace System.Text.Json
                     il.Emit(System.Reflection.Emit.OpCodes.Unbox_Any, key);
                 if (kParse.ReturnType.IsValueType && (key == typeof(object)))
                     il.Emit(System.Reflection.Emit.OpCodes.Box, kParse.ReturnType);
+                if (knType != null)
+                    il.Emit(System.Reflection.Emit.OpCodes.Newobj, typeof(Nullable<>).MakeGenericType(knType).GetConstructor(knType));
                 il.Emit(System.Reflection.Emit.OpCodes.Stloc_0);
 
                 il.Emit(System.Reflection.Emit.OpCodes.Ldarg_1);
@@ -349,6 +357,8 @@ namespace System.Text.Json
                     il.Emit(System.Reflection.Emit.OpCodes.Unbox_Any, value);
                 if (vParse.ReturnType.IsValueType && (value == typeof(object)))
                     il.Emit(System.Reflection.Emit.OpCodes.Box, vParse.ReturnType);
+                if (vnType != null)
+                    il.Emit(System.Reflection.Emit.OpCodes.Newobj, typeof(Nullable<>).MakeGenericType(vnType).GetConstructor(vnType));
                 il.Emit(System.Reflection.Emit.OpCodes.Stloc_1);
 
                 il.Emit(System.Reflection.Emit.OpCodes.Ldarg_1);
@@ -369,8 +379,9 @@ namespace System.Text.Json
 
             protected string GetParseName(Type type)
             {
-                var typeName = (!WellKnown.Contains(type) ? ((type.IsEnum && WellKnown.Contains(GetEnumUnderlyingType(type))) ? GetEnumUnderlyingType(type).Name : null) : type.Name);
-                return ((typeName != null) ? String.Concat("Parse", typeName) : null);
+                var actual = (type.IsGenericType && (type.GetGenericTypeDefinition() == typeof(Nullable<>)) ? type.GetGenericArguments()[0] : type);
+                var name = (!WellKnown.Contains(actual) ? ((actual.IsEnum && WellKnown.Contains(GetEnumUnderlyingType(actual))) ? GetEnumUnderlyingType(actual).Name : null) : actual.Name);
+                return ((name != null) ? String.Concat("Parse", name) : null);
             }
 
             protected System.Reflection.MethodInfo GetParserParse(string pName)
@@ -384,7 +395,7 @@ namespace System.Text.Json
                 var infos = new Dictionary<string, ItemInfo>();
                 IsAnonymous = ((eType == null) && (type.Name[0] == '<') && type.IsSealed);
                 IsStruct = type.IsValueType;
-                IsEnum = type.IsEnum;
+                IsEnum = ((type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>)) ? type.GetGenericArguments()[0].IsEnum : type.IsEnum);
                 EType = eType;
                 Type = type;
                 T = self;
