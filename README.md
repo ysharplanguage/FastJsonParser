@@ -2,6 +2,7 @@ System.Text.Json
 ================
 
 * <a href="#Overview">Overview</a>
+* <a href="#Goal">Design goal</a>
 * <a href="#Interface">Public interface</a>
 * <a href="#JSONPath">JSONPath support</a> (&gt;= 1.9.9.7)
 * <a href="#AnonymousTypes">Anonymous types support</a> (&gt;= 1.9.9.8)
@@ -11,6 +12,7 @@ System.Text.Json
     * <a href="#PerfOverview">Speed Tests Results : Overview</a>
     * <a href="#PerfDetailed">Speed Tests Results : Detailed</a>
 * <a href="#POCOs">Test target POCOs</a>
+* <a href="#Limitations">Known limitations / caveats</a>
 * <a href="#Roadmap">Roadmap</a>
 * <a href="#Background">Background</a>
 
@@ -38,8 +40,8 @@ https://www.nuget.org/packages/System.Text.Json
 
 <a name="Goal"></a>
 
-Goal
-----
+Design goal
+-----------
 
 This aims at parsing textual JSON data, and to deserialize it into our (strongly typed) [POCO](http://en.wikipedia.org/wiki/Plain_Old_CLR_Object)s, as fast as possible.
 
@@ -859,6 +861,12 @@ These are used by some of the above tests:
             public string maidenName { get; set; }
         }
 
+<a name="Limitations"></a>
+
+Known limitations / caveats
+---------------------------
+
+* The current [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) implementation is **neither** thread-safe or reentrant
 
 <a name="Roadmap"></a>
 
@@ -877,8 +885,10 @@ In any case, I don't plan to make this small JSON deserializer as general-purpos
 
 <a name="Background"></a>
 
-"But, why this ad-hoc parser, and 'need for speed', anyway?"
-------------------------------------------------------------
+Background
+----------
+
+***"But, why this ad-hoc parser, and 'need for speed', anyway?"***
 
 "... Why do you even care, when you already have the excellent, fast, feature-rich [Json.NET](http://james.newtonking.com/json) and [ServiceStack](https://github.com/ServiceStack/ServiceStack) around?"
 
