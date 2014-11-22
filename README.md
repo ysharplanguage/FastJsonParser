@@ -416,7 +416,7 @@ Miscellaneous types support
     * Guid?
     * DateTime?
     * DateTimeOffset?
-    * (as well as any nullable [enumeration type](http://msdn.microsoft.com/en-us/library/system.enum(v=vs.110).aspx))
+    * (as well as any programmer-defined nullable [enumeration type](http://msdn.microsoft.com/en-us/library/system.enum(v=vs.110).aspx))
 
 <a name="Performance"></a>
 <a name="Performances"></a>
