@@ -399,6 +399,23 @@ Miscellaneous types support
 ---------------------------
 
 * Starting with [version 2.0.0.1](https://www.nuget.org/packages/System.Text.Json), [System.Guid](http://msdn.microsoft.com/en-us/library/System.Guid.aspx) is supported ([example](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L647))
+* Starting with [version 2.0.0.2](https://www.nuget.org/packages/System.Text.Json), some well-known [nullable types](http://msdn.microsoft.com/en-us/library/b3h38hb0.aspx) are supported ([example](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L647)) - these are:
+** bool?
+** char?
+** sbyte?
+** byte?
+** short?
+** ushort?
+** int?
+** uint?
+** long?
+** ulong?
+** float?
+** double?
+** decimal?
+** Guid?
+** DateTime?
+** DateTimeOffset?
 
 <a name="Performance"></a>
 <a name="Performances"></a>
