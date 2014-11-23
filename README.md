@@ -289,26 +289,26 @@ E.g., the following [JSONPath](http://goessner.net/articles/JsonPath) expression
     $.store // The store
     $['store'] // The store
     
-    // (Involves an <strong>object member selector</strong> lambda)
+    // (Involves an object member selector lambda)
     $.[((@ is Data) ? \"store\" : (string)null)] // The store
     
     $.store.book[3].title // Title of the fourth book
     
-    // (Involves an **object filter predicate** lambda)
+    // (Involves an object filter predicate lambda)
     $.store.book[?(@.author == \"Herman Melville\")].price // Price of Herman Melville's book
     
     $.store.book[*].author // Authors of all books in the store
     $.store..price // Price of everything in the store
     $..book[2] // Third book
     
-    // (Involves an **array member (index) selector** lambda)
+    // (Involves an array member (index) selector lambda)
     $..book[(@.Length - 1)] // Last book in order
     
     $..book[-1:] // Last book in order
     $..book[0,1] // First two books
     $..book[:2] // First two books
     
-    // (Involves an **object filter predicate** lambda)
+    // (Involves an object filter predicate lambda)
     $..book[?(@.isbn)] // All books with an ISBN
     
     // (Idem)
@@ -346,7 +346,7 @@ Starting with [version 1.9.9.8](https://www.nuget.org/packages/System.Text.Json)
                             initials = default(string),
                             DOB = default(DateTime),
                             citizen = default(bool),
-                            status = default(Status)
+                            status = default(Status) // (Enumeration type)
                         }
                     }
                 }
@@ -398,6 +398,7 @@ Starting with [version 1.9.9.8](https://www.nuget.org/packages/System.Text.Json)
             System.Diagnostics.Debug.Assert
             (
                 (nodes = scope.SelectNodes(@"$..people[?(!@.citizen)]")).Length == 1 &&
+                nodes.ArrayOf(OBJECT_MODEL.country.people[0])[0].Initials == "CJ" &&
                 nodes.ArrayOf(OBJECT_MODEL.country.people[0])[0].DOB == new DateTime(1970, 5, 10) &&
                 nodes.ArrayOf(OBJECT_MODEL.country.people[0])[0].status == Status.Single
             );
