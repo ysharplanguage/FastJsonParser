@@ -888,17 +888,11 @@ In any case, I don't plan to make this small JSON deserializer as general-purpos
 Background
 ----------
 
-***"But, why this ad-hoc parser, and 'need for speed', anyway?"***
-
-"... Why do you even care, when you already have the excellent, fast, feature-rich [Json.NET](http://james.newtonking.com/json) and [ServiceStack](https://github.com/ServiceStack/ServiceStack) around?"
-
-Indeed, pure parsing + deserialization speed isn't in fact my *long term* goal, or not for any *arbitrary* JSON input, anyway. For another, and broader project - still in design stage - that I have, I plan to use JSON as a "malleable" IR (intermediate representation) for code and meta data transformations that I'll have to make happen in-between a high level source language (e.g., C#, or F#,...) and the target CIL (or some other lower target).
+Pure parsing + deserialization speed isn't in fact my *long term* goal, or not for any *arbitrary* JSON input, anyway. For another, and broader project - still in design stage - that I have, I plan to use JSON as a "malleable" IR (intermediate representation) for code and meta data transformations that I'll have to make happen in-between a high level source language (e.g., C#, or F#,...) and the target CIL (or some other lower target).
 
 [Json.NET](http://james.newtonking.com/json)'s deserialization performance is great, and so is [ServiceStack](https://github.com/ServiceStack/ServiceStack)'s - [really, they are, already](http://theburningmonk.com/benchmarks/) - but I would like to have something of my own in my toolbox much smaller / more manageable (in terms of # of SLOC), and simpler to extend, for whatever unforeseen requirements of the deserialization process (from JSON text into CLR types and values) I may have to tackle.
 
-From an earlier experiment on that other project, I found out that I will *not* need a *generic* way to solve a *specific* deserialization sub-problem very efficiently (which nobody can really do - as there is "no silver bullet" / "one size fits all" for that matter), but instead I will only need a *specific* way to solve it efficiently, by extending this small parser's functionality only where and how that's exactly needed (while trying to maintain its good performance).
-
-Finally, this parser / deserializer is / was a nice learning opportunity for me with parsing JSON, and to verify by myself once again [what I had read about](http://msdn.microsoft.com/en-us/magazine/cc507639.aspx) and experienced many times before. That is: never try to merely guess about performance, but instead always do your best to measure and to find out *where exactly* the parsing and deserialization slowdowns (and memory consumption costs) *actually* come from.
+This parser / deserializer is / was also a nice learning opportunity in regards to parsing JSON, and to verify by myself once again [what I had read about](http://msdn.microsoft.com/en-us/magazine/cc507639.aspx) and experienced many times before. That is: never try to merely guess about performance, but instead always do your best to measure and to find out *where exactly* the parsing and deserialization slowdowns (and memory consumption costs) *actually* come from.
 
 Other questions?
 ----------------
