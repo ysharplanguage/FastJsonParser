@@ -33,7 +33,7 @@ The complete source code of the parser is pretty short (in a [single source file
 
 The console test program includes a few unit tests (for both nominal cases vs. error cases), and it will attempt to execute them before the speed tests - see [ParserTests.cs](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/ParserTests.cs).
 
-Do not hesitate to add more of the former (i.e., unit tests) and to raise here whatever issues you may find.
+**Do not hesitate** to add more of the former (i.e., unit tests) and **raise here whatever issues** you may find.
 
 There's a link to this repository at [json.org](http://www.json.org/) (in the C# implementations section).
 
@@ -70,15 +70,15 @@ For convenience:
 Development status
 ------------------
 
-Although it is promisingly fast, lightweight, and easy to use, please note this parser / deserializer is still experimental.
+Although it is promisingly fast, lightweight, and easy to use, please note this parser / deserializer is still *mostly* experimental.
 
-I do *not* recommend it for any use in production, at this point. This may or may not evolve soon, but for one simple thing to begin with, it's in need of more comprehensive JSON conformance tests.
+For one simple thing to begin with, it is in need of *more comprehensive* JSON conformance tests.
 
-That being said, just feel free to [fork / bugfix / augment / improve it](https://github.com/ysharplanguage/FastJsonParser/graphs/contributors) at your own will.
+That said, just feel free to [fork / bugfix / augment / improve it](https://github.com/ysharplanguage/FastJsonParser/graphs/contributors) at your own will.
 
 Of course, I welcome your informed input and feedback.
 
-Please read and accept the terms of the [LICENSE](https://github.com/ysharplanguage/FastJsonParser/blob/master/LICENSE.md), or else, do not use this library.
+**Please read and accept** the terms of the [LICENSE](https://github.com/ysharplanguage/FastJsonParser/blob/master/LICENSE.md), or else, do not use this library.
 
 <a name="Interface"></a>
 
