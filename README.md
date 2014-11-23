@@ -386,14 +386,14 @@ Starting with [version 2.0.0.0](https://www.nuget.org/packages/System.Text.Json)
 
 ([example](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L647))
 
-* [System.SByte (aka "sbyte" in C#)](http://msdn.microsoft.com/en-us/library/System.SByte.aspx)
+* [System.SByte (aka "sbyte" in C#)](http://msdn.microsoft.com/en-us/library/System.SByte.aspx) (new in 2.0.0.0)
 * [System.Byte (aka "byte")](http://msdn.microsoft.com/en-us/library/System.Byte.aspx)
 * [System.Int16 (aka "short")](http://msdn.microsoft.com/en-us/library/System.Int16.aspx)
-* [System.UInt16 (aka "ushort")](http://msdn.microsoft.com/en-us/library/System.UInt16.aspx)
+* [System.UInt16 (aka "ushort")](http://msdn.microsoft.com/en-us/library/System.UInt16.aspx) (new in 2.0.0.0)
 * [System.Int32 (aka "int")](http://msdn.microsoft.com/en-us/library/System.Int32.aspx)
-* [System.UInt32 (aka "uint")](http://msdn.microsoft.com/en-us/library/System.UInt32.aspx)
+* [System.UInt32 (aka "uint")](http://msdn.microsoft.com/en-us/library/System.UInt32.aspx) (new in 2.0.0.0)
 * [System.Int64 (aka "long")](http://msdn.microsoft.com/en-us/library/System.Int64.aspx)
-* [System.UInt64 (aka "ulong")](http://msdn.microsoft.com/en-us/library/System.UInt64.aspx)
+* [System.UInt64 (aka "ulong")](http://msdn.microsoft.com/en-us/library/System.UInt64.aspx) (new in 2.0.0.0)
 
 <a name="MiscellaneousTypes"></a>
 
