@@ -59,11 +59,11 @@ http://forums.xamarin.com/discussion/comment/39011/#Comment_39011
 Available on NuGet
 ------------------
 
+( https://www.nuget.org/packages/System.Text.Json )
+
 For convenience:
 
-**PM&gt; Install-Package** [System.Text.Json](https://www.nuget.org/packages/System.Text.Json)
-
-( https://www.nuget.org/packages/System.Text.Json )
+PM&gt; Install-Package [System.Text.Json](https://www.nuget.org/packages/System.Text.Json)
 
 <a name="Status"></a>
 
