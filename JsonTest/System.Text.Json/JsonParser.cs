@@ -155,11 +155,11 @@ namespace System.Text.Json
     {
         internal bool Validate()
         {
-            return ((TypeCacheCapacity > 3) && (InputBufferSize > 0));
+            return ((StringBufferLength > byte.MaxValue) && (TypeCacheCapacity > byte.MaxValue));
         }
 
+        public int StringBufferLength { get; set; }
         public int TypeCacheCapacity { get; set; }
-        public int InputBufferSize { get; set; }
     }
 
     public class JsonParser
@@ -174,8 +174,6 @@ namespace System.Text.Json
         private static readonly bool[] IDN = new bool[128];
         private const int EOF = (char.MaxValue + 1);
         private const int ANY = 0;
-        private const int LBS = 512;
-        private const int TDS = 256;
 
         private IDictionary<Type, int> rtti = new Dictionary<Type, int>();
         private TypeInfo[] types;
@@ -191,7 +189,6 @@ namespace System.Text.Json
         private Func<int> Space;
         private string txt;
         private int lbs;
-        private int tds;
         private int len;
         private int lln;
         private int chr;
@@ -1141,17 +1138,15 @@ namespace System.Text.Json
 
         public JsonParser(JsonParserOptions options)
         {
-            options = (options ?? new JsonParserOptions { TypeCacheCapacity = TDS, InputBufferSize = LBS });
+            options = (options ?? new JsonParserOptions { StringBufferLength = (byte.MaxValue + 1), TypeCacheCapacity = (byte.MaxValue + 1) });
             if (!options.Validate()) throw new ArgumentException("Invalid JSON parser options", "options");
-            tds = options.TypeCacheCapacity;
-            lbs = options.InputBufferSize;
+            lbf = new char[lbs = options.StringBufferLength];
+            types = new TypeInfo[options.TypeCacheCapacity];
             parse['n'] = Null; parse['f'] = False; parse['t'] = True;
             parse['0'] = parse['1'] = parse['2'] = parse['3'] = parse['4'] =
             parse['5'] = parse['6'] = parse['7'] = parse['8'] = parse['9'] =
             parse['-'] = Num; parse['"'] = Str; parse['{'] = Obj; parse['['] = Arr;
             for (var input = 0; input < 128; input++) parse[input] = (parse[input] ?? Error);
-            types = new TypeInfo[tds];
-            lbf = new char[lbs];
             Entry(typeof(object));
             Entry(typeof(List<object>));
             Entry(typeof(char));
