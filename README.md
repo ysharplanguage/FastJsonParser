@@ -2,8 +2,10 @@ System.Text.Json
 ================
 
 * <a href="#Overview">Overview</a>
-* <a href="#NuGet">On NuGet</a>
-* <a href="#Goal">Design goal</a>
+    * <a href="#Introduction">Introduction</a>
+    * <a href="#Goal">Design goal</a>
+    * <a href="#NuGet">On NuGet</a>
+    * <a href="#Status">Development status</a>
 * <a href="#Interface">Public interface</a>
 * <a href="#JSONPath">JSONPath support</a> (&gt;= 1.9.9.7)
 * <a href="#AnonymousTypes">Anonymous types support</a> (&gt;= 1.9.9.8)
@@ -19,6 +21,8 @@ System.Text.Json
 
 <a name="Overview"></a>
 
+<a name="Introduction"></a>
+
 "Small is beautiful."
 ---------------------
 
@@ -31,15 +35,6 @@ The console test program includes a few unit tests (for both nominal cases vs. e
 Do not hesitate to add more of the former (i.e., unit tests) and to raise here whatever issues you may find.
 
 There's a link to this repository at [json.org](http://www.json.org/) (in the C# implementations section).
-
-<a name="NuGet"></a>
-
-Available on NuGet
-------------------
-
-For convenience:
-
-https://www.nuget.org/packages/System.Text.Json
 
 <a name="Goal"></a>
 
@@ -58,8 +53,19 @@ Nevertheless, [Sami](https://github.com/sami1971) has just recently been able to
 
 http://forums.xamarin.com/discussion/comment/39011/#Comment_39011
 
-Early development status warning
---------------------------------
+<a name="NuGet"></a>
+
+Available on NuGet
+------------------
+
+For convenience:
+
+https://www.nuget.org/packages/System.Text.Json
+
+<a name="Status"></a>
+
+Development status
+------------------
 
 Although it is promisingly fast, lightweight, and easy to use, please note this parser / deserializer is still experimental.
 
