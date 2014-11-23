@@ -5,7 +5,7 @@ System.Text.Json
     * <a href="#Introduction">Introduction</a>
     * <a href="#Goal">Design goal</a>
     * <a href="#NuGet">Available on NuGet</a>
-        * *PM&gt; Install-Package* [System.Text.Json](https://www.nuget.org/packages/System.Text.Json)
+        * **PM&gt; Install-Package** [System.Text.Json](https://www.nuget.org/packages/System.Text.Json)
     * <a href="#Status">Development status</a>
 * <a href="#Interface">Public interface</a>
 * <a href="#JSONPath">JSONPath support</a> (&gt;= 1.9.9.7)
