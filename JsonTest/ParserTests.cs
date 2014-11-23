@@ -3,14 +3,13 @@
 #define RUN_UNIT_TESTS
 #define RUN_BASIC_JSONPATH_TESTS
 #define RUN_ADVANCED_JSONPATH_TESTS
-//#define RUN_SERVICESTACK_TESTS
+#define RUN_SERVICESTACK_TESTS
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-
 // For the JavaScriptSerializer
 using System.Web.Script.Serialization;
 
@@ -299,6 +298,7 @@ namespace Test
         private static readonly string TINY_TEST_FILE_PATH = string.Format(@"..{0}..{0}TestData{0}tiny.json.txt", Path.DirectorySeparatorChar);
         private static readonly string DICOS_TEST_FILE_PATH = string.Format(@"..{0}..{0}TestData{0}dicos.json.txt", Path.DirectorySeparatorChar);
         private static readonly string SMALL_TEST_FILE_PATH = string.Format(@"..{0}..{0}TestData{0}small.json.txt", Path.DirectorySeparatorChar);
+        private static readonly string TWITTER_TEST_FILE_PATH = string.Format(@"..{0}..{0}TestData{0}twitter.json.txt", Path.DirectorySeparatorChar);
         private static readonly string FATHERS_TEST_FILE_PATH = string.Format(@"..{0}..{0}TestData{0}fathers.json.txt", Path.DirectorySeparatorChar);
         private static readonly string HUGE_TEST_FILE_PATH = string.Format(@"..{0}..{0}TestData{0}huge.json.txt", Path.DirectorySeparatorChar);
 
@@ -401,6 +401,7 @@ namespace Test
 
 #if RUN_ADVANCED_JSONPATH_TESTS
             var typed = new JsonParser().Parse<Data>(input); // (Data typed = ...)
+
             scope = new JsonPathSelection(typed, evaluator); // Cache the JsonPathSelection and its lambdas compiled on-demand (at run-time) by the evaluator.
             nodes = scope.SelectNodes("$.store.book[?(@.title == \"The Lord of the Rings\")].price");
             System.Diagnostics.Debug.Assert
@@ -425,10 +426,9 @@ namespace Test
             // And this, as well. To compare with the above '... nodes = scope.SelectNodes("$.store.book[3].title")'
             nodes = scope.
                 SelectNodes
-                (
-                // JSONPath expression template...
+                (   // JSONPath expression template...
                     "$.[{0}].[{1}][{2}].[{3}]",
-                // ... interpolated with these compile-time lambdas:
+                    // ... interpolated with these compile-time lambdas:
                     (script, value, context) => "store", // Member selector (by name)
                     (script, value, context) => "book", // Member selector (by name)
                     (script, value, context) => 1, // Member selector (by index)
@@ -1066,6 +1066,15 @@ namespace Test
             LoopTest(GetVersionString(typeof(JsonParser).Assembly.GetName()), new JsonParser().Parse, SMALL_TEST_FILE_PATH, 100000);
 
 #if !THIS_JSON_PARSER_ONLY
+            LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<TwitterSample.RootObject>, TWITTER_TEST_FILE_PATH, 1000000);
+            LoopTest(GetVersionString(typeof(JsonConvert).Assembly.GetName()), JsonConvert.DeserializeObject<TwitterSample.RootObject>, TWITTER_TEST_FILE_PATH, 1000000);
+#if RUN_SERVICESTACK_TESTS
+            LoopTest("ServiceStack", new JsonSerializer<TwitterSample.RootObject>().DeserializeFromString, TWITTER_TEST_FILE_PATH, 1000000);
+#endif
+#endif
+            LoopTest(GetVersionString(typeof(JsonParser).Assembly.GetName()), new JsonParser().Parse<TwitterSample.RootObject>, TWITTER_TEST_FILE_PATH, 1000000);
+
+#if !THIS_JSON_PARSER_ONLY
             var msJss = new JavaScriptSerializer() { MaxJsonLength = int.MaxValue };
             Test(typeof(JavaScriptSerializer).FullName, msJss.Deserialize<FathersData>, FATHERS_TEST_FILE_PATH);
             Test(GetVersionString(typeof(JsonConvert).Assembly.GetName()), JsonConvert.DeserializeObject<FathersData>, FATHERS_TEST_FILE_PATH);
@@ -1372,5 +1381,92 @@ namespace Test
 #endif
             SpeedTests();
         }
+    }
+}
+
+namespace TwitterSample
+{
+    public class Url
+    {
+        public object expanded_url { get; set; }
+        public string url { get; set; }
+        public List<int> indices { get; set; }
+    }
+
+    public class UserMention
+    {
+        public string name { get; set; }
+        public string id_str { get; set; }
+        public int id { get; set; }
+        public List<int> indices { get; set; }
+        public string screen_name { get; set; }
+    }
+
+    public class Entities
+    {
+        public List<Url> urls { get; set; }
+        public List<object> hashtags { get; set; }
+        public List<UserMention> user_mentions { get; set; }
+    }
+
+    public class User
+    {
+        public string profile_sidebar_border_color { get; set; }
+        public string name { get; set; }
+        public string profile_sidebar_fill_color { get; set; }
+        public bool profile_background_tile { get; set; }
+        public string profile_image_url { get; set; }
+        public string location { get; set; }
+        public string created_at { get; set; }
+        public string id_str { get; set; }
+        public bool follow_request_sent { get; set; }
+        public string profile_link_color { get; set; }
+        public int favourites_count { get; set; }
+        public string url { get; set; }
+        public bool contributors_enabled { get; set; }
+        public int utc_offset { get; set; }
+        public int id { get; set; }
+        public bool profile_use_background_image { get; set; }
+        public int listed_count { get; set; }
+        public bool @protected { get; set; }
+        public string lang { get; set; }
+        public string profile_text_color { get; set; }
+        public int followers_count { get; set; }
+        public string time_zone { get; set; }
+        public bool verified { get; set; }
+        public bool geo_enabled { get; set; }
+        public string profile_background_color { get; set; }
+        public bool notifications { get; set; }
+        public string description { get; set; }
+        public int friends_count { get; set; }
+        public string profile_background_image_url { get; set; }
+        public int statuses_count { get; set; }
+        public string screen_name { get; set; }
+        public bool following { get; set; }
+        public bool show_all_inline_media { get; set; }
+    }
+
+    public class RootObject
+    {
+        public object coordinates { get; set; }
+        public string created_at { get; set; }
+        public bool favorited { get; set; }
+        public bool truncated { get; set; }
+        public string id_str { get; set; }
+        public Entities entities { get; set; }
+        public object in_reply_to_user_id_str { get; set; }
+        public string text { get; set; }
+        public object contributors { get; set; }
+        public long id { get; set; }
+        public object retweet_count { get; set; }
+        public object in_reply_to_status_id_str { get; set; }
+        public object geo { get; set; }
+        public bool retweeted { get; set; }
+        public object in_reply_to_user_id { get; set; }
+        public User user { get; set; }
+        public object in_reply_to_screen_name { get; set; }
+        public string source { get; set; }
+        public object place { get; set; }
+        public object in_reply_to_status_id { get; set; }
     }
 }
