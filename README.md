@@ -289,7 +289,7 @@ E.g., the following [JSONPath](http://goessner.net/articles/JsonPath) expression
     $.store // The store
     $['store'] // The store
     
-    // (Involves an **object member selector** lambda)
+    // (Involves an <strong>object member selector</strong> lambda)
     $.[((@ is Data) ? \"store\" : (string)null)] // The store
     
     $.store.book[3].title // Title of the fourth book
