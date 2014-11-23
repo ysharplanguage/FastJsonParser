@@ -158,7 +158,7 @@ JSONPath support
 
 Starting with [version 1.9.9.7](https://www.nuget.org/packages/System.Text.Json), Stefan Gössner's [JSONPath](http://goessner.net/articles/JsonPath) is also supported. For a classic example, in four steps:
 
-\#1 :
+Step \#1, have an object model / type system to hydrate :
 
              namespace Test
              {
@@ -188,7 +188,7 @@ Starting with [version 1.9.9.7](https://www.nuget.org/packages/System.Text.Json)
                 }
              }
 
-\#2 :
+Step \#2, have some JSON input :
 
             string input = @"
               { ""store"": {
@@ -224,7 +224,7 @@ Starting with [version 1.9.9.7](https://www.nuget.org/packages/System.Text.Json)
             }
             ";
 
-\#3 :
+(Optional) step \#3, have an evaluator delegate ready to compile [JSONPath member selectors or filter predicates](http://goessner.net/articles/JsonPath/#e2) that the [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49)'s [SelectNodes(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L57) method may come across :
 
             JsonPathScriptEvaluator evaluator =
                (script, value, context) =>
@@ -244,7 +244,7 @@ Note there is a **basic** ( * ) lambda expression parser & compiler - [Expressio
 
 (* N.B. **not** all of the C\# 3.0+ syntax is supported by [ExpressionParser](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/LambdaCompilation.cs#L608) (e.g., the [Linq Query Comprehension Syntax](http://msdn.microsoft.com/en-us/library/bb397947(v=vs.90).aspx) isn't) - only the most common expression forms, including unary / binary / ternary operators, array & dictionary indexers "[ ]", instance and static method calls, "is", "as", "typeof" type system operators, ... etc.)
 
-\#4 :
+Step \#4, (a) parse the JSON input into the target object model, (b) wrap a [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49) instance around the latter, and (c) invoke the [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49)'s [SelectNodes(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L57) method with the [JSONPath](http://goessner.net/articles/JsonPath) expression(s) of interest to query the data :
 
             var typed = new JsonParser().Parse<Data>(input); // (Data typed = ...)
             
@@ -262,7 +262,7 @@ Note there is a **basic** ( * ) lambda expression parser & compiler - [Expressio
                 nodes.ArrayOf<decimal>()[0] == 22.99m
             );
 
-The purpose of this "evaluator", passed here as an optional argument to the [JsonPathSelection constructor](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L55), is for the [SelectNodes(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L57) method afterwards to be able to compile on-demand whatever lambda expression delegates are required to implement [JSONPath expressions for member selectors or filter predicates](http://goessner.net/articles/JsonPath/#e2), such as
+Thus, the purpose of this "evaluator", passed here as an optional argument to the [JsonPathSelection constructor](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L55), is for the [SelectNodes(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L57) method to be able to compile on-demand whatever lambda expression delegates are required to implement [JSONPath expressions for member selectors or filter predicates](http://goessner.net/articles/JsonPath/#e2), such as
 
     ?(@.title == \"The Lord of the Rings\")
 
@@ -276,7 +276,7 @@ corresponding to the actual lambda expression script prepared behind the scene:
 
     (string script, Book value, string context) => (object)(value.title == "The Lord of the Rings")
     
-There is thus type inference - performed at run-time by the [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49)'s [SelectNodes(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L57) method - on the second argument (and only that one, named "value") of the evaluator-produced, cached delegates.
+There is thus type inference - performed at run-time by the [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49)'s [SelectNodes(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L57) method - regarding the second argument (and only that one, named "value") of the evaluator-produced, cached delegates.
 
 Finally, notice how those delegates' static return type is in fact [System.Object](http://msdn.microsoft.com/en-us/library/System.Object.aspx) (and not [System.Boolean](http://msdn.microsoft.com/en-us/library/System.Boolean.aspx)), for uniformity with the more general member selector expression, as used as an [alternative to explicit names or indices](http://goessner.net/articles/JsonPath/#e2).
 
@@ -879,6 +879,7 @@ Known limitations / caveats
 ---------------------------
 
 * The current [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) implementation is **neither** thread-safe or reentrant.
+    * (Work is underway to make [the "Parse" methods of the public interface](#Interface) *at least* reentrant for any given [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) instance.)
 
 <a name="Roadmap"></a>
 
