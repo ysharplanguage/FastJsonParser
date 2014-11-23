@@ -156,9 +156,11 @@ In my opinion, *in that case*, it's the application.
 JSONPath support
 ----------------
 
-Starting with [version 1.9.9.7](https://www.nuget.org/packages/System.Text.Json), Stefan Gössner's [JSONPath](http://goessner.net/articles/JsonPath) is also supported. For a classic example, in four steps:
+Starting with [version 1.9.9.7](https://www.nuget.org/packages/System.Text.Json), Stefan Gössner's [JSONPath](http://goessner.net/articles/JsonPath) is also supported.
 
-Step \#1, have an object model / type system to hydrate :
+For a reference example, in three or four steps:
+
+**Step \#1**, have an object model / type system to hydrate :
 
              namespace Test
              {
@@ -188,7 +190,7 @@ Step \#1, have an object model / type system to hydrate :
                 }
              }
 
-Step \#2, have some JSON input :
+**Step \#2**, have some JSON input data :
 
             string input = @"
               { ""store"": {
@@ -224,7 +226,7 @@ Step \#2, have some JSON input :
             }
             ";
 
-(Optional) step \#3, have an evaluator delegate ready to compile [JSONPath member selectors or filter predicates](http://goessner.net/articles/JsonPath/#e2) that the [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49)'s [SelectNodes(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L57) method may come across :
+(Optional) **step \#3**, have an evaluator delegate ready to compile [JSONPath member selectors or filter predicates](http://goessner.net/articles/JsonPath/#e2) that the [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49)'s [SelectNodes(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L57) method may come across :
 
             JsonPathScriptEvaluator evaluator =
                (script, value, context) =>
@@ -244,7 +246,7 @@ Note there is a **basic** ( * ) lambda expression parser & compiler - [Expressio
 
 (* N.B. **not** all of the C\# 3.0+ syntax is supported by [ExpressionParser](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/LambdaCompilation.cs#L608) (e.g., the [Linq Query Comprehension Syntax](http://msdn.microsoft.com/en-us/library/bb397947(v=vs.90).aspx) isn't) - only the most common expression forms, including unary / binary / ternary operators, array & dictionary indexers "[ ]", instance and static method calls, "is", "as", "typeof" type system operators, ... etc.)
 
-Step \#4, (a) parse the JSON input into the target object model, (b) wrap a [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49) instance around the latter, and (c) invoke the [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49)'s [SelectNodes(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L57) method with the [JSONPath](http://goessner.net/articles/JsonPath) expression(s) of interest to query the data :
+**Step \#4**, (a) parse the JSON input into the target object model, (b) wrap a [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49) instance around the latter, and (c) invoke the [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49)'s [SelectNodes(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L57) method with the [JSONPath](http://goessner.net/articles/JsonPath) expression(s) of interest to query the data :
 
             var typed = new JsonParser().Parse<Data>(input); // (Data typed = ...)
             
@@ -286,17 +288,30 @@ E.g., the following [JSONPath](http://goessner.net/articles/JsonPath) expression
 
     $.store // The store
     $['store'] // The store
+    
+    // (Involves an **object member selector** lambda)
     $.[((@ is Data) ? \"store\" : (string)null)] // The store
+    
     $.store.book[3].title // Title of the fourth book
+    
+    // (Involves an **object filter predicate** lambda)
     $.store.book[?(@.author == \"Herman Melville\")].price // Price of Herman Melville's book
+    
     $.store.book[*].author // Authors of all books in the store
     $.store..price // Price of everything in the store
     $..book[2] // Third book
+    
+    // (Involves an **array member (index) selector** lambda)
     $..book[(@.Length - 1)] // Last book in order
+    
     $..book[-1:] // Last book in order
     $..book[0,1] // First two books
     $..book[:2] // First two books
+    
+    // (Involves an **object filter predicate** lambda)
     $..book[?(@.isbn)] // All books with an ISBN
+    
+    // (Idem)
     $..book[?(@.price < 10m)] // All books cheaper than 10
 
 ***References***
