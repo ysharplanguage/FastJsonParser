@@ -2,6 +2,7 @@ System.Text.Json
 ================
 
 * <a href="#Overview">Overview</a>
+* <a href="#NuGet">NuGet-ready</a>
 * <a href="#Goal">Design goal</a>
 * <a href="#Interface">Public interface</a>
 * <a href="#JSONPath">JSONPath support</a> (&gt;= 1.9.9.7)
@@ -31,8 +32,10 @@ Do not hesitate to add more of the former (i.e., unit tests) and to raise here w
 
 There's a link to this repository at [json.org](http://www.json.org/) (in the C# implementations section).
 
-Also available on NuGet
------------------------
+<a name="NuGet"></a>
+
+Available on NuGet
+------------------
 
 For convenience:
 
