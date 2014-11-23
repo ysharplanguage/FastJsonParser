@@ -33,7 +33,7 @@ The complete source code of the parser is pretty short (in a [single source file
 
 The console test program includes a few unit tests (for both nominal cases vs. error cases), and it will attempt to execute them before the speed tests - see [ParserTests.cs](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/ParserTests.cs).
 
-**Do not hesitate** to add more of the former (i.e., unit tests) and **raise here whatever issues** you may find.
+**Do not hesitate** to add more of the former (i.e., unit tests) and/or to **raise here whatever issues** you may find.
 
 There's a link to this repository at [json.org](http://www.json.org/) (in the C# implementations section).
 
