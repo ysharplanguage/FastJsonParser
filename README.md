@@ -2,7 +2,7 @@ System.Text.Json
 ================
 
 * <a href="#Overview">Overview</a>
-* <a href="#NuGet">NuGet-ready</a>
+* <a href="#NuGet">On NuGet</a>
 * <a href="#Goal">Design goal</a>
 * <a href="#Interface">Public interface</a>
 * <a href="#JSONPath">JSONPath support</a> (&gt;= 1.9.9.7)
