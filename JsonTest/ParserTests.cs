@@ -1066,13 +1066,13 @@ namespace Test
             LoopTest(GetVersionString(typeof(JsonParser).Assembly.GetName()), new JsonParser().Parse, SMALL_TEST_FILE_PATH, 100000);
 
 #if !THIS_JSON_PARSER_ONLY
-            LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<TwitterSample.RootObject>, TWITTER_TEST_FILE_PATH, 1000000);
-            LoopTest(GetVersionString(typeof(JsonConvert).Assembly.GetName()), JsonConvert.DeserializeObject<TwitterSample.RootObject>, TWITTER_TEST_FILE_PATH, 1000000);
+            LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<TwitterSample.RootObject>, TWITTER_TEST_FILE_PATH, 100000);
+            LoopTest(GetVersionString(typeof(JsonConvert).Assembly.GetName()), JsonConvert.DeserializeObject<TwitterSample.RootObject>, TWITTER_TEST_FILE_PATH, 100000);
 #if RUN_SERVICESTACK_TESTS
-            LoopTest("ServiceStack", new JsonSerializer<TwitterSample.RootObject>().DeserializeFromString, TWITTER_TEST_FILE_PATH, 1000000);
+            LoopTest("ServiceStack", new JsonSerializer<TwitterSample.RootObject>().DeserializeFromString, TWITTER_TEST_FILE_PATH, 100000);
 #endif
 #endif
-            LoopTest(GetVersionString(typeof(JsonParser).Assembly.GetName()), new JsonParser().Parse<TwitterSample.RootObject>, TWITTER_TEST_FILE_PATH, 1000000);
+            LoopTest(GetVersionString(typeof(JsonParser).Assembly.GetName()), new JsonParser().Parse<TwitterSample.RootObject>, TWITTER_TEST_FILE_PATH, 100000);
 
 #if !THIS_JSON_PARSER_ONLY
             var msJss = new JavaScriptSerializer() { MaxJsonLength = int.MaxValue };
