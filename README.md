@@ -895,7 +895,7 @@ These are used by some of the above tests:
 Known limitations / caveats
 ---------------------------
 
-* The current [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) implementation is **neither** thread-safe or reentrant.
+* The current [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs)'s instance methods implementation is **neither** thread-safe or reentrant.
     * (Work is underway to make [the "Parse" methods of the public interface](#Interface) *at least* reentrant for any given [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) instance.)
 
 <a name="Roadmap"></a>
@@ -903,7 +903,7 @@ Known limitations / caveats
 Roadmap
 -------
 
-None really worth of the name for now.
+None really worth of the name for now (beyond what is mentioned in "[known limitations](#Limitations)" above).
 
 <s>However, one thing I would like to support as soon as I can, is the ability to deserialize into [C#'s anonymous types](http://en.wikipedia.org/wiki/Anonymous_type). I've done it before, but I need to put more thinking into it (vs. [my first, other attempt at it](https://code.google.com/p/ysharp/source/browse/trunk/TestJSONParser/%28System.Text.Json%29Parser.cs)), in order to avoid the potential significant loss in performance I'm aware of.</s>
 
