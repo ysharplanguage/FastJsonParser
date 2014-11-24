@@ -287,10 +287,10 @@ More [JSONPath](http://goessner.net/articles/JsonPath) usage examples (after JSO
 E.g., the following [JSONPath](http://goessner.net/articles/JsonPath) expressions work as expected, in [version 1.9.9.7](https://www.nuget.org/packages/System.Text.Json) and up:
 
     $.store // The store
-    $['store'] // The store
+    $['store'] // (Idem) The store
     
     // (Involves an object member selector lambda)
-    $.[((@ is Data) ? \"store\" : (string)null)] // The store
+    $.[((@ is Data) ? \"store\" : (string)null)] // (Idem) The store
     
     $.store.book[3].title // Title of the fourth book
     
@@ -304,15 +304,16 @@ E.g., the following [JSONPath](http://goessner.net/articles/JsonPath) expression
     // (Involves an array member (index) selector lambda)
     $..book[(@.Length - 1)] // Last book in order
     
-    $..book[-1:] // Last book in order
+    $..book[-1:] // (Idem) Last book in order
+    
     $..book[0,1] // First two books
-    $..book[:2] // First two books
+    $..book[:2] // (Idem) First two books
     
     // (Involves an object filter predicate lambda)
     $..book[?(@.isbn)] // All books with an ISBN
     
     // (Idem)
-    $..book[?(@.price < 10m)] // All books cheaper than 10
+    $..book[?(@.price < 10m)] // (Idem) All books cheaper than 10
 
 ***References***
 
