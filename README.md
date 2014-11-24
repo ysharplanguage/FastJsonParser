@@ -50,7 +50,7 @@ For now ( * ), the only tiers of interest for this parser are the desktop / serv
 
 This JSON parser / deserializer thus aims first at staying "simple", short, fast, and for use by some desktop- or server-side code that would require the full .NET anyway, and unlikely to ever be usable on mobile devices (unless those can eventually run the full .NET).
 
-Nevertheless, [Sami](https://github.com/sami1971) has just recently been able to do a quick performance test on his Android device (as the code could luckily compile for it *as-is*), and came up with a few benchmark results (a dozen or so) which do seem encouraging - i.e., see this thread of Xamarin's Android forum:
+Nevertheless, [Sami](https://github.com/sami1971) has just recently been able to do a quick performance test on his Android device (as the code could luckily compile for it *as-is*), and came up with a few benchmark results (a dozen or so) which do seem encouraging - i.e., see this thread of Xamarin's Android forum :
 
 http://forums.xamarin.com/discussion/comment/39011/#Comment_39011
 
@@ -61,7 +61,7 @@ Available on NuGet
 
 ( https://www.nuget.org/packages/System.Text.Json )
 
-For convenience:
+For convenience :
 
 PM&gt; Install-Package [System.Text.Json](https://www.nuget.org/packages/System.Text.Json)
 
@@ -85,7 +85,7 @@ Of course, I welcome your informed input and feedback.
 Public interface
 ----------------
 
-Consists mainly in these six (three generic ones, and three non-generic ones) *instance* methods:
+Consists mainly in these six (three generic ones, and three non-generic ones) *instance* methods :
 
     T Parse<T>(string input)
 
@@ -115,11 +115,11 @@ Note that if you don't care (i.e., don't need / don't want to bother) deserializ
 
     object
 
-for the generic type argument, as in, e.g.:
+for the generic type argument, as in, e.g. :
 
     parser.Parse<object>(@" [ { ""greetings"": ""hello"" } ] ")
 
-or, equivalently, just:
+or, equivalently, just :
 
     parser.Parse(@" [ { ""greetings"": ""hello"" } ] ")
     
@@ -133,13 +133,13 @@ instances, for JSON *objects* which are unordered sets of name / value pairs, an
    
 instances, for JSON *arrays* which are ordered collections of values.
 
-The leaves will be from any of these types:
+The leaves will be from any of these types :
 
     null type
     bool
     string
 
-In this case of, say, "loosely typed" deserialization, you may ask: "But what about the JSON number literals in the input - why deserializing them as *strings*?"
+In this case of, say, "loosely typed" deserialization, you may ask : "But what about the JSON number literals in the input - why deserializing them as *strings*?"
 
 I would then ask - "... in absence of more specific type information about the deserialization target, *"who"* is likely best placed to decide whether the number after the colon, in
 
@@ -158,7 +158,7 @@ JSONPath support
 
 Starting with [version 1.9.9.7](https://www.nuget.org/packages/System.Text.Json), Stefan Gössner's [JSONPath](http://goessner.net/articles/JsonPath) is also supported.
 
-For a reference example, in three or four steps:
+For a reference example, in three or four steps :
 
 **Step \#1**, have an object model / type system to hydrate :
 
@@ -241,7 +241,7 @@ For a reference example, in three or four steps:
                   :
                   null;
 
-where the delegate type [JsonPathScriptEvaluator](https://code.google.com/p/jsonpath/source/browse/trunk/src/cs/JsonPath.cs?spec=svn56&r=53#57) is defined as:
+where the delegate type [JsonPathScriptEvaluator](https://code.google.com/p/jsonpath/source/browse/trunk/src/cs/JsonPath.cs?spec=svn56&r=53#57) is defined as :
 
             delegate object JsonPathScriptEvaluator(string script, object value, string context)
 
@@ -275,11 +275,11 @@ Thus, the purpose of this "evaluator", passed here as an optional argument to th
 
 above.
 
-In this same example, the lambda expression delegate compiled by the evaluator (and then cached into the "scope" [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49) instance) is of type:
+In this same example, the lambda expression delegate compiled by the evaluator (and then cached into the "scope" [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49) instance) is of type
 
     Func<string, Book, string, object>
     
-corresponding to the actual lambda expression script prepared behind the scene:
+corresponding to the actual lambda expression script prepared behind the scene :
 
     (string script, Book value, string context) => (object)(value.title == "The Lord of the Rings")
     
@@ -289,7 +289,7 @@ Finally, notice how those delegates' static return type is in fact [System.Objec
 
 More [JSONPath](http://goessner.net/articles/JsonPath) usage examples (after JSON deserialization by [System.Text.Json.JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs)) can be found [here](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L333).
 
-E.g., the following [JSONPath](http://goessner.net/articles/JsonPath) expressions work as expected, in [version 1.9.9.7](https://www.nuget.org/packages/System.Text.Json) and up:
+E.g., the following [JSONPath](http://goessner.net/articles/JsonPath) expressions work as expected, in [version 1.9.9.7](https://www.nuget.org/packages/System.Text.Json) and up :
 
     $.store // The store
     $['store'] // (Idem) The store
@@ -336,7 +336,7 @@ E.g., the following [JSONPath](http://goessner.net/articles/JsonPath) expression
 Anonymous types support
 -----------------------
 
-Starting with [version 1.9.9.8](https://www.nuget.org/packages/System.Text.Json), the deserialization into anonymous types instances is also supported. [Here is an example](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L510) to get started:
+Starting with [version 1.9.9.8](https://www.nuget.org/packages/System.Text.Json), the deserialization into anonymous types instances is also supported. [Here is an example](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L510) to get started :
 
             // Anonymous type instance prototype of the target object model,
             // used for static type inference by the C# compiler (see below)
@@ -415,7 +415,7 @@ where the "evaluator" is the same as the one defined in the [JSONPath section](#
 Integral types support
 ----------------------
 
-Starting with [version 2.0.0.0](https://www.nuget.org/packages/System.Text.Json), the following integral types are supported (including as possible [underlying types](http://msdn.microsoft.com/en-us/library/system.enum.getunderlyingtype(v=vs.110).aspx) of programmer-defined [enumeration types](http://msdn.microsoft.com/en-us/library/system.enum(v=vs.110).aspx)):
+Starting with [version 2.0.0.0](https://www.nuget.org/packages/System.Text.Json), the following integral types are supported (including as possible [underlying types](http://msdn.microsoft.com/en-us/library/system.enum.getunderlyingtype(v=vs.110).aspx) of programmer-defined [enumeration types](http://msdn.microsoft.com/en-us/library/system.enum(v=vs.110).aspx)) :
 
 ([example](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L647))
 
@@ -434,7 +434,7 @@ Miscellaneous types support
 ---------------------------
 
 * Starting with [version 2.0.0.1](https://www.nuget.org/packages/System.Text.Json), [System.Guid](http://msdn.microsoft.com/en-us/library/System.Guid.aspx) is supported ([example](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L647))
-* Starting with [version 2.0.0.2](https://www.nuget.org/packages/System.Text.Json), some well-known [nullable types](http://msdn.microsoft.com/en-us/library/b3h38hb0.aspx) are supported ([example](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L647)) - these are, in C# syntax:
+* Starting with [version 2.0.0.2](https://www.nuget.org/packages/System.Text.Json), some well-known [nullable types](http://msdn.microsoft.com/en-us/library/b3h38hb0.aspx) are supported ([example](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L647)) - these are, in C# syntax :
     * bool?
     * char?
     * sbyte?
@@ -461,7 +461,7 @@ Performance
 
 Following in the table below: a few figures, the outcome *average numbers* (only) that I obtain from the tests provided here.
 
-Consistently enough, I also obtain similar performance ratios for the same 4 parsers / deserializers when compared one-to-one, after I adapt (for this [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) doesn't provide object-to-JSON text *serialization*) and I run "the burning monk's" simple speed tester for JSON, which can be found at:
+Consistently enough, I also obtain similar performance ratios for the same 4 parsers / deserializers when compared one-to-one, after I adapt (for this [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) doesn't provide object-to-JSON text *serialization*) and I run "the burning monk's" simple speed tester for JSON, which can be found at :
 
 http://theburningmonk.com/2014/09/binary-and-json-benchmarks-updated
 
@@ -637,7 +637,7 @@ So, without further ado... (larger figure - # parses per second - means faster)
 </tr>
 </table>
 
-The same, with the test files and timings details: 
+The same, with the test files and timings details :
 
 (smaller time means faster)
 
@@ -645,7 +645,7 @@ The same, with the test files and timings details:
 
 ***Peter's "Oj Strict Mode Performance" test***
 
-* "Loop" Test over Peter's "Oj Strict Mode Performance" sample (deserializing x times the JSON contained in the [_oj-highly-nested.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/_oj-highly-nested.json.txt) file = 257 bytes) - "loosely-typed" deserialization:
+* "Loop" Test over Peter's "Oj Strict Mode Performance" sample (deserializing x times the JSON contained in the [_oj-highly-nested.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/_oj-highly-nested.json.txt) file = 257 bytes) - "loosely-typed" deserialization :
     * Performed 10,000 iterations: in ~ 235 milliseconds ( * )
         * vs. JavaScriptSerializer in ~ 875 milliseconds (... **272 %** slower)
         * vs. Json.NET in ~ 805 milliseconds (... **242 %** slower)
@@ -659,7 +659,7 @@ The same, with the test files and timings details:
     * [_oj-highly-nested.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/_oj-highly-nested.json.txt) comes from Peter's sample and tests, at:
         * http://www.ohler.com/dev/oj_misc/performance_strict.html
 
-I find the JSON data sample from Peter interesting for its non-trivial "shape", and the presence of these "highly nested" arrays (so to speak) at end of the payload:
+I find the JSON data sample from Peter interesting for its non-trivial "shape", and the presence of these "highly nested" arrays (so to speak) at end of the payload :
 
     {"a":"Alpha","b":true,"c":12345,"d":[true,[false,[-123456789,null],3.9676,
     ["Something else.",false],null]],"e":{"zero":null,"one":1,"two":2,"three":[3],"four":[0,1,2,3,4]},
@@ -672,7 +672,7 @@ unfortunately, quite unfamiliar with ServiceStack, I'm still trying to understan
 
 ***Rick's "Boon" small test***
 
-* Rick's "Boon" small test, slightly modified (deserializing x times the JSON contained in the [boon-small.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/boon-small.json.txt) file = 79 bytes) - with POCO target (1 class):
+* Rick's "Boon" small test, slightly modified (deserializing x times the JSON contained in the [boon-small.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/boon-small.json.txt) file = 79 bytes) - with POCO target (1 class) :
     * Performed 1,000,000 iterations: in ~ 3.83 seconds ( * )
         * vs. JavaScriptSerializer in ~ 31.5 seconds (... **722 %** slower)
         * vs. Json.NET in ~ 7.15 seconds (... **86 %** slower)
@@ -684,7 +684,7 @@ unfortunately, quite unfamiliar with ServiceStack, I'm still trying to understan
         * vs. ServiceStack in ~ 54.8 seconds (... **48 %** slower)
         * ( * Which yields System.Text.Json.JsonParser's throughput : 21,379,664 bytes / second)
 
-Rick's original test can be found at:
+Rick's original test can be found at :
 
 http://rick-hightower.blogspot.com/2013/11/benchmark-for-json-parsing-boon-scores.html
 
@@ -692,7 +692,7 @@ Note Rick is one of our fellows from the Java realm - and from [his own comparat
 
 ***"Tiny JSON" test***
 
-* "Loop" Test over tiny JSON (deserializing x times the JSON contained in the [tiny.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/tiny.json.txt) file = 127 bytes) - with POCO target (1 class):
+* "Loop" Test over tiny JSON (deserializing x times the JSON contained in the [tiny.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/tiny.json.txt) file = 127 bytes) - with POCO target (1 class) :
     * Performed 10,000 iterations: in ~ 56 milliseconds (pretty good) ( * )
         * vs. JavaScriptSerializer in ~ 550 milliseconds (... **882 %** slower)
         * vs. Json.NET in ~ 250 milliseconds (... **346 %** slower)
@@ -714,7 +714,7 @@ Note Rick is one of our fellows from the Java realm - and from [his own comparat
 
 ***"Dicos JSON" test***
 
-* "Loop" Test over JSON "dictionaries" (deserializing x times the JSON contained in the [dicos.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/dicos.json.txt) file = 922 bytes) - with POCO target (1 class):
+* "Loop" Test over JSON "dictionaries" (deserializing x times the JSON contained in the [dicos.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/dicos.json.txt) file = 922 bytes) - with POCO target (1 class) :
     * Performed 10,000 iterations: in ~ 239 milliseconds (pretty good) ( * )
         * vs. JavaScriptSerializer... N / A
         * vs. Json.NET in ~ 1,525 milliseconds (... **538 %** slower)
@@ -736,7 +736,7 @@ Note: this reads "JavaScriptSerializer... N / A" for this test because I couldn'
 
 ***"Small JSON" test***
 
-* "Loop" Test over small JSON (deserializing x times the JSON contained in the [small.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/small.json.txt) file ~ 3.5 KB) - "loosely-typed" deserialization:
+* "Loop" Test over small JSON (deserializing x times the JSON contained in the [small.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/small.json.txt) file ~ 3.5 KB) - "loosely-typed" deserialization :
     * Performed 10,000 iterations: in ~ 1.14 second (pretty good) ( * )
         * vs. JavaScriptSerializer in ~ 6.7 seconds (... **488 %** slower)
         * vs. Json.NET in ~ 2.2 seconds (... **93 %** slower)
@@ -752,13 +752,13 @@ Note: this reads "JavaScriptSerializer... N / A" for this test because I couldn'
 
 ***"Fathers JSON" test***
 
-* "Fathers" Test (12 MB JSON file) - with POCO targets (4 distinct classes):
+* "Fathers" Test (12 MB JSON file) - with POCO targets (4 distinct classes) :
     * Parsed in ~ 285 milliseconds ( * )
         * vs. JavaScriptSerializer in ~ 2.6 seconds (... **812 %** slower)
         * vs. Json.NET in ~ 500 milliseconds (... **75 %** slower)
         * vs. ServiceStack in ~ 575 milliseconds (... **101 %** slower)
         * ( * Which yields System.Text.Json.JsonParser's throughput : 45,494,340 bytes / second)
-    * Note: [fathers.json.txt](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/TestData/fathers.json.txt) was generated using this nifty online helper:
+    * Note: [fathers.json.txt](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/TestData/fathers.json.txt) was generated using this nifty online helper :
         * http://experiments.mennovanslooten.nl/2010/mockjson/tryit.html
 
 The latter, "fathers" test, is the one with the results that intrigued me the most the very first few times I ran it - and it still does. However, I haven't taken the time yet to do more serious profiling to fully explain these timing differences that I didn't expect to be *that significant*.
@@ -767,7 +767,7 @@ They are also interesting to notice, if only when comparing Json.NET vs. Service
 
 ***"Huge JSON" test***
 
-* "Huge" Test (180 MB JSON file) - "loosely-typed" deserialization:
+* "Huge" Test (180 MB JSON file) - "loosely-typed" deserialization :
     * Parsed in ~ 8.3 seconds ( * )
         * vs. JavaScriptSerializer in ~ 62 seconds (... **646 %** slower)
         * vs. Json.NET... OutOfMemoryException
@@ -781,7 +781,7 @@ They are also interesting to notice, if only when comparing Json.NET vs. Service
 Test target POCOs
 -----------------
 
-These are used by some of the above tests:
+These are used by some of the above tests :
 
         // Used in the "boon-small.json" test
         public class BoonSmall
@@ -936,10 +936,10 @@ CFAQ
 
 (Could-be Frequently Asked Questions)
 
-* Q: Isn't it a bit confusing, somehow, that [the "Parse" methods of the public interface](#Interface) do actually more than just parse the input against [the JSON syntax](http://www.json.org/), but also perform the work that most other JSON implementations call "Deserialize"?
-    * A: **Yes** and **no**. It is indeed true that [these "Parse" methods](#Interface) do more than just parse the input, but they have been named that way because this [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) is designed to remain only that : *merely* a JSON **parser** and **deserializer**, thus *without* any JSON *serialization*-related feature. By not naming them "Deserialize", this helps to avoid another otherwise possible confusion as to why there are no "Serialize" methods to be found anywhere, w.r.t. the dual operation (*serialization* vs. *deserialization*).
-* Q: Do you foresee that you'll make any breaking changes to [the public interface](#Interface) in the near-, mid-, or long-term?
-    * A: For [most of it](#Interface), **no**, I should not and I won't. The only [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs)'s instance methods that may be subject to change / to some refactoring (or disappear altogether) in the future, are those taking that last "IDictionary&lt;Type, Func&lt;...&gt;&gt; mappers" parameter (for now a rudimentary provision to support custom filtered deserialization use cases). So, all of the following are definitely going to stay around for as long as [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) is developed and maintained here:
+* Q : Isn't it a bit confusing, somehow, that [the "Parse" methods of the public interface](#Interface) do actually more than just parse the input against [the JSON syntax](http://www.json.org/), but also perform the work that most other JSON implementations call "Deserialize"?
+    * A : **Yes** and **no**. It is indeed true that [these "Parse" methods](#Interface) do more than just parse the input, but they have been named that way because this [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) is designed to remain only that : *merely* a JSON **parser** and **deserializer**, thus *without* any JSON *serialization*-related feature. By not naming them "Deserialize", this helps to avoid another otherwise possible confusion as to why there are no "Serialize" methods to be found anywhere, w.r.t. the dual operation (*serialization* vs. *deserialization*).
+* Q : Do you foresee that you'll make any breaking changes to [the public interface](#Interface) in the near-, mid-, or long-term?
+    * A : For [most of it](#Interface), **no**, I should not and I won't. The only [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs)'s instance methods that may be subject to change / to some refactoring (or disappear altogether) in the future, are those taking that last "IDictionary&lt;Type, Func&lt;...&gt;&gt; mappers" parameter (for now a rudimentary provision to support custom filtered deserialization use cases). So, all of the following are definitely going to stay around for as long as [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) is developed and maintained here :
 
 [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs)'s (public)
 
@@ -961,6 +961,6 @@ CFAQ
 Other questions?
 ----------------
 
-Feel free to send them to:
+Feel free to send them to :
 
 ysharp {dot} design {at} gmail {dot} com
