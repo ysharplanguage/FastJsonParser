@@ -385,7 +385,7 @@ namespace Test
                 nodes != null &&
                 nodes.Length == 1 &&
                 nodes[0].Value is string &&
-                nodes.ArrayOf<string>()[0] == "The Lord of the Rings"
+                nodes[0].As<string>() == "The Lord of the Rings"
             );
 
             scope = new JsonPathSelection(untyped, evaluator); // Cache the JsonPathSelection and its lambdas compiled on-demand (at run-time) by the evaluator.
@@ -395,7 +395,7 @@ namespace Test
                 nodes != null &&
                 nodes.Length == 1 &&
                 nodes[0].Value is string &&
-                nodes.ArrayOf<string>()[0] == "The Lord of the Rings"
+                nodes[0].As<string>() == "The Lord of the Rings"
             );
 #endif
 
@@ -409,7 +409,7 @@ namespace Test
                 nodes != null &&
                 nodes.Length == 1 &&
                 nodes[0].Value is decimal &&
-                nodes.ArrayOf<decimal>()[0] == 22.99m
+                nodes[0].As<decimal>() == 22.99m
             );
 
             // Yup. This works too.
