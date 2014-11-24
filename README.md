@@ -78,7 +78,7 @@ That said, just feel free to [fork / bugfix / augment / improve it](https://gith
 
 Of course, I welcome your informed input and feedback.
 
-**Please read and accept** the terms of the [LICENSE](https://github.com/ysharplanguage/FastJsonParser/blob/master/LICENSE.md), or else, do not use this library *as-is*.
+**Please read and accept** the terms of the [LICENSE](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/LICENSE.md), or else, do not use this library *as-is*.
 
 <a name="Interface"></a>
 
