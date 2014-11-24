@@ -400,11 +400,10 @@ Starting with [version 1.9.9.8](https://www.nuget.org/packages/System.Text.Json)
                 );
                 
             scope = new JsonPathSelection(anonymous, evaluator);
-            
             System.Diagnostics.Debug.Assert
             (
                 (nodes = scope.SelectNodes(@"$..people[?(!@.citizen)]")).Length == 1 &&
-                nodes.ArrayOf(OBJECT_MODEL.country.people[0])[0].Initials == "CJ" &&
+                nodes.ArrayOf(OBJECT_MODEL.country.people[0])[0].initials == "CJ" &&
                 nodes.ArrayOf(OBJECT_MODEL.country.people[0])[0].DOB == new DateTime(1970, 5, 10) &&
                 nodes.ArrayOf(OBJECT_MODEL.country.people[0])[0].status == Status.Single
             );
