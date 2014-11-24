@@ -231,7 +231,7 @@ For a reference example, in three or four steps:
             JsonPathScriptEvaluator evaluator =
                (script, value, context) =>
                   ((value is Type) && (context == script)) ?
-                  // value == typeof(Func<string, T, string, object>),
+                  // This holds: (value as Type) == typeof(Func<string, T, string, object>),
                   // with T inferred by JsonPathSelection::SelectNodes(...)
                   ExpressionParser.Parse
                   (
