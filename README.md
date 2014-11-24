@@ -352,7 +352,7 @@ Starting with [version 1.9.9.8](https://www.nuget.org/packages/System.Text.Json)
                             initials = default(string),
                             DOB = default(DateTime),
                             citizen = default(bool),
-                            status = default(Status) // (Enumeration type)
+                            status = default(Status) // (Marital "Status" enumeration type)
                         }
                     }
                 }
