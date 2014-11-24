@@ -247,7 +247,7 @@ where the delegate type [JsonPathScriptEvaluator](https://code.google.com/p/json
 
 Note there is a **basic** ( * ) lambda expression parser & compiler - [ExpressionParser](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/LambdaCompilation.cs#L608) (adapted from Zhucai's "lambda-parser", at [http://code.google.com/p/lambda-parser](http://code.google.com/p/lambda-parser)) defined in the namespace "[System.Text.Json.JsonPath.LambdaCompilation](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/LambdaCompilation.cs#L606)" - used here as a helper to implement the above "evaluator".
 
-(* N.B. **not** all of the C\# 3.0+ syntax is supported by [ExpressionParser](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/LambdaCompilation.cs#L608) (e.g., the [Linq Query Comprehension Syntax](http://msdn.microsoft.com/en-us/library/bb397947(v=vs.90).aspx) isn't) - only the most common expression forms, including unary / binary / ternary operators, array & dictionary indexers "[ ]", instance and static method calls, "is", "as", "typeof" type system operators, ... etc.)
+(* N.B. : **not** all of the C\# 3.0+ syntax is supported by [ExpressionParser](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/LambdaCompilation.cs#L608) (e.g., the [Linq Query Comprehension Syntax](http://msdn.microsoft.com/en-us/library/bb397947(v=vs.90).aspx) isn't) - only the most common expression forms, including unary / binary / ternary operators, array & dictionary indexers "[ ]", instance and static method calls, "is", "as", "typeof" type system operators, ... etc.)
 
 **Step \#3 or \#4**, (a) parse and deserialize the JSON input into the target object model, (b) wrap a [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49) instance around the latter, and (c) invoke the [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49)'s [SelectNodes(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L57) method with the [JSONPath](http://goessner.net/articles/JsonPath) expression(s) of interest to query the object model :
 
@@ -666,7 +666,7 @@ I find the JSON data sample from Peter interesting for its non-trivial "shape", 
     "f":null,"h":{"a":{"b":{"c":{"d":{"e":{"f":{"g":null}}}}}}},
     "i":[[[[[[[null]]]]]]]}
 
-As for that "vs. ServiceStack in... N / A":
+As for that "vs. ServiceStack in... N / A" :
 
 unfortunately, quite unfamiliar with ServiceStack, I'm still trying to understand how, in absence of POCOs, to have it deserialize into merely trees of dictionaries + lists or arrays (just as we can do very easily using Json.NET, or Microsoft's JavaScriptSerializer, or this parser here).
 
@@ -732,7 +732,7 @@ Note Rick is one of our fellows from the Java realm - and from [his own comparat
         * ( * Which yields System.Text.Json.JsonParser's throughput : 35,788,984 bytes / second)
     * [dicos.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/dicos.json.txt)
 
-Note: this reads "JavaScriptSerializer... N / A" for this test because I couldn't get Microsoft's JavaScriptSerializer to deserialize [dicos.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/dicos.json.txt)'s data properly... and easily.
+Note this reads "JavaScriptSerializer... N / A" for this test because I couldn't get Microsoft's JavaScriptSerializer to deserialize [dicos.json.txt](https://raw.github.com/ysharplanguage/FastJsonParser/master/JsonTest/TestData/dicos.json.txt)'s data properly... and easily.
 
 ***"Small JSON" test***
 
