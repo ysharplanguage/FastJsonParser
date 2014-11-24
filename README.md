@@ -251,15 +251,15 @@ Note there is a **basic** ( * ) lambda expression parser & compiler - [Expressio
 
 **Step \#3 or \#4**, (a) parse the JSON input into the target object model, (b) wrap a [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49) instance around the latter, and (c) invoke the [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49)'s [SelectNodes(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L57) method with the [JSONPath](http://goessner.net/articles/JsonPath) expression(s) of interest to query the data :
 
-            var typed = new JsonParser().Parse<Data>(input); // (Data typed = ...)
-            JsonPathSelection scope;
-            JsonPathNode[] nodes;
+            // (Data typed = ...)
+            var typed = new JsonParser().Parse<Data>(input);
 
             // Cache the JsonPathSelection and its lambdas compiled on-demand (at run-time)
             // by the evaluator.
-            scope = new JsonPathSelection(typed, evaluator);
+            var scope = new JsonPathSelection(typed, evaluator);
             
-            nodes = scope.SelectNodes("$.store.book[?(@.title == \"The Lord of the Rings\")].price");
+            // (JsonPathNode[] nodes = ...)
+            var nodes = scope.SelectNodes("$.store.book[?(@.title == \"The Lord of the Rings\")].price");
             
             System.Diagnostics.Debug.Assert
             (
