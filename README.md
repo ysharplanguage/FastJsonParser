@@ -899,8 +899,8 @@ These are used by some of the above tests:
 Known limitations / caveats
 ---------------------------
 
-* The current [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs)'s instance methods implementation is **neither** thread-safe or reentrant.
-    * (Work is underway to make [the "Parse" methods of the public interface](#Interface) *at least* reentrant for any given [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) instance.)
+* The current [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs)'s instance methods implementation is **neither** [thread-safe or reentrant](http://en.wikipedia.org/wiki/Thread_safety#Implementation_approaches).
+    * (Work is underway to make [the "Parse" methods of the public interface](#Interface) *at least* [reentrant](http://en.wikipedia.org/wiki/Reentrancy_(computing)#Rules_for_reentrancy) for any given [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) instance.)
 
 <a name="Roadmap"></a>
 
