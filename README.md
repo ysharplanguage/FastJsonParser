@@ -230,9 +230,14 @@ For a reference example, in three or four steps:
 
             JsonPathScriptEvaluator evaluator =
                (script, value, context) =>
-                  ((value is Type) && (context == script))
-                  ?
-                  ExpressionParser.Parse((Type)value, script, true, typeof(Data).Namespace).Compile()
+                  ((value is Type) && (context == script)) ?
+                  // value == typeof(Func<string, T, string, object>),
+                  // with T inferred by JsonPathSelection::SelectNodes(...)
+                  ExpressionParser.Parse
+                  (
+                     (Type)value, script, true, typeof(Data).Namespace
+                  ).
+                  Compile()
                   :
                   null;
             JsonPathSelection scope;
