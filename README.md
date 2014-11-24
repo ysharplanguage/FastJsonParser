@@ -18,6 +18,7 @@ System.Text.Json
 * <a href="#Limitations">Known limitations / caveats</a>
 * <a href="#Roadmap">Roadmap</a>
 * <a href="#Background">Background</a>
+* <a href="#FAQ">CFAQ</a>
 
 <a name="Overview"></a>
 
@@ -77,7 +78,7 @@ That said, just feel free to [fork / bugfix / augment / improve it](https://gith
 
 Of course, I welcome your informed input and feedback.
 
-**Please read and accept** the terms of the [LICENSE](https://github.com/ysharplanguage/FastJsonParser/blob/master/LICENSE.md), or else, do not use this library.
+**Please read and accept** the terms of the [LICENSE](https://github.com/ysharplanguage/FastJsonParser/blob/master/LICENSE.md), or else, do not use this library *as-is*.
 
 <a name="Interface"></a>
 
@@ -900,6 +901,7 @@ Known limitations / caveats
 
 * The current [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs)'s instance methods implementation is **neither** [thread-safe or reentrant](http://en.wikipedia.org/wiki/Thread_safety#Implementation_approaches).
     * (Work is underway to make [the "Parse" methods of the public interface](#Interface) *at least* [reentrant](http://en.wikipedia.org/wiki/Reentrancy_(computing)#Rules_for_reentrancy) for any given [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) instance.)
+* (?)
 
 <a name="Roadmap"></a>
 
@@ -927,9 +929,22 @@ Pure parsing + deserialization speed isn't in fact my *long term* goal, or not f
 
 This parser / deserializer is / was also a nice learning opportunity in regards to parsing JSON, and to verify by myself once again [what I had read about](http://msdn.microsoft.com/en-us/magazine/cc507639.aspx) and experienced many times before. That is: never try to merely guess about performance, but instead always do your best to measure and to find out *where exactly* the parsing and deserialization slowdowns (and memory consumption costs) *actually* come from.
 
+<a name="FAQ"></a>
+
+CFAQ
+----
+
+(**C**ould-be **F**requently **A**sked **Q**uestions)
+
+* Q: Isn't it a bit confusing, somehow, that [the "Parse" methods of the public interface](#Interface) do actually more than just parse the input against [the JSON syntax](http://www.json.org/) but also perform the work that most other JSON implementations call "Deserialize"?
+    * A: Yes and no. It is true that [these "Parse" methods](#Interface) do more than just parse the input, but they have been named that way because this [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) is designed to remain only that : *merely* a JSON **parser** and **deserializer**, *without* any serialization-related feature. By not naming them "deserialize", this helps to avoid another otherwise possible confusion as to why there are no dual "Serialize" methods to be found anywhere, w.r.t. the dual operation.
+* Q: Do you foresee any breaking changes to [the public interface](#Interface) for the near-, mid-, or long-term?
+    * A: No, for most of it. The only [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs)'s instance methods that may be subject to change / some refactoring (or disappear altogether) in the future, are those taking that last "IDictionary<Type, Func<...>> mappers" parameter (for custom filtered deserialization use cases).
+* ...
+
 Other questions?
 ----------------
 
-Let yourself go:
+Feel free to send them to:
 
 ysharp (dot) design (at) gmail (dot) com
