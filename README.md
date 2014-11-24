@@ -937,7 +937,7 @@ CFAQ
 (Could-be Frequently Asked Questions)
 
 * Q: Isn't it a bit confusing, somehow, that [the "Parse" methods of the public interface](#Interface) do actually more than just parse the input against [the JSON syntax](http://www.json.org/), but also perform the work that most other JSON implementations call "Deserialize"?
-    * A: **Yes** and **no**. It is indeed true that [these "Parse" methods](#Interface) do more than just parse the input, but they have been named that way because this [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) is designed to remain only that : *merely* a JSON **parser** and **deserializer**, thus *without* any JSON *serialization*-related feature. By not naming them "Deserialize", this helps to avoid another otherwise possible confusion as to why there are no "Serialize" methods to be found anywhere, w.r.t. the dual operation (*serialization* vs. *deserializayion*).
+    * A: **Yes** and **no**. It is indeed true that [these "Parse" methods](#Interface) do more than just parse the input, but they have been named that way because this [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) is designed to remain only that : *merely* a JSON **parser** and **deserializer**, thus *without* any JSON *serialization*-related feature. By not naming them "Deserialize", this helps to avoid another otherwise possible confusion as to why there are no "Serialize" methods to be found anywhere, w.r.t. the dual operation (*serialization* vs. *deserialization*).
 * Q: Do you foresee that you'll make any breaking changes to [the public interface](#Interface) in the near-, mid-, or long-term?
     * A: For [most of it](#Interface), **no**, I should not and I won't. The only [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs)'s instance methods that may be subject to change / to some refactoring (or disappear altogether) in the future, are those taking that last "IDictionary&lt;Type, Func&lt;...&gt;&gt; mappers" parameter (for now a rudimentary provision to support custom filtered deserialization use cases). So, all of the following are definitely going to stay around for as long as [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) is developed and maintained here:
 
@@ -963,4 +963,4 @@ Other questions?
 
 Feel free to send them to:
 
-ysharp (dot) design (at) gmail (dot) com
+ysharp {dot} design {at} gmail {dot} com
