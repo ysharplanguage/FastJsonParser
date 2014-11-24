@@ -368,7 +368,7 @@ namespace Test
             JsonPathScriptEvaluator evaluator =
                 (script, value, context) =>
                     ((value is Type) && (context == script))
-                    ?
+                    ? // value == typeof(Func<string, T, string, object>), with T inferred by JsonPathSelection::SelectNodes(...)
                     ExpressionParser.Parse((Type)value, script, true, typeof(Data).Namespace).Compile()
                     :
                     null;
@@ -1088,7 +1088,7 @@ namespace Test
             JsonPathScriptEvaluator evaluator =
                 (script, value, context) =>
                     ((value is Type) && (context == script))
-                    ?
+                    ? // value == typeof(Func<string, T, string, object>), with T inferred by JsonPathSelection::SelectNodes(...)
                     ExpressionParser.Parse((Type)value, script, true, typeof(Data).Namespace).Compile()
                     :
                     null;
