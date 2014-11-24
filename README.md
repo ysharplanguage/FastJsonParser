@@ -240,8 +240,6 @@ For a reference example, in three or four steps:
                   Compile()
                   :
                   null;
-            JsonPathSelection scope;
-            JsonPathNode[] nodes;
 
 where the delegate type [JsonPathScriptEvaluator](https://code.google.com/p/jsonpath/source/browse/trunk/src/cs/JsonPath.cs?spec=svn56&r=53#57) is defined as:
 
@@ -254,7 +252,9 @@ Note there is a **basic** ( * ) lambda expression parser & compiler - [Expressio
 **Step \#3 or \#4**, (a) parse the JSON input into the target object model, (b) wrap a [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49) instance around the latter, and (c) invoke the [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49)'s [SelectNodes(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L57) method with the [JSONPath](http://goessner.net/articles/JsonPath) expression(s) of interest to query the data :
 
             var typed = new JsonParser().Parse<Data>(input); // (Data typed = ...)
-            
+            JsonPathSelection scope;
+            JsonPathNode[] nodes;
+
             // Cache the JsonPathSelection and its lambdas compiled on-demand (at run-time)
             // by the evaluator.
             scope = new JsonPathSelection(typed, evaluator);
