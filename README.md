@@ -955,8 +955,6 @@ CFAQ
         T Parse<T>(Stream input, Encoding encoding)
         T Parse<T>(T prototype, Stream input, Encoding encoding)
 
-* ...
-
 Other questions?
 ----------------
 
