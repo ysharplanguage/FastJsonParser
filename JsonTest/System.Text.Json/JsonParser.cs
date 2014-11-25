@@ -44,7 +44,7 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
         public static T[] As<T>(this JsonPathNode[] nodes, T prototype) { return nodes.Cast<T>().ToArray(); }
     }
 
-    public delegate object JsonPathScriptEvaluator(string script, object value, IJsonPathScriptContext context);
+    public delegate object JsonPathScriptEvaluator(string script, object value, IJsonPathContext context);
     
     public sealed class JsonPathSelection
     {
@@ -1275,12 +1275,6 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
 
     public delegate void JsonPathResultAccumulator(object value, string[] indicies);
 
-    public interface IJsonPathScriptContext
-    {
-        JsonPathNode[] SelectNodes(string expression);
-        string Moniker { get; }
-    }
-
     public interface IJsonPathValueSystem
     {
         bool HasMember(object value, string member);
@@ -1289,6 +1283,11 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
         bool IsObject(object value);
         bool IsArray(object value);
         bool IsPrimitive(object value);
+    }
+
+    public interface IJsonPathContext
+    {
+        JsonPathNode[] SelectNodes(string expression);
     }
 
     [Serializable]
@@ -1354,7 +1353,7 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
         }
     }
 
-    public sealed class JsonPathContext
+    public sealed class JsonPathContext : IJsonPathContext
     {
         public static readonly JsonPathContext Default = new JsonPathContext();
         public readonly IDictionary<string, Delegate> Lambdas = new Dictionary<string, Delegate>();
@@ -1368,10 +1367,12 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
         public JsonPathContext(object data, IJsonPathValueSystem system) : this(data, system, null) { }
         public JsonPathContext(object data, IJsonPathValueSystem system, JsonPathScriptEvaluator eval) { Data = data; ValueSystem = system; ScriptEvaluator = eval; }
 
+        #region IJsonPathContext implementation
         public JsonPathNode[] SelectNodes(string expression)
         {
-            return Evaluate(expression);
+            return (new JsonPathContext(Data, ValueSystem, ScriptEvaluator)).Evaluate(expression);
         }
+        #endregion
 
         public JsonPathScriptEvaluator ScriptEvaluator
         {
@@ -1502,17 +1503,6 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
             }
         }
 
-        private sealed class JsonPathScriptContext : IJsonPathScriptContext
-        {
-            private readonly JsonPathContext outer;
-            private readonly string moniker;
-            public JsonPathScriptContext(JsonPathContext outer, string script) { this.outer = outer; this.moniker = script; }
-            #region IJsonPathScriptContext implementation
-            public JsonPathNode[] SelectNodes(string expression) { return outer.SelectNodes(expression); }
-            public string Moniker { get { return moniker; } }
-            #endregion
-        }
-
         private sealed class Interpreter
         {
             public static readonly Regex REGEXP_SEGMENTED = RegExp(@"^(-?[0-9]*):(-?[0-9]*):?([0-9]*)$", true);
@@ -1568,12 +1558,12 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
                 }
                 else if (atom.Length > 2 && atom[0] == '(' && atom[atom.Length - 1] == ')') // [(exp)]
                 {
-                    Trace(Eval(atom, value, new JsonPathScriptContext(Bindings, path.Substring(path.LastIndexOf(';') + 1))) + ";" + tail, value, path, lambdas, -1);
+                    Trace(Eval(atom, value, path.Substring(path.LastIndexOf(';') + 1)) + ";" + tail, value, path, lambdas, -1);
                 }
                 else if (atom.Length > 2 && atom[0] == '{' && atom[atom.Length - 1] == '}') // [{N}]
                 {
                     var lambda = lambdas[int.Parse(atom.Substring(1, atom.Length - 2))];
-                    Trace(lambda.DynamicInvoke(atom, value, new JsonPathScriptContext(Bindings, path.Substring(path.LastIndexOf(';') + 1))) + ";" + tail, value, path, lambdas, -1);
+                    Trace(lambda.DynamicInvoke(atom, value, Bindings) + ";" + tail, value, path, lambdas, -1);
                 }
                 else if (atom.Length > 3 && atom[0] == '?' && atom[1] == '(' && atom[atom.Length - 1] == ')') // [?(exp)]
                 {
@@ -1633,8 +1623,7 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
             private void WalkFiltered(object member, string loc, string expression, object value, string path, Delegate[] lambdas, int clambda)
             {
                 string script = filter.Replace(loc, "$1");
-                IJsonPathScriptContext context = new JsonPathScriptContext(Bindings, member.ToString());
-                object result = ((clambda < 0) ? Eval(script, value, context, true) : lambdas[clambda].DynamicInvoke(script, value, context));
+                object result = ((clambda < 0) ? Eval(script, value, member.ToString(), true) : lambdas[clambda].DynamicInvoke(script, value, Bindings));
                 if ((result != null) && ((result is bool) ? (bool)result : ((result is string) ? !String.IsNullOrEmpty((string)result) : true)))
                     Trace(member + ";" + expression, value, path, lambdas, -1);
             }
@@ -1662,25 +1651,24 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
                 return system.GetMemberValue(obj, member);
             }
 
-            private object Eval(string script, object value, IJsonPathScriptContext context) { return Eval(script, value, context, false); }
+            private object Eval(string script, object value, string member) { return Eval(script, value, member, false); }
 
-            private object Eval(string script, object value, IJsonPathScriptContext context, bool forFilter)
+            private object Eval(string script, object value, string member, bool forFilter)
             {
-                object target = (forFilter ? Index(value, context.Moniker) : value);
+                object target = (forFilter ? Index(value, member) : value);
                 Type type = ((target != null) ? target.GetType() : typeof(object));
-                string key = String.Concat('(', type.FullName, ')', script);
                 Delegate func;
                 if (!Bindings.Lambdas.TryGetValue(script, out func))
                 {
-                    string lambda = String.Format("(string script, ~ value, IJsonPathScriptContext context) => (object)({0})", script.Replace("@(", "context.SelectNodes(").Replace("@", "value"));
-                    type = typeof(Func<,,,>).MakeGenericType(typeof(string), (forFilter ? type : (target is IEnumerable ? type : typeof(object))), typeof(IJsonPathScriptContext), typeof(object));
-                    func = (eval(lambda, type, new JsonPathScriptContext(Bindings, lambda)) as Delegate);
+                    string lambda = String.Format("(string script, ~ value, IJsonPathContext context) => (object)({0})", script.Replace("@", "value"));
+                    type = typeof(Func<,,,>).MakeGenericType(typeof(string), (forFilter ? type : (target is IEnumerable ? type : typeof(object))), typeof(IJsonPathContext), typeof(object));
+                    func = (eval(lambda, type, Bindings) as Delegate);
                     if (func != null) Bindings.Lambdas.Add(script, func);
                 }
-                return ((func != null) ? func.DynamicInvoke(script, target, context) : eval(script, target, context));
+                return ((func != null) ? func.DynamicInvoke(script, target, Bindings) : eval(script, target, Bindings));
             }
 
-            private static object NullEval(string expression, object value, IJsonPathScriptContext context)
+            private static object NullEval(string expression, object value, IJsonPathContext context)
             {
                 //
                 // @ symbol in expression must be interpreted specially to resolve
