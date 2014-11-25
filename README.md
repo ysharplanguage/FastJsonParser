@@ -245,7 +245,7 @@ For a reference example, in four or five steps :
                   :
                   null;
 
-where the delegate type [JsonPathScriptEvaluator](https://code.google.com/p/jsonpath/source/browse/trunk/src/cs/JsonPath.cs?spec=svn56&r=53#57) has been [redefined here](), as :
+where the delegate type [JsonPathScriptEvaluator](https://code.google.com/p/jsonpath/source/browse/trunk/src/cs/JsonPath.cs?spec=svn56&r=53#57) has been [redefined here](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L47), as :
 
             delegate object JsonPathScriptEvaluator(string script, object value, IJsonPathScriptContext context)
 
