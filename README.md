@@ -906,6 +906,7 @@ Known limitations / caveats
 * The current [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs)'s instance methods implementation is **neither** [thread-safe or reentrant](http://en.wikipedia.org/wiki/Thread_safety#Implementation_approaches).
     * (Work is underway to make [the "Parse" methods of the public interface](#Interface) *at least* [reentrant](http://en.wikipedia.org/wiki/Reentrancy_(computing)#Rules_for_reentrancy) for any given [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) instance.)
 * Incoming "null"s are not yet recognized as a valid "value" (or rather, absence thereof) for nullable types members of the target POCO(s).
+    * (Support for such explicited "null"s will be added asap.)
 
 <a name="Roadmap"></a>
 
