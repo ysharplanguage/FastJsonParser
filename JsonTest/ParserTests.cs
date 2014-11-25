@@ -367,8 +367,8 @@ namespace Test
         ";
             JsonPathScriptEvaluator evaluator =
                 (script, value, context) =>
-                    ((value is Type) && (context == script))
-                    ? // This holds: (value as Type) == typeof(Func<string, T, string, object>), with T inferred by JsonPathSelection::SelectNodes(...)
+                    ((value is Type) && (context.Moniker == script))
+                    ? // This holds: (value as Type) == typeof(Func<string, T, IJsonPathScriptContext, object>), with T inferred by JsonPathSelection::SelectNodes(...)
                     ExpressionParser.Parse((Type)value, script, true, typeof(Data).Namespace).Compile()
                     :
                     null;
@@ -572,9 +572,9 @@ namespace Test
             System.Diagnostics.Debug.Assert
             (
                 (nodes = scope.SelectNodes(@"$..people[?(!@.citizen)]")).Length == 1 &&
-                nodes.ArrayOf(OBJECT_MODEL.country.people[0])[0].initials == "CJ" &&
-                nodes.ArrayOf(OBJECT_MODEL.country.people[0])[0].DOB == new DateTime(1970, 5, 10) &&
-                nodes.ArrayOf(OBJECT_MODEL.country.people[0])[0].status == Status.Single
+                nodes.As(OBJECT_MODEL.country.people[0])[0].initials == "CJ" &&
+                nodes.As(OBJECT_MODEL.country.people[0])[0].DOB == new DateTime(1970, 5, 10) &&
+                nodes.As(OBJECT_MODEL.country.people[0])[0].status == Status.Single
             );
 #endif
             #endregion
@@ -1087,8 +1087,8 @@ namespace Test
 #if RUN_UNIT_TESTS && RUN_ADVANCED_JSONPATH_TESTS
             JsonPathScriptEvaluator evaluator =
                 (script, value, context) =>
-                    ((value is Type) && (context == script))
-                    ? // This holds: (value as Type) == typeof(Func<string, T, string, object>), with T inferred by JsonPathSelection::SelectNodes(...)
+                    ((value is Type) && (context.Moniker == script))
+                    ? // This holds: (value as Type) == typeof(Func<string, T, IJsonPathScriptContext, object>), with T inferred by JsonPathSelection::SelectNodes(...)
                     ExpressionParser.Parse((Type)value, script, true, typeof(Data).Namespace).Compile()
                     :
                     null;
