@@ -158,9 +158,9 @@ JSONPath support
 
 Starting with [version 1.9.9.7](https://www.nuget.org/packages/System.Text.Json), Stefan Gössner's [JSONPath](http://goessner.net/articles/JsonPath) is also supported.
 
-For a reference example, in three or four steps :
+For a reference example, in four or five steps :
 
-**Step \#1**, have an object model / type system to hydrate :
+**Step \#1**, have defined somewhere a target object model / type system to hydrate :
 
              namespace Test
              {
@@ -190,7 +190,11 @@ For a reference example, in three or four steps :
                 }
              }
 
-**Step \#2**, have some JSON input data :
+**Step \#2**, in order to use this [JSONPath facility]() don't forget to include, accordingly :
+
+            using System.Text.Json.JsonPath;
+
+**Step \#3**, have some input JSON to parse :
 
             string input = @"
               { ""store"": {
@@ -226,7 +230,7 @@ For a reference example, in three or four steps :
             }
             ";
 
-(Optional) **step \#3**, have an evaluator delegate ready to compile [JSONPath member selectors or filter predicates](http://goessner.net/articles/JsonPath/#e2) that the [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49)'s [SelectNodes(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L57) method may come across :
+(Optional) **step \#4**, have an evaluator delegate ready to compile [JSONPath member selectors or filter predicates](http://goessner.net/articles/JsonPath/#e2) that the [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49)'s [SelectNodes(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L57) method may come across :
 
             JsonPathScriptEvaluator evaluator =
                (script, value, context) =>
@@ -249,7 +253,7 @@ Note there is a **basic** ( * ) lambda expression parser & compiler - [Expressio
 
 (* N.B. : **not** all of the C\# 3.0+ syntax is supported by [ExpressionParser](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/LambdaCompilation.cs#L608) (e.g., the [Linq Query Comprehension Syntax](http://msdn.microsoft.com/en-us/library/bb397947(v=vs.90).aspx) isn't) - only the most common expression forms, including unary / binary / ternary operators, array & dictionary indexers "[ ]", instance and static method calls, "is", "as", "typeof" type system operators, ... etc.)
 
-**Step \#3 or \#4**, (a) parse and deserialize the JSON input into the target object model, (b) wrap a [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49) instance around the latter, and (c) invoke the [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49)'s [SelectNodes(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L57) method with the [JSONPath](http://goessner.net/articles/JsonPath) expression(s) of interest to query the object model :
+**Step \#4 or \#5**, (a) parse and deserialize the input JSON into the target object model, (b) wrap a [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49) instance around the latter, and (c) invoke the [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49)'s [SelectNodes(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L57) method with the [JSONPath](http://goessner.net/articles/JsonPath) expression(s) of interest to query the object model :
 
             // (Data typed = ...)
             var typed = new JsonParser().Parse<Data>(input);
@@ -403,9 +407,9 @@ Starting with [version 1.9.9.8](https://www.nuget.org/packages/System.Text.Json)
             System.Diagnostics.Debug.Assert
             (
                 (nodes = scope.SelectNodes(@"$..people[?(!@.citizen)]")).Length == 1 &&
-                nodes.ArrayOf(OBJECT_MODEL.country.people[0])[0].initials == "CJ" &&
-                nodes.ArrayOf(OBJECT_MODEL.country.people[0])[0].DOB == new DateTime(1970, 5, 10) &&
-                nodes.ArrayOf(OBJECT_MODEL.country.people[0])[0].status == Status.Single
+                nodes.As(OBJECT_MODEL.country.people[0])[0].initials == "CJ" &&
+                nodes.As(OBJECT_MODEL.country.people[0])[0].DOB == new DateTime(1970, 5, 10) &&
+                nodes.As(OBJECT_MODEL.country.people[0])[0].status == Status.Single
             );
 
 where the "evaluator" is the same as the one defined in the [JSONPath section](#JSONPath) of this document.
