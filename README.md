@@ -234,7 +234,7 @@ For a reference example, in four or five steps :
 
             JsonPathScriptEvaluator evaluator =
                (script, value, context) =>
-                  ((value is Type) && (context.Moniker == script)) ?
+                  (value is Type) ?
                   // This holds: (value as Type) == typeof(Func<string, T, IJsonPathContext, object>),
                   // with T inferred by JsonPathSelection::SelectNodes(...)
                   ExpressionParser.Parse
