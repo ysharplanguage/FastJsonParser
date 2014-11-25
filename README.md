@@ -190,7 +190,7 @@ For a reference example, in four or five steps :
                 }
              }
 
-**Step \#2**, in order to use this [JSONPath facility]() don't forget to include, accordingly :
+**Step \#2**, in order to use this [JSONPath facility](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49) don't forget to include, accordingly :
 
             using System.Text.Json.JsonPath;
 
