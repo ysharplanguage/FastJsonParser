@@ -26,9 +26,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 Except as contained in this notice, the name of Cyril Jandia shall
 not be used in advertising or otherwise to promote the sale, use or
 other dealings in this Software without prior written authorization
-from Cyril Jandia.
-
-Inquiries : ysharp {dot} design {at} gmail {dot} com */
+from Cyril Jandia. */
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -46,6 +44,8 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
         public static T[] As<T>(this JsonPathNode[] nodes, T prototype) { return nodes.Cast<T>().ToArray(); }
     }
 
+    public delegate object JsonPathScriptEvaluator(string script, object value, IJsonPathScriptContext context);
+    
     public sealed class JsonPathSelection
     {
         public readonly JsonPathContext Context;
@@ -1273,7 +1273,6 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
 
     #endregion
 
-    public delegate object JsonPathScriptEvaluator(string script, object value, IJsonPathScriptContext context);
     public delegate void JsonPathResultAccumulator(object value, string[] indicies);
 
     public interface IJsonPathScriptContext
