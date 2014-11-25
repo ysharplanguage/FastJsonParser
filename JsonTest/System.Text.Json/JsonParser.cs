@@ -28,9 +28,7 @@ not be used in advertising or otherwise to promote the sale, use or
 other dealings in this Software without prior written authorization
 from Cyril Jandia.
 
-Inquiries : ysharp {dot} design {at} gmail {dot} com
- *
- */
+Inquiries : ysharp {dot} design {at} gmail {dot} com */
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -42,8 +40,10 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
 {
     public static class JsonPathExtensions
     {
-        public static T[] ArrayOf<T>(this JsonPathNode[] source) { return ArrayOf(source, default(T)); }
-        public static T[] ArrayOf<T>(this JsonPathNode[] source, T prototype) { return source.Select(node => node.As<T>()).ToArray(); }
+        public static T As<T>(this JsonPathNode node) { return As(node, default(T)); }
+        public static T As<T>(this JsonPathNode node, T prototype) { return (T)node.Value; }
+        public static T[] As<T>(this JsonPathNode[] nodes) { return As(nodes, default(T)); }
+        public static T[] As<T>(this JsonPathNode[] nodes, T prototype) { return nodes.Cast<T>().ToArray(); }
     }
 
     public sealed class JsonPathSelection
@@ -53,8 +53,10 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
         public JsonPathSelection(object data) : this(data, null as IJsonPathValueSystem) { }
         public JsonPathSelection(object data, IJsonPathValueSystem valueSystem) : this(data, valueSystem, null) { }
         public JsonPathSelection(object data, JsonPathScriptEvaluator evaluator) : this(data, null, evaluator) { }
-        public JsonPathSelection(object data, IJsonPathValueSystem valueSystem, JsonPathScriptEvaluator evaluator) { Context = new JsonPathContext((valueSystem ?? new JsonPathValueSystem()), evaluator); Data = data; }
-        public JsonPathNode[] SelectNodes(string expression, params JsonPathScriptEvaluator[] lambdas) { return Context.SelectNodes(Data, expression, lambdas); }
+        public JsonPathSelection(object data, IJsonPathValueSystem valueSystem, JsonPathScriptEvaluator evaluator) { Context = new JsonPathContext(data, (valueSystem ?? new JsonPathValueSystem()), evaluator); }
+        public JsonPathNode[] SelectNodes(string expression, params JsonPathScriptEvaluator[] lambdas) { return Context.Evaluate(expression, lambdas); }
+        public T[] SelectNodes<T>(string expression, params JsonPathScriptEvaluator[] lambdas) { return SelectNodes(default(T), expression, lambdas); }
+        public T[] SelectNodes<T>(T prototype, string expression, params JsonPathScriptEvaluator[] lambdas) { return SelectNodes(expression, lambdas).As<T>(); }
     }
 
     internal class JsonPathValueSystem : IJsonPathValueSystem
@@ -1271,8 +1273,14 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
 
     #endregion
 
-    public delegate object JsonPathScriptEvaluator(string script, object value, string context);
+    public delegate object JsonPathScriptEvaluator(string script, object value, IJsonPathScriptContext context);
     public delegate void JsonPathResultAccumulator(object value, string[] indicies);
+
+    public interface IJsonPathScriptContext
+    {
+        JsonPathNode[] SelectNodes(string expression);
+        string Moniker { get; }
+    }
 
     public interface IJsonPathValueSystem
     {
@@ -1290,16 +1298,17 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
         private readonly object value;
         private readonly string path;
 
+        public JsonPathNode(object value) : this(value, null) { }
         public JsonPathNode(object value, string path)
         {
-            if (path == null)
-                throw new ArgumentNullException("path");
-
-            if (path.Length == 0)
-                throw new ArgumentException("path");
+            if (path != null)
+            {
+                if (path.Length == 0)
+                    throw new ArgumentException("path");
+            }
 
             this.value = value;
-            this.path = path;
+            this.path = (path ?? "(dynamic)");
         }
 
         public object Value
@@ -1311,10 +1320,6 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
         {
             get { return path; }
         }
-
-        public T As<T>() { return As(default(T)); }
-
-        public T As<T>(T prototype) { return (T)Value; }
 
         public override string ToString()
         {
@@ -1357,10 +1362,17 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
 
         private JsonPathScriptEvaluator eval;
         private IJsonPathValueSystem system;
+        private object data;
 
-        public JsonPathContext() : this(null) { }
-        public JsonPathContext(IJsonPathValueSystem system) : this(system, null) { }
-        public JsonPathContext(IJsonPathValueSystem system, JsonPathScriptEvaluator eval) { ValueSystem = system; ScriptEvaluator = eval; }
+        public JsonPathContext() : this(new object()) { }
+        public JsonPathContext(object data) : this(data, null) { }
+        public JsonPathContext(object data, IJsonPathValueSystem system) : this(data, system, null) { }
+        public JsonPathContext(object data, IJsonPathValueSystem system, JsonPathScriptEvaluator eval) { Data = data; ValueSystem = system; ScriptEvaluator = eval; }
+
+        public JsonPathNode[] SelectNodes(string expression)
+        {
+            return Evaluate(expression);
+        }
 
         public JsonPathScriptEvaluator ScriptEvaluator
         {
@@ -1374,11 +1386,28 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
             private set { system = value; }
         }
 
-        public void SelectTo(object obj, string expression, JsonPathResultAccumulator output, params JsonPathScriptEvaluator[] lambdas)
+        public object Data
         {
-            if (obj == null)
-                throw new ArgumentNullException("obj");
+            get { return data; }
+            private set { data = value; }
+        }
 
+        internal JsonPathNode[] Evaluate(string expression, params JsonPathScriptEvaluator[] lambdas)
+        {
+            IList<JsonPathNode> result = new List<JsonPathNode>();
+            SelectTo(expression, result, lambdas);
+            return result.ToArray();
+        }
+
+        private IList<JsonPathNode> SelectTo(string expression, IList<JsonPathNode> result, params JsonPathScriptEvaluator[] lambdas)
+        {
+            ListAccumulator accumulator = new ListAccumulator(result);
+            SelectTo(expression, new JsonPathResultAccumulator(accumulator.Put), lambdas);
+            return result;
+        }
+
+        private void SelectTo(string expression, JsonPathResultAccumulator output, params JsonPathScriptEvaluator[] lambdas)
+        {
             if (output == null)
                 throw new ArgumentNullException("output");
 
@@ -1389,21 +1418,7 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
             if (expression.Length >= 1 && expression[0] == '$') // ^\$:?
                 expression = expression.Substring(expression.Length >= 2 && expression[1] == ';' ? 2 : 1);
 
-            i.Trace(expression, obj, "$", lambdas, -1);
-        }
-
-        public JsonPathNode[] SelectNodes(object obj, string expression, params JsonPathScriptEvaluator[] lambdas)
-        {
-            ArrayList list = new ArrayList();
-            SelectNodesTo(obj, expression, list, lambdas);
-            return (JsonPathNode[])list.ToArray(typeof(JsonPathNode));
-        }
-
-        public IList SelectNodesTo(object obj, string expression, IList output, params JsonPathScriptEvaluator[] lambdas)
-        {
-            ListAccumulator accumulator = new ListAccumulator(output != null ? output : new ArrayList());
-            SelectTo(obj, expression, new JsonPathResultAccumulator(accumulator.Put), lambdas);
-            return output;
+            i.Trace(expression, Data, "$", (lambdas ?? new JsonPathScriptEvaluator[] { }), -1);
         }
 
         private static Regex RegExp(string pattern) { return RegExp(pattern, false); }
@@ -1488,6 +1503,17 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
             }
         }
 
+        private sealed class JsonPathScriptContext : IJsonPathScriptContext
+        {
+            private readonly JsonPathContext outer;
+            private readonly string moniker;
+            public JsonPathScriptContext(JsonPathContext outer, string script) { this.outer = outer; this.moniker = script; }
+            #region IJsonPathScriptContext implementation
+            public JsonPathNode[] SelectNodes(string expression) { return outer.SelectNodes(expression); }
+            public string Moniker { get { return moniker; } }
+            #endregion
+        }
+
         private sealed class Interpreter
         {
             public static readonly Regex REGEXP_SEGMENTED = RegExp(@"^(-?[0-9]*):(-?[0-9]*):?([0-9]*)$", true);
@@ -1500,8 +1526,6 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
             private readonly IJsonPathValueSystem system;
             private readonly Regex filter;
 
-            private static readonly IJsonPathValueSystem defaultValueSystem = new BasicValueSystem();
-
             private static readonly char[] colon = new char[] { ':' };
             private static readonly char[] semicolon = new char[] { ';' };
 
@@ -1513,8 +1537,8 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
             {
                 this.Bindings = bindings;
                 this.output = output;
-                this.eval = eval != null ? eval : new JsonPathScriptEvaluator(NullEval);
-                this.system = valueSystem != null ? valueSystem : defaultValueSystem;
+                this.eval = (eval ?? new JsonPathScriptEvaluator(NullEval));
+                this.system = valueSystem;
                 this.filter = REGEXP_FILTER;
             }
 
@@ -1545,12 +1569,12 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
                 }
                 else if (atom.Length > 2 && atom[0] == '(' && atom[atom.Length - 1] == ')') // [(exp)]
                 {
-                    Trace(Eval(atom, value, path.Substring(path.LastIndexOf(';') + 1)) + ";" + tail, value, path, lambdas, -1);
+                    Trace(Eval(atom, value, new JsonPathScriptContext(Bindings, path.Substring(path.LastIndexOf(';') + 1))) + ";" + tail, value, path, lambdas, -1);
                 }
                 else if (atom.Length > 2 && atom[0] == '{' && atom[atom.Length - 1] == '}') // [{N}]
                 {
                     var lambda = lambdas[int.Parse(atom.Substring(1, atom.Length - 2))];
-                    Trace(lambda.DynamicInvoke(atom, value, path.Substring(path.LastIndexOf(';') + 1)) + ";" + tail, value, path, lambdas, -1);
+                    Trace(lambda.DynamicInvoke(atom, value, new JsonPathScriptContext(Bindings, path.Substring(path.LastIndexOf(';') + 1))) + ";" + tail, value, path, lambdas, -1);
                 }
                 else if (atom.Length > 3 && atom[0] == '?' && atom[1] == '(' && atom[atom.Length - 1] == ')') // [?(exp)]
                 {
@@ -1610,7 +1634,7 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
             private void WalkFiltered(object member, string loc, string expression, object value, string path, Delegate[] lambdas, int clambda)
             {
                 string script = filter.Replace(loc, "$1");
-                string context = member.ToString();
+                IJsonPathScriptContext context = new JsonPathScriptContext(Bindings, member.ToString());
                 object result = ((clambda < 0) ? Eval(script, value, context, true) : lambdas[clambda].DynamicInvoke(script, value, context));
                 if ((result != null) && ((result is bool) ? (bool)result : ((result is string) ? !String.IsNullOrEmpty((string)result) : true)))
                     Trace(member + ";" + expression, value, path, lambdas, -1);
@@ -1639,24 +1663,25 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
                 return system.GetMemberValue(obj, member);
             }
 
-            private object Eval(string script, object value, string context) { return Eval(script, value, context, false); }
+            private object Eval(string script, object value, IJsonPathScriptContext context) { return Eval(script, value, context, false); }
 
-            private object Eval(string script, object value, string context, bool forFilter)
+            private object Eval(string script, object value, IJsonPathScriptContext context, bool forFilter)
             {
-                object target = (forFilter ? Index(value, context) : value);
+                object target = (forFilter ? Index(value, context.Moniker) : value);
                 Type type = ((target != null) ? target.GetType() : typeof(object));
+                string key = String.Concat('(', type.FullName, ')', script);
                 Delegate func;
                 if (!Bindings.Lambdas.TryGetValue(script, out func))
                 {
-                    string lambda = String.Format("(string script, ~ value, string context) => (object)({0})", script.Replace("@", "value"));
-                    type = typeof(Func<,,,>).MakeGenericType(typeof(string), (forFilter ? type : (target is IEnumerable ? type : typeof(object))), typeof(string), typeof(object));
-                    func = (eval(lambda, type, lambda) as Delegate);
+                    string lambda = String.Format("(string script, ~ value, IJsonPathScriptContext context) => (object)({0})", script.Replace("@(", "context.SelectNodes(").Replace("@", "value"));
+                    type = typeof(Func<,,,>).MakeGenericType(typeof(string), (forFilter ? type : (target is IEnumerable ? type : typeof(object))), typeof(IJsonPathScriptContext), typeof(object));
+                    func = (eval(lambda, type, new JsonPathScriptContext(Bindings, lambda)) as Delegate);
                     if (func != null) Bindings.Lambdas.Add(script, func);
                 }
                 return ((func != null) ? func.DynamicInvoke(script, target, context) : eval(script, target, context));
             }
 
-            private static object NullEval(string expression, object value, string context)
+            private static object NullEval(string expression, object value, IJsonPathScriptContext context)
             {
                 //
                 // @ symbol in expression must be interpreted specially to resolve
@@ -1670,73 +1695,11 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
             }
         }
 
-        private sealed class BasicValueSystem : IJsonPathValueSystem
-        {
-            public bool HasMember(object value, string member)
-            {
-                if (IsPrimitive(value))
-                    return false;
-
-                IDictionary dict = value as IDictionary;
-                if (dict != null)
-                    return dict.Contains(member);
-
-                IList list = value as IList;
-                if (list != null)
-                {
-                    int index = ParseInt(member, -1);
-                    return index >= 0 && index < list.Count;
-                }
-
-                return false;
-            }
-
-            public object GetMemberValue(object value, string member)
-            {
-                if (IsPrimitive(value))
-                    throw new ArgumentException("value");
-
-                IDictionary dict = value as IDictionary;
-                if (dict != null)
-                    return dict[member];
-
-                IList list = (IList)value;
-                int index = ParseInt(member, -1);
-                if (index >= 0 && index < list.Count)
-                    return list[index];
-
-                return null;
-            }
-
-            public IEnumerable GetMembers(object value)
-            {
-                return ((IDictionary)value).Keys;
-            }
-
-            public bool IsObject(object value)
-            {
-                return value is IDictionary;
-            }
-
-            public bool IsArray(object value)
-            {
-                return value is IList;
-            }
-
-            public bool IsPrimitive(object value)
-            {
-                if (value == null)
-                    throw new ArgumentNullException("value");
-
-                return Type.GetTypeCode(value.GetType()) != TypeCode.Object;
-            }
-        }
-
         private sealed class ListAccumulator
         {
-            private readonly IList list;
+            private readonly IList<JsonPathNode> list;
 
-            public ListAccumulator(IList list)
+            public ListAccumulator(IList<JsonPathNode> list)
             {
                 this.list = list;
             }
