@@ -367,8 +367,8 @@ namespace Test
         ";
             JsonPathScriptEvaluator evaluator =
                 (script, value, context) =>
-                    ((value is Type) && (context.Moniker == script))
-                    ? // This holds: (value as Type) == typeof(Func<string, T, IJsonPathScriptContext, object>), with T inferred by JsonPathSelection::SelectNodes(...)
+                    (value is Type)
+                    ? // This holds: (value as Type) == typeof(Func<string, T, IJsonPathContext, object>), with T inferred by JsonPathSelection::SelectNodes(...)
                     ExpressionParser.Parse((Type)value, script, true, typeof(Data).Namespace).Compile()
                     :
                     null;
@@ -1087,8 +1087,8 @@ namespace Test
 #if RUN_UNIT_TESTS && RUN_ADVANCED_JSONPATH_TESTS
             JsonPathScriptEvaluator evaluator =
                 (script, value, context) =>
-                    ((value is Type) && (context.Moniker == script))
-                    ? // This holds: (value as Type) == typeof(Func<string, T, IJsonPathScriptContext, object>), with T inferred by JsonPathSelection::SelectNodes(...)
+                    (value is Type)
+                    ? // This holds: (value as Type) == typeof(Func<string, T, IJsonPathContext, object>), with T inferred by JsonPathSelection::SelectNodes(...)
                     ExpressionParser.Parse((Type)value, script, true, typeof(Data).Namespace).Compile()
                     :
                     null;
