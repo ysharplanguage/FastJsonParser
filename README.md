@@ -235,7 +235,7 @@ For a reference example, in four or five steps :
             JsonPathScriptEvaluator evaluator =
                (script, value, context) =>
                   ((value is Type) && (context == script)) ?
-                  // This holds: (value as Type) == typeof(Func<string, T, string, object>),
+                  // This holds: (value as Type) == typeof(Func<string, T, IJsonPathScriptContext, object>),
                   // with T inferred by JsonPathSelection::SelectNodes(...)
                   ExpressionParser.Parse
                   (
@@ -245,9 +245,9 @@ For a reference example, in four or five steps :
                   :
                   null;
 
-where the delegate type [JsonPathScriptEvaluator](https://code.google.com/p/jsonpath/source/browse/trunk/src/cs/JsonPath.cs?spec=svn56&r=53#57) is defined as :
+where the delegate type [JsonPathScriptEvaluator](https://code.google.com/p/jsonpath/source/browse/trunk/src/cs/JsonPath.cs?spec=svn56&r=53#57) has been [redefined here](), as :
 
-            delegate object JsonPathScriptEvaluator(string script, object value, string context)
+            delegate object JsonPathScriptEvaluator(string script, object value, IJsonPathScriptContext context)
 
 Note there is a **basic** ( * ) lambda expression parser & compiler - [ExpressionParser](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/LambdaCompilation.cs#L608) (adapted from Zhucai's "lambda-parser", at [http://code.google.com/p/lambda-parser](http://code.google.com/p/lambda-parser)) defined in the namespace "[System.Text.Json.JsonPath.LambdaCompilation](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/LambdaCompilation.cs#L606)" - used here as a helper to implement the above "evaluator".
 
@@ -281,11 +281,11 @@ above.
 
 In this same example, the lambda expression delegate compiled by the evaluator (and then cached into the "scope" [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49) instance) is of type
 
-    Func<string, Book, string, object>
+    Func<string, Book, IJsonPathScriptContext, object>
     
 corresponding to the actual lambda expression script prepared behind the scene :
 
-    (string script, Book value, string context) => (object)(value.title == "The Lord of the Rings")
+    (string script, Book value, IJsonPathScriptContext context) => (object)(value.title == "The Lord of the Rings")
     
 There is therefore type inference - performed at run-time by the [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49)'s [SelectNodes(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L57) method - regarding the second argument (and only that one, named "value") of the evaluator-produced, cached delegates.
 
