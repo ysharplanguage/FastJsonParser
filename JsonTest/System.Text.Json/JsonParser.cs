@@ -41,11 +41,11 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
         public static T As<T>(this JsonPathNode node) { return As(node, default(T)); }
         public static T As<T>(this JsonPathNode node, T prototype) { return (T)node.Value; }
         public static T[] As<T>(this JsonPathNode[] nodes) { return As(nodes, default(T)); }
-        public static T[] As<T>(this JsonPathNode[] nodes, T prototype) { return nodes.Cast<T>().ToArray(); }
+        public static T[] As<T>(this JsonPathNode[] nodes, T prototype) { return nodes.Select(node => node.As<T>()).ToArray(); }
     }
 
     public delegate object JsonPathScriptEvaluator(string script, object value, IJsonPathContext context);
-    
+
     public sealed class JsonPathSelection
     {
         public readonly JsonPathContext Context;
@@ -225,9 +225,11 @@ namespace System.Text.Json
             internal ItemInfo Dico;
             internal ItemInfo List;
             internal bool IsAnonymous;
+            internal bool IsNullable;
             internal bool IsStruct;
             internal bool IsEnum;
             internal bool Closed;
+            internal Type VType;
             internal Type EType;
             internal Type Type;
             internal int Inner;
@@ -394,7 +396,7 @@ namespace System.Text.Json
                 var infos = new Dictionary<string, ItemInfo>();
                 IsAnonymous = ((eType == null) && (type.Name[0] == '<') && type.IsSealed);
                 IsStruct = type.IsValueType;
-                IsEnum = ((type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>)) ? type.GetGenericArguments()[0].IsEnum : type.IsEnum);
+                IsEnum = ((IsNullable = (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))) ? (VType = type.GetGenericArguments()[0]).IsEnum : type.IsEnum);
                 EType = eType;
                 Type = type;
                 T = self;
@@ -891,7 +893,7 @@ namespace System.Text.Json
 
         private object Str(int outer) { var s = ParseString(0); if ((outer != 2) || ((s != null) && (s.Length == 1))) return ((outer == 2) ? (object)s[0] : s); else throw Error("Bad character"); }
 
-        private object Cta(TypeInfo atinfo, object[] atargs)
+        private object Cat(TypeInfo atinfo, object[] atargs)
         {
             for (var i = 0; i < atinfo.Props.Length; i++)
             {
@@ -919,7 +921,7 @@ namespace System.Text.Json
                 if (ch == '}')
                 {
                     Read();
-                    return (isAnon ? Cta(cached, atargs) : ctor());
+                    return (isAnon ? Cat(cached, atargs) : ctor());
                 }
                 obj = null;
                 while (ch < EOF)
@@ -958,13 +960,22 @@ namespace System.Text.Json
                             if ((select == null) || ((read = select(cached.Type, obj, prop.Name, -1)) != null))
                             {
                                 obj = (obj ?? ctor());
-                                prop.Set(obj, this, prop.Outer, 0);
+                                if (((ch = Space()) == 'n') && types[prop.Outer].IsNullable)
+                                    Null(0);
+                                else
+                                    prop.Set(obj, this, prop.Outer, 0);
                             }
                             else
                                 Val(0);
                         }
                         else
-                            atargs[prop.Atm] = (types[keyed = prop.Outer].Type.IsValueType ? types[keyed].Parse(this, keyed) : Val(keyed));
+                        {
+                            keyed = prop.Outer;
+                            if (((ch = Space()) == 'n') && types[keyed].IsNullable)
+                                Null(0);
+                            else
+                                atargs[prop.Atm] = (types[keyed].Type.IsValueType ? (types[keyed].IsNullable ? types[types[keyed].Inner].Parse(this, types[keyed].Inner) : types[keyed].Parse(this, keyed)) : Val(keyed));
+                        }
                     }
                     else
                         Val(0);
@@ -974,7 +985,7 @@ namespace System.Text.Json
                     {
                         mapper = (mapper ?? Identity);
                         Read();
-                        return mapper(isAnon ? Cta(cached, atargs) : (obj ?? ctor()));
+                        return mapper(isAnon ? Cat(cached, atargs) : (obj ?? ctor()));
                     }
                     Next(',');
                     ch = Space();
@@ -1019,7 +1030,12 @@ namespace System.Text.Json
                 {
                     Func<object, object> read = null;
                     i++;
-                    if (dico || (select == null) || ((read = select(cached.Type, obj, null, i)) != null))
+                    if ((ch == 'n') && types[val].IsNullable && !dico)
+                    {
+                        Null(0);
+                        ((IList)obj).Add(null);
+                    }
+                    else if (dico || (select == null) || ((read = select(cached.Type, obj, null, i)) != null))
                         items.Set(obj, this, val, key);
                     else
                         Val(0);
@@ -1107,7 +1123,7 @@ namespace System.Text.Json
                 outer = rtti.Count;
                 types[outer] = (TypeInfo)Activator.CreateInstance(typeof(TypeInfo<>).MakeGenericType(type), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, new object[] { outer, et, kt, vt }, null);
                 rtti.Add(type, outer);
-                types[outer].Inner = ((et != null) ? Entry(et, filter) : (dico ? Entry(vt, filter) : 0));
+                types[outer].Inner = ((et != null) ? Entry(et, filter) : (dico ? Entry(vt, filter) : (types[outer].IsNullable ? Entry(types[outer].VType, filter) : 0)));
                 if (dico) types[outer].Key = Entry(kt, filter);
             }
             if ((filter != null) && filter.TryGetValue(type, out select))
