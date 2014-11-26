@@ -759,6 +759,35 @@ namespace Test
             anon = new JsonParser().Parse(anon, @"{""Int1"":null,""Stat"":1,""Stat3"":null}");
             Assert(!anon.Int1.HasValue && anon.Stat == Status.Married && !anon.Stat2.HasValue && !anon.Stat3.HasValue);
 
+            var someGuys = @"{
+                ""Jean-Pierre"": ""Single"",
+                ""Jean-Philippe"": 1,
+                ""Jean-Paul"": ""Divorced"",
+                ""Jean-Jacques"": null
+            }";
+            var someStatuses =
+                new JsonParser().Parse<Dictionary<string, Status?>>(someGuys);
+            var statusCheck =
+                someStatuses["Jean-Pierre"].Value == Status.Single &&
+                someStatuses["Jean-Philippe"].Value == Status.Married &&
+                someStatuses["Jean-Paul"].Value == Status.Divorced &&
+                !someStatuses["Jean-Jacques"].HasValue; // (we don't know about his...)
+            Assert(statusCheck);
+
+            var someGuys2 = @"{
+                ""Single"": [ ""Jean-Pierre"" ],
+                ""Married"": [ ""Jean-Philippe"" ],
+                ""2"": [ ""Jean-Paul"" ]
+            }";
+            var someStatuses2 =
+                new JsonParser().Parse<Dictionary<Status?, string[]>>(someGuys2);
+            var statusCheck2 =
+                someStatuses2[Status.Single][0] == "Jean-Pierre" &&
+                someStatuses2[Status.Married][0] == "Jean-Philippe" &&
+                someStatuses2[Status.Divorced][0] == "Jean-Paul";
+                // (we still don't know about Jean-Jacques' status...)
+            Assert(statusCheck2);
+
 #if !THIS_JSON_PARSER_ONLY
             // Support for Json.NET's "$type" pseudo-key (in addition to ServiceStack's "__type"):
             Person jsonNetPerson = new Person { Id = 123, Abc = '#', Name = "Foo", Scores = new[] { 100, 200, 300 } };
