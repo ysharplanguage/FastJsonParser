@@ -1,64 +1,42 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{C4054A9A-4907-470E-90F7-3DAA6A378518}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Test</RootNamespace>
-    <AssemblyName>Test</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ParserTests.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="System.Text.Json\System.Text.Json.csproj">
-      <Project>{56D09917-2BE1-4655-8235-310DC6E4887E}</Project>
-      <Name>System.Text.Json</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
-</Project>
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C# Express 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test.csproj", "{C4054A9A-4907-470E-90F7-3DAA6A378518}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Text.Json", "System.Text.Json\System.Text.Json.csproj", "{56D09917-2BE1-4655-8235-310DC6E4887E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C4054A9A-4907-470E-90F7-3DAA6A378518}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4054A9A-4907-470E-90F7-3DAA6A378518}.Debug|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{C4054A9A-4907-470E-90F7-3DAA6A378518}.Debug|Mixed Platforms.Build.0 = Release|Any CPU
+		{C4054A9A-4907-470E-90F7-3DAA6A378518}.Debug|x86.ActiveCfg = Debug|x86
+		{C4054A9A-4907-470E-90F7-3DAA6A378518}.Debug|x86.Build.0 = Debug|x86
+		{C4054A9A-4907-470E-90F7-3DAA6A378518}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4054A9A-4907-470E-90F7-3DAA6A378518}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4054A9A-4907-470E-90F7-3DAA6A378518}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{C4054A9A-4907-470E-90F7-3DAA6A378518}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{C4054A9A-4907-470E-90F7-3DAA6A378518}.Release|x86.ActiveCfg = Release|x86
+		{C4054A9A-4907-470E-90F7-3DAA6A378518}.Release|x86.Build.0 = Release|x86
+		{56D09917-2BE1-4655-8235-310DC6E4887E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56D09917-2BE1-4655-8235-310DC6E4887E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56D09917-2BE1-4655-8235-310DC6E4887E}.Debug|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{56D09917-2BE1-4655-8235-310DC6E4887E}.Debug|Mixed Platforms.Build.0 = Release|Any CPU
+		{56D09917-2BE1-4655-8235-310DC6E4887E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{56D09917-2BE1-4655-8235-310DC6E4887E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56D09917-2BE1-4655-8235-310DC6E4887E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56D09917-2BE1-4655-8235-310DC6E4887E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{56D09917-2BE1-4655-8235-310DC6E4887E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{56D09917-2BE1-4655-8235-310DC6E4887E}.Release|x86.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
