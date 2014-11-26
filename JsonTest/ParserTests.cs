@@ -1,5 +1,5 @@
 // On GitHub: https://github.com/ysharplanguage/FastJsonParser
-//#define THIS_JSON_PARSER_ONLY
+#define THIS_JSON_PARSER_ONLY
 #define RUN_UNIT_TESTS
 #define RUN_BASIC_JSONPATH_TESTS
 #define RUN_ADVANCED_JSONPATH_TESTS
@@ -380,7 +380,7 @@ namespace Test
 
             scope = new JsonPathSelection(untyped); // Cache the JsonPathSelection.
             nodes = scope.SelectNodes("$.store.book[3].title"); // Normalized in bracket-notation: $['store']['book'][3]['title']
-            System.Diagnostics.Debug.Assert
+            Assert
             (
                 nodes != null &&
                 nodes.Length == 1 &&
@@ -390,7 +390,7 @@ namespace Test
 
             scope = new JsonPathSelection(untyped, evaluator); // Cache the JsonPathSelection and its lambdas compiled on-demand (at run-time) by the evaluator.
             nodes = scope.SelectNodes("$.store.book[?(@.ContainsKey(\"isbn\") && (string)@[\"isbn\"] == \"0-395-19395-8\")].title");
-            System.Diagnostics.Debug.Assert
+            Assert
             (
                 nodes != null &&
                 nodes.Length == 1 &&
@@ -404,7 +404,7 @@ namespace Test
 
             scope = new JsonPathSelection(typed, evaluator); // Cache the JsonPathSelection and its lambdas compiled on-demand (at run-time) by the evaluator.
             nodes = scope.SelectNodes("$.store.book[?(@.title == \"The Lord of the Rings\")].price");
-            System.Diagnostics.Debug.Assert
+            Assert
             (
                 nodes != null &&
                 nodes.Length == 1 &&
@@ -414,7 +414,7 @@ namespace Test
 
             // Yup. This works too.
             nodes = scope.SelectNodes("$.[((@ is Data) ? \"store\" : (string)null)]"); // Dynamic member (property) selection
-            System.Diagnostics.Debug.Assert
+            Assert
             (
                 nodes != null &&
                 nodes.Length == 1 &&
@@ -434,7 +434,7 @@ namespace Test
                     (script, value, context) => 1, // Member selector (by index)
                     (script, value, context) => "title" // Member selector (by name)
                 );
-            System.Diagnostics.Debug.Assert
+            Assert
             (
                 nodes != null &&
                 nodes.Length == 1 &&
@@ -445,43 +445,43 @@ namespace Test
             // Some JSONPath expressions from Stefan Gössner's JSONPath examples ( http://goessner.net/articles/JsonPath/#e3 )...
 
             // Authors of all books in the store
-            System.Diagnostics.Debug.Assert
+            Assert
             (
                 (nodes = scope.SelectNodes("$.store.book[*].author")).Length == 4
             );
 
             // Price of everything in the store
-            System.Diagnostics.Debug.Assert
+            Assert
             (
                 (nodes = scope.SelectNodes("$.store..price")).Length == 5
             );
 
             // Third book
-            System.Diagnostics.Debug.Assert
+            Assert
             (
                 (nodes = scope.SelectNodes("$..book[2]"))[0].Value is Book && nodes[0].As<Book>().isbn == "0-553-21311-3"
             );
 
             // Last book in order
-            System.Diagnostics.Debug.Assert
+            Assert
             (
                 (nodes = scope.SelectNodes("$..book[(@.Length - 1)]"))[0].Value == scope.SelectNodes("$..book[-1:]")[0].Value
             );
 
             // First two books
-            System.Diagnostics.Debug.Assert
+            Assert
             (
                 (nodes = scope.SelectNodes("$..book[0,1]")).Length == scope.SelectNodes("$..book[:2]").Length && nodes.Length == 2
             );
 
             // All books with an ISBN
-            System.Diagnostics.Debug.Assert
+            Assert
             (
                 (nodes = scope.SelectNodes("$..book[?(@.isbn)]")).Length == 2
             );
 
             // All books cheaper than 10
-            System.Diagnostics.Debug.Assert
+            Assert
             (
                 (nodes = scope.SelectNodes("$..book[?(@.price < 10m)]")).Length == 2
             );
@@ -495,7 +495,7 @@ namespace Test
             var legalSonCount = jsonPath.SelectNodes("$.fathers[*].sons[?(@.age >= 18)]").Length;
             var totalSonCount = jsonPath.SelectNodes("$.fathers[*].sons[*]").Length;
             var tm = (int)DateTime.Now.Subtract(st).TotalMilliseconds;
-            System.Diagnostics.Debug.Assert(totalSonCount == minorSonCount + legalSonCount);
+            Assert(totalSonCount == minorSonCount + legalSonCount);
             Console.WriteLine();
             Console.WriteLine("\t\t\t$.fathers[*].sons[?(@.age < 18)]\t:\t{0}", minorSonCount);
             Console.WriteLine("\t\t\t$.fathers[*].sons[?(@.age >= 18)]\t:\t{0}", legalSonCount);
@@ -559,17 +559,17 @@ namespace Test
                 }"
             );
 
-            System.Diagnostics.Debug.Assert(anonymous.country.people.Length == 3);
+            Assert(anonymous.country.people.Length == 3);
 
             foreach (var person in anonymous.country.people)
-                System.Diagnostics.Debug.Assert
+                Assert
                 (
                     person.initials.Length == 2 &&
                     person.DOB > new DateTime(1901, 1, 1)
                 );
 
             scope = new JsonPathSelection(anonymous, evaluator);
-            System.Diagnostics.Debug.Assert
+            Assert
             (
                 (nodes = scope.SelectNodes(@"$..people[?(!@.citizen)]")).Length == 1 &&
                 nodes.As(OBJECT_MODEL.country.people[0])[0].initials == "CJ" &&
@@ -582,67 +582,67 @@ namespace Test
 
             // A few nominal cases
             obj = UnitTest("null", s => new JsonParser().Parse(s));
-            System.Diagnostics.Debug.Assert(obj == null);
+            Assert(obj == null);
 
             obj = UnitTest("true", s => new JsonParser().Parse(s));
-            System.Diagnostics.Debug.Assert(obj is bool && (bool)obj);
+            Assert(obj is bool && (bool)obj);
 
             obj = UnitTest(@"""\z""", s => new JsonParser().Parse<char>(s));
-            System.Diagnostics.Debug.Assert(obj is char && (char)obj == 'z');
+            Assert(obj is char && (char)obj == 'z');
 
             obj = UnitTest(@"""\t""", s => new JsonParser().Parse<char>(s));
-            System.Diagnostics.Debug.Assert(obj is char && (char)obj == '\t');
+            Assert(obj is char && (char)obj == '\t');
 
             obj = UnitTest(@"""\u0021""", s => new JsonParser().Parse<char>(s));
-            System.Diagnostics.Debug.Assert(obj is char && (char)obj == '!');
+            Assert(obj is char && (char)obj == '!');
 
             obj = UnitTest(@"""\u007D""", s => new JsonParser().Parse<char>(s));
-            System.Diagnostics.Debug.Assert(obj is char && (char)obj == '}');
+            Assert(obj is char && (char)obj == '}');
 
             obj = UnitTest(@" ""\u007e"" ", s => new JsonParser().Parse<char>(s));
-            System.Diagnostics.Debug.Assert(obj is char && (char)obj == '~');
+            Assert(obj is char && (char)obj == '~');
 
             obj = UnitTest(@" ""\u202A"" ", s => new JsonParser().Parse<char>(s));
-            System.Diagnostics.Debug.Assert(obj is char && (int)(char)obj == 0x202a);
+            Assert(obj is char && (int)(char)obj == 0x202a);
 
             obj = UnitTest("123", s => new JsonParser().Parse<int>(s));
-            System.Diagnostics.Debug.Assert(obj is int && (int)obj == 123);
+            Assert(obj is int && (int)obj == 123);
 
             obj = UnitTest("\"\"", s => new JsonParser().Parse<string>(s));
-            System.Diagnostics.Debug.Assert(obj is string && (string)obj == String.Empty);
+            Assert(obj is string && (string)obj == String.Empty);
 
             obj = UnitTest("\"Abc\\tdef\"", s => new JsonParser().Parse<string>(s));
-            System.Diagnostics.Debug.Assert(obj is string && (string)obj == "Abc\tdef");
+            Assert(obj is string && (string)obj == "Abc\tdef");
 
             obj = UnitTest("[null]", s => new JsonParser().Parse<object[]>(s));
-            System.Diagnostics.Debug.Assert(obj is object[] && ((object[])obj).Length == 1 && ((object[])obj)[0] == null);
+            Assert(obj is object[] && ((object[])obj).Length == 1 && ((object[])obj)[0] == null);
 
             obj = UnitTest("[true]", s => new JsonParser().Parse<IList<bool>>(s));
-            System.Diagnostics.Debug.Assert(obj is IList<bool> && ((IList<bool>)obj).Count == 1 && ((IList<bool>)obj)[0]);
+            Assert(obj is IList<bool> && ((IList<bool>)obj).Count == 1 && ((IList<bool>)obj)[0]);
 
             obj = UnitTest("[1,2,3,4,5]", s => new JsonParser().Parse<int[]>(s));
-            System.Diagnostics.Debug.Assert(obj is int[] && ((int[])obj).Length == 5 && ((int[])obj)[4] == 5);
+            Assert(obj is int[] && ((int[])obj).Length == 5 && ((int[])obj)[4] == 5);
 
             obj = UnitTest("123.456", s => new JsonParser().Parse<decimal>(s));
-            System.Diagnostics.Debug.Assert(obj is decimal && (decimal)obj == 123.456m);
+            Assert(obj is decimal && (decimal)obj == 123.456m);
 
             obj = UnitTest("{\"a\":123,\"b\":true}", s => new JsonParser().Parse(s));
-            System.Diagnostics.Debug.Assert(obj is IDictionary<string, object> && (((IDictionary<string, object>)obj)["a"] as string) == "123" && ((obj = ((IDictionary<string, object>)obj)["b"]) is bool) && (bool)obj);
+            Assert(obj is IDictionary<string, object> && (((IDictionary<string, object>)obj)["a"] as string) == "123" && ((obj = ((IDictionary<string, object>)obj)["b"]) is bool) && (bool)obj);
 
             obj = UnitTest("1", s => new JsonParser().Parse<Status>(s));
-            System.Diagnostics.Debug.Assert(obj is Status && (Status)obj == Status.Married);
+            Assert(obj is Status && (Status)obj == Status.Married);
 
             obj = UnitTest("\"Divorced\"", s => new JsonParser().Parse<Status>(s));
-            System.Diagnostics.Debug.Assert(obj is Status && (Status)obj == Status.Divorced);
+            Assert(obj is Status && (Status)obj == Status.Divorced);
 
             obj = UnitTest("{\"Name\":\"Peter\",\"Status\":0}", s => new JsonParser().Parse<Person>(s));
-            System.Diagnostics.Debug.Assert(obj is Person && ((Person)obj).Name == "Peter" && ((Person)obj).Status == Status.Single);
+            Assert(obj is Person && ((Person)obj).Name == "Peter" && ((Person)obj).Status == Status.Single);
 
             obj = UnitTest("{\"Name\":\"Paul\",\"Status\":\"Married\"}", s => new JsonParser().Parse<Person>(s));
-            System.Diagnostics.Debug.Assert(obj is Person && ((Person)obj).Name == "Paul" && ((Person)obj).Status == Status.Married);
+            Assert(obj is Person && ((Person)obj).Name == "Paul" && ((Person)obj).Status == Status.Married);
 
             obj = UnitTest("{\"History\":[{\"key\":\"1801-06-30T00:00:00Z\",\"value\":\"Birth date\"}]}", s => new JsonParser().Parse<Person>(s));
-            System.Diagnostics.Debug.Assert(obj is Person && ((Person)obj).History[new DateTime(1801, 6, 30, 0, 0, 0, DateTimeKind.Utc)] == "Birth date");
+            Assert(obj is Person && ((Person)obj).History[new DateTime(1801, 6, 30, 0, 0, 0, DateTimeKind.Utc)] == "Birth date");
 
             obj = UnitTest(@"{""Items"":[
                 {
@@ -657,7 +657,7 @@ namespace Test
                     ""SmallInt1"": 127,
                     ""SmallInt2"": -128
                 }]}", s => new JsonParser().Parse<StuffHolder>(s));
-            System.Diagnostics.Debug.Assert
+            Assert
             (
                 obj is StuffHolder && ((StuffHolder)obj).Items.Count == 2 &&
                 ((Stuff)((StuffHolder)obj).Items[1]).Name == "Bar" &&
@@ -700,7 +700,7 @@ namespace Test
             }";
 
             obj = UnitTest(configTestInputVendors, s => new JsonParser().Parse<SampleConfigData<VendorID>>(s));
-            System.Diagnostics.Debug.Assert
+            Assert
             (
                 obj is SampleConfigData<VendorID> &&
                 ((SampleConfigData<VendorID>)obj).ConfigItems.ContainsKey(VendorID.Vendor3) &&
@@ -709,7 +709,7 @@ namespace Test
             );
 
             obj = UnitTest(configTestInputIntegers, s => new JsonParser().Parse<SampleConfigData<int>>(s));
-            System.Diagnostics.Debug.Assert
+            Assert
             (
                 obj is SampleConfigData<int> &&
                 ((SampleConfigData<int>)obj).ConfigItems.ContainsKey(456) &&
@@ -740,7 +740,7 @@ namespace Test
                 ]
             }", s => new JsonParser().Parse<Owners>(s));
             Owner peter, owner;
-            System.Diagnostics.Debug.Assert
+            Assert
             (
                 (obj is Owners) &&
                 (peter = ((Owners)obj).WealthByOwner.Keys.
@@ -752,6 +752,13 @@ namespace Test
                 (owner.Assets[0].Name == "Car")
             );
 
+            var nea = (Status?[])UnitTest(@"[1,""Married"",null,2]", s => new JsonParser().Parse<Status?[]>(s));
+            Assert(nea[0].Value == Status.Married && nea[1].Value == nea[0].Value && !nea[2].HasValue && nea[3].Value == Status.Divorced);
+
+            var anon = new { Int1 = default(int?), Stat = default(Status?), Stat2 = default(Status?), Stat3 = default(Status?) };
+            anon = new JsonParser().Parse(anon, @"{""Int1"":null,""Stat"":1,""Stat3"":null}");
+            Assert(!anon.Int1.HasValue && anon.Stat == Status.Married && !anon.Stat2.HasValue && !anon.Stat3.HasValue);
+
 #if !THIS_JSON_PARSER_ONLY
             // Support for Json.NET's "$type" pseudo-key (in addition to ServiceStack's "__type"):
             Person jsonNetPerson = new Person { Id = 123, Abc = '#', Name = "Foo", Scores = new[] { 100, 200, 300 } };
@@ -762,7 +769,7 @@ namespace Test
 
             // (Note the Parse<object>(...))
             object restoredObject = UnitTest(jsonNetString, s => new JsonParser().Parse<object>(jsonNetString));
-            System.Diagnostics.Debug.Assert
+            Assert
             (
                 restoredObject is Person &&
                 ((Person)restoredObject).Name == "Foo" &&
@@ -804,26 +811,26 @@ namespace Test
                     ) as
                     Dictionary<string, Post[]>
                 );
-            System.Diagnostics.Debug.Assert(posts != null && posts["data"][0].id == "post 1");
-            System.Diagnostics.Debug.Assert(posts != null && posts["data"][0].from.category == "Local business");
-            System.Diagnostics.Debug.Assert(posts != null && posts["data"][0].likes["data"][0].id == "like 1");
-            System.Diagnostics.Debug.Assert(posts != null && posts["data"][0].likes["data"][1].id == "like 2");
+            Assert(posts != null && posts["data"][0].id == "post 1");
+            Assert(posts != null && posts["data"][0].from.category == "Local business");
+            Assert(posts != null && posts["data"][0].likes["data"][0].id == "like 1");
+            Assert(posts != null && posts["data"][0].likes["data"][1].id == "like 2");
 
             // A few error cases
             obj = UnitTest("\"unfinished", s => new JsonParser().Parse<string>(s), true);
-            System.Diagnostics.Debug.Assert(obj is Exception && ((Exception)obj).Message.StartsWith("Bad string"));
+            Assert(obj is Exception && ((Exception)obj).Message.StartsWith("Bad string"));
 
             obj = UnitTest("[123]", s => new JsonParser().Parse<string[]>(s), true);
-            System.Diagnostics.Debug.Assert(obj is Exception && ((Exception)obj).Message.StartsWith("Bad string"));
+            Assert(obj is Exception && ((Exception)obj).Message.StartsWith("Bad string"));
 
             obj = UnitTest("[null]", s => new JsonParser().Parse<short[]>(s), true);
-            System.Diagnostics.Debug.Assert(obj is Exception && ((Exception)obj).Message.StartsWith("Bad number (short)"));
+            Assert(obj is Exception && ((Exception)obj).Message.StartsWith("Bad number (short)"));
 
             obj = UnitTest("[123.456]", s => new JsonParser().Parse<int[]>(s), true);
-            System.Diagnostics.Debug.Assert(obj is Exception && ((Exception)obj).Message.StartsWith("Unexpected character at 4"));
+            Assert(obj is Exception && ((Exception)obj).Message.StartsWith("Unexpected character at 4"));
 
             obj = UnitTest("\"Unknown\"", s => new JsonParser().Parse<Status>(s), true);
-            System.Diagnostics.Debug.Assert(obj is Exception && ((Exception)obj).Message.StartsWith("Bad enum value"));
+            Assert(obj is Exception && ((Exception)obj).Message.StartsWith("Bad enum value"));
 
             Console.Clear();
             Console.WriteLine("... Unit tests done.");
@@ -863,7 +870,7 @@ namespace Test
             var finalMemory = System.GC.GetTotalMemory(true);
             var consumption = finalMemory - initialMemory;
 
-            System.Diagnostics.Debug.Assert(l.Count == count);
+            Assert(l.Count == count);
 
             Console.WriteLine();
             Console.WriteLine("... Done, in {0} ms. Throughput: {1} characters / second.", tm.ToString("0,0"), (1000 * (decimal)(count * json.Length) / (tm > 0 ? tm : 1)).ToString("0,0.00"));
@@ -912,7 +919,7 @@ namespace Test
             {
                 var selection = jsonPathSelect(o);
                 var assertion = jsonPathAssert(selection);
-                System.Diagnostics.Debug.Assert(assertion);
+                Assert(assertion);
             }
             var tm = (int)DateTime.Now.Subtract(st).TotalMilliseconds;
 
@@ -1193,7 +1200,7 @@ namespace Test
                 Console.WriteLine();
                 if (filter == null)
                 {
-                    System.Diagnostics.Debug.Assert(o.fathers.Length == 30000);
+                    Assert(o.fathers.Length == 30000);
                 }
                 Console.WriteLine();
                 Console.WriteLine("... {0} ms", tm);
@@ -1263,14 +1270,14 @@ namespace Test
             {
                 FathersData data = parser.Parse<FathersData>(reader, filters);
 
-                System.Diagnostics.Debug.Assert
+                Assert
                 (
                     (data != null) &&
                     (data.fathers != null) &&
                     (data.fathers.Length == 5)
                 );
                 foreach (var i in Enumerable.Range(29995, 5))
-                    System.Diagnostics.Debug.Assert
+                    Assert
                     (
                         (data.fathers[i - 29995].id == i) &&
                         !String.IsNullOrEmpty(data.fathers[i - 29995].name)
@@ -1342,7 +1349,7 @@ namespace Test
             {
                 FathersData data = parser.Parse<FathersData>(reader, filters);
 
-                System.Diagnostics.Debug.Assert
+                Assert
                 (
                     (data != null) &&
                     (data.fathers != null) &&
@@ -1355,7 +1362,7 @@ namespace Test
                     if ((father.daughters != null) && (father.daughters.Length > 0))
                         foreach (var daughter in father.daughters)
                         {
-                            System.Diagnostics.Debug.Assert
+                            Assert
                             (
                                 !String.IsNullOrEmpty(daughter.maidenName)
                             );
@@ -1380,6 +1387,16 @@ namespace Test
             UnitTests();
 #endif
             SpeedTests();
+        }
+
+        public static void Assert(bool condition)
+        {
+            //System.Diagnostics.Debug.Assert(condition);
+            if (!condition)
+            {
+                Console.Error.WriteLine();
+                Console.Error.WriteLine("\t\t\t\t^^^ TEST FAILED!");
+            }
         }
     }
 }
