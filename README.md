@@ -109,7 +109,7 @@ and
 
     object Parse(System.IO.Stream input)
 
-The capability to parse JSON text coming thru a stream (reader) is clearly a must-have, past a certain size of payload - "*[have mercy for your CLR's large object heap](http://msdn.microsoft.com/en-us/magazine/cc534993.aspx)*".
+The capability to parse JSON text coming thru a stream (reader) is clearly a must-have, past a certain size of payload - "*[have mercy on your CLR large object heap](http://msdn.microsoft.com/en-us/magazine/cc534993.aspx)*".
 
 Note that if you don't care (i.e., don't need / don't want to bother) deserializing whatever input JSON into POCOs, you can then just call these methods with
 
