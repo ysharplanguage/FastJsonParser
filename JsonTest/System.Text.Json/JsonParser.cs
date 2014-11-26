@@ -321,7 +321,7 @@ namespace System.Text.Json
                 var kColon = typeof(JsonParser).GetMethod("KColon", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
                 var sComma = typeof(JsonParser).GetMethod("SComma", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
                 var vnType = (value.IsGenericType && (value.GetGenericTypeDefinition() == typeof(Nullable<>)) ? new Type[] { value.GetGenericArguments()[0] } : null);
-                var knType = (value.IsGenericType && (key.GetGenericTypeDefinition() == typeof(Nullable<>)) ? new Type[] { key.GetGenericArguments()[0] } : null);
+                var knType = (key.IsGenericType && (key.GetGenericTypeDefinition() == typeof(Nullable<>)) ? new Type[] { key.GetGenericArguments()[0] } : null);
                 var vParse = GetParserParse(GetParseName(value));
                 var kParse = GetParserParse(GetParseName(key));
                 var il = method.GetILGenerator();
@@ -904,13 +904,20 @@ namespace System.Text.Json
             return Activator.CreateInstance(atinfo.Type, atargs);
         }
 
+        private object Parse(int typed)
+        {
+            if ((Space() != 'n') || !types[typed].IsNullable)
+                return (types[typed].Type.IsValueType ? (types[typed].IsNullable ? types[types[typed].Inner].Parse(this, types[typed].Inner) : types[typed].Parse(this, typed)) : Val(typed));
+            else
+                return Null(0);
+        }
+
         private object Obj(int outer)
         {
             var cached = types[outer]; var isAnon = cached.IsAnonymous; var hash = types[cached.Key]; var select = cached.Select; var ctor = cached.Ctor;
             var atargs = (isAnon ? new object[cached.Props.Length] : null);
             var mapper = (null as Func<object, object>);
             var typed = ((outer > 0) && (cached.Dico == null) && ((ctor != null) || isAnon));
-            var parse = hash.Parse;
             var keyed = hash.T;
             var ch = chr;
             if (ch == '{')
@@ -927,7 +934,7 @@ namespace System.Text.Json
                 while (ch < EOF)
                 {
                     var prop = (typed ? GetPropInfo(cached) : null);
-                    var slot = (!typed ? parse(this, keyed) : null);
+                    var slot = (!typed ? Parse(keyed) : null);
                     Func<object, object> read = null;
                     Space();
                     Next(':');
@@ -935,7 +942,7 @@ namespace System.Text.Json
                     {
                         if ((select == null) || ((read = select(cached.Type, obj, slot, -1)) != null))
                         {
-                            var val = Val(cached.Inner);
+                            var val = Parse(cached.Inner);
                             var key = (slot as string);
                             if (obj == null)
                             {
@@ -959,23 +966,19 @@ namespace System.Text.Json
                         {
                             if ((select == null) || ((read = select(cached.Type, obj, prop.Name, -1)) != null))
                             {
-                                obj = (obj ?? ctor());
-                                if (((ch = Space()) == 'n') && types[prop.Outer].IsNullable)
-                                    Null(0);
-                                else
+                                if ((Space() != 'n') || !types[prop.Outer].IsNullable)
+                                {
+                                    obj = (obj ?? ctor());
                                     prop.Set(obj, this, prop.Outer, 0);
+                                }
+                                else
+                                    Null(0);
                             }
                             else
                                 Val(0);
                         }
                         else
-                        {
-                            keyed = prop.Outer;
-                            if (((ch = Space()) == 'n') && types[keyed].IsNullable)
-                                Null(0);
-                            else
-                                atargs[prop.Atm] = (types[keyed].Type.IsValueType ? (types[keyed].IsNullable ? types[types[keyed].Inner].Parse(this, types[keyed].Inner) : types[keyed].Parse(this, keyed)) : Val(keyed));
-                        }
+                            atargs[prop.Atm] = Parse(prop.Outer);
                     }
                     else
                         Val(0);
@@ -1036,7 +1039,7 @@ namespace System.Text.Json
                         ((IList)obj).Add(null);
                     }
                     else if (dico || (select == null) || ((read = select(cached.Type, obj, null, i)) != null))
-                        items.Set(obj, this, val, key);
+                        items.Set(obj, this, (types[val].IsNullable ? types[val].Inner : val), (types[key].IsNullable ? types[key].Inner : key));
                     else
                         Val(0);
                     mapper = (mapper ?? read);
