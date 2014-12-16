@@ -946,7 +946,7 @@ CFAQ
 * Q : Do you foresee that you'll make any breaking changes to [the public interface](#Interface) in the near-, mid-, or long-term?
     * A : For [most of it](#Interface), **no**, I should not and I won't. The only [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs)'s instance methods that may be subject to change / to some refactoring (or disappear altogether) in the future, are those taking that last "IDictionary&lt;Type, Func&lt;...&gt;&gt; mappers" parameter (for now a rudimentary provision to support custom filtered deserialization use cases). So, all of the following are definitely going to stay around for as long as [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) is developed and maintained here :
 
-[JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs)'s (public)
+[JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs)'s (*stable* public interface)
 
         object Parse(string input)
         object Parse(TextReader input)
