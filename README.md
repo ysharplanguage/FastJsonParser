@@ -485,7 +485,7 @@ http://theburningmonk.com/2014/09/binary-and-json-benchmarks-updated
 <td align="center"><strong>Performance<br/>+/- %</strong></td>
 <td align="center"><strong>+ 425 %</strong><br/>(faster)</td>
 <td align="center"><strong>+ 127 %</strong><br/>(faster)</td>
-<td align="center"><strong>+ 32 %</strong><br/>(faster)</td>
+<td align="center"><strong>+ 33 %</strong><br/>(faster)</td>
 <td align="center"><strong>=</strong></td>
 <td align="center"><strong>- 108 %</strong><br/>(slower)</td>
 </tr>
