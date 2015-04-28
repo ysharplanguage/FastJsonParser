@@ -852,9 +852,9 @@ namespace System.Text.Json
             throw Error("Bad key");
         }
 
-        private ItemInfo GetPropInfo(TypeInfo type)
+        private ItemInfo GetPropInfo(ItemInfo[] a)
         {
-            var a = type.Props; int ch = Space(), n = a.Length, c = 0, i = 0;
+            int ch = Space(), n = a.Length, c = 0, i = 0;
             var e = false;
             ItemInfo pi;
             if (ch == '"')
@@ -933,7 +933,7 @@ namespace System.Text.Json
                 obj = null;
                 while (ch < EOF)
                 {
-                    var prop = (typed ? GetPropInfo(cached) : null);
+                    var prop = (typed ? GetPropInfo(cached.Props) : null);
                     var slot = (!typed ? Parse(keyed) : null);
                     Func<object, object> read = null;
                     Space();
