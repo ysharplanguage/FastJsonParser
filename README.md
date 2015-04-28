@@ -255,16 +255,15 @@ Note there is a **basic** ( * ) lambda expression parser & compiler - [Expressio
 
 **Step \#4 or \#5**, (a) parse and deserialize the input JSON into the target object model, (b) wrap a [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49) instance around the latter, and (c) invoke the [JsonPathSelection](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L49)'s [SelectNodes(...)](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/System.Text.Json/JsonParser.cs#L57) method with the [JSONPath](http://goessner.net/articles/JsonPath) expression of interest to query the object model :
 
-            // Step #5 (a) : parse and deserialize the input JSON into the target object model
-            // i.e., Data typed = ...
+            // Step #5 (a)... parse and deserialize the input JSON into the target object model :
             var typed = new JsonParser().Parse<Data>(input);
 
-            // Step #5 (b) : cache the JsonPathSelection and its lambdas compiled (on-demand) by the evaluator
-            // i.e., JsonPathSelection scope = ...
+            // Step #5 (b)... cache the JsonPathSelection and its lambdas compiled (on-demand)
+            // by the evaluator :
             var scope = new JsonPathSelection(typed, evaluator);
             
-            // Step #5 (c) : invoke the SelectNodes method with the JSONPath expression to query the object model
-            // i.e., JsonPathNode[] nodes = ...
+            // Step #5 (c)... invoke the SelectNodes method with the JSONPath expression
+            // to query the object model :
             var nodes = scope.SelectNodes("$.store.book[?(@.title == \"The Lord of the Rings\")].price");
             
             System.Diagnostics.Debug.Assert
