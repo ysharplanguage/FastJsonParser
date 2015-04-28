@@ -914,8 +914,8 @@ namespace System.Text.Json
 
         private object Obj(int outer)
         {
-            var cached = types[outer]; var isAnon = cached.IsAnonymous; var hash = types[cached.Key]; var select = cached.Select; var ctor = cached.Ctor;
-            var atargs = (isAnon ? new object[cached.Props.Length] : null);
+            var cached = types[outer]; var isAnon = cached.IsAnonymous; var hash = types[cached.Key]; var select = cached.Select; var props = cached.Props; var ctor = cached.Ctor;
+            var atargs = (isAnon ? new object[props.Length] : null);
             var mapper = (null as Func<object, object>);
             var typed = ((outer > 0) && (cached.Dico == null) && ((ctor != null) || isAnon));
             var keyed = hash.T;
@@ -933,7 +933,7 @@ namespace System.Text.Json
                 obj = null;
                 while (ch < EOF)
                 {
-                    var prop = (typed ? GetPropInfo(cached.Props) : null);
+                    var prop = (typed ? GetPropInfo(props) : null);
                     var slot = (!typed ? Parse(keyed) : null);
                     Func<object, object> read = null;
                     Space();
