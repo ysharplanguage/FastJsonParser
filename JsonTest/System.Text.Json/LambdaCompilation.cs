@@ -1051,7 +1051,7 @@ namespace System.Text.Json.JsonPath.LambdaCompilation
                                 List<Expression> listParam = ReadParams("(", true);
 
                                 // 获取构造函数
-                                ConstructorInfo constructor = type.GetConstructor(listParam.ConvertAll<Type>(m => m.Type).ToArray());
+                                ConstructorInfo constructor = type.GetConstructor(listParam.Select(m => m.Type).ToArray());
                                 currentExpression = Expression.New(constructor, listParam);
 
                                 // 成员初始化/集合初始化
@@ -1251,7 +1251,7 @@ namespace System.Text.Json.JsonPath.LambdaCompilation
                                     List<Expression> listParam = ReadParams("(", false);
 
                                     MethodInfo methodInfo = _params[0].Type.GetMethod(val,
-                                        listParam.ConvertAll<Type>(m => m.Type).ToArray());
+                                        listParam.Select(m => m.Type).ToArray());
                                     currentExpression = Expression.Call(_params[0], methodInfo, listParam.ToArray());
                                 }
                                 // 参数 or 类 or  默认实例的属性
@@ -1289,13 +1289,13 @@ namespace System.Text.Json.JsonPath.LambdaCompilation
                                             if (parameter != null)
                                             {
                                                 MethodInfo methodInfo = parameter.Type.GetMethod(strMember,
-                                                    listParam.ConvertAll<Type>(m => m.Type).ToArray());
+                                                    listParam.Select(m => m.Type).ToArray());
                                                 currentExpression = Expression.Call(parameter, methodInfo, listParam.ToArray());
                                             }
                                             else
                                             {
                                                 MethodInfo methodInfo = type.GetMethod(strMember, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic, null,
-                                                    listParam.ConvertAll<Type>(m => m.Type).ToArray(), null);
+                                                    listParam.Select(m => m.Type).ToArray(), null);
                                                 currentExpression = Expression.Call(methodInfo, listParam.ToArray());
                                             }
                                         }
@@ -1596,7 +1596,7 @@ namespace System.Text.Json.JsonPath.LambdaCompilation
                                 // 获取参数
                                 List<Expression> listParam = ReadParams("(", false);
 
-                                MethodInfo methodInfo = currentExpression.Type.GetMethod(strMember, listParam.ConvertAll<Type>(m => m.Type).ToArray());
+                                MethodInfo methodInfo = currentExpression.Type.GetMethod(strMember, listParam.Select(m => m.Type).ToArray());
                                 currentExpression = Expression.Call(currentExpression, methodInfo, listParam.ToArray());
                             }
                             // 成员(PropertyOrField)
@@ -2070,14 +2070,14 @@ namespace System.Text.Json.JsonPath.LambdaCompilation
                 }
                 if (assembly != executing)
                 {
-                    type = assembly.GetType(typeName, false, false);
+                    type = assembly.GetType(typeName, false);
                     if (type != null)
                     {
                         break;
                     }
                 }
             }
-            return (((type == null) && (executing != null)) ? executing.GetType(typeName, false, false) : type);
+            return (((type == null) && (executing != null)) ? executing.GetType(typeName, false) : type);
         }
 
         #endregion
