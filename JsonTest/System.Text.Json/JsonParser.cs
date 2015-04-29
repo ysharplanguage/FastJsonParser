@@ -1460,18 +1460,18 @@ namespace System.Text.Json.JsonPath // ( See http://goessner.net/articles/JsonPa
 
         private sealed class NormalizationSwap
         {
-            private readonly ArrayList subx = new ArrayList(4);
+            private readonly List<string> subx = new List<string>(4);
 
             public string Capture(Match match)
             {
-                int index = subx.Add(match.Groups[1].Value);
-                return "[#" + index.ToString(CultureInfo.InvariantCulture) + "]";
+                this.subx.Add(match.Groups[1].Value);
+                return "[#" + (this.subx.Count - 1).ToString(CultureInfo.InvariantCulture) + "]";
             }
 
             public string Yield(Match match)
             {
-                int index = int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
-                return (string)subx[index];
+                var index = int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
+                return this.subx[index];
             }
         }
 
