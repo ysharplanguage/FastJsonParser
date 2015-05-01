@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>System.Text.Json.Mobile</id>
+    <title>System.Text.Json.Mobile</title>
+    <tags>Fast JSON parser deserializer POCO Xamarin Mobile Android WP</tags>
+    <version>2.0.0.6</version>
+    <authors>Cyril Jandia, Sami Kallio</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>
+      A minimalistic and fast JSON parser/deserializer. Mobile versions for Android and WP8.
+    </description>
+    <summary>
+    </summary>
+    <language>en-US</language>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="Mono.Android.Export" targetFramework="MonoAndroid" />
+    </frameworkAssemblies>
+  </metadata>
+  <files>
+    <file src="..\..\JsonTest\System.Text.Json\bin\Release\**\System.Text.Json.Droid.dll" target="lib\MonoAndroid" />
+    <file src="..\..\JsonTest\System.Text.Json\bin\Release\**\System.Text.Json.WP8.dll" target="lib\wp8" />
+    <!-- Source Files for Symbol Server -->
+    <file src="..\..\JsonTest\System.Text.Json\**\*.cs" target="src" />
+  </files>
+</package>
