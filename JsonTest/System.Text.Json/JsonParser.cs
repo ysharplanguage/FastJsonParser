@@ -575,7 +575,7 @@ namespace System.Text.Json
         private short ParseSByte(int outer)
         {
             sbyte it = 1, n = 0;
-            bool b = false, k;
+            bool b, k;
             int ch = Space();
             TypeInfo t;
             if (k = ((outer > 0) && (ch == '"')))
@@ -589,14 +589,15 @@ namespace System.Text.Json
                 }
             }
             if (ch == '-') { ch = Read(); it = (sbyte)-it; }
-            while ((ch >= '0') && (ch <= '9') && (b = true)) { checked { n *= 10; n += (sbyte)(it * (ch - 48)); } ch = Read(); }
+            b = (ch >= '0') && (ch <= '9');
+            if (b) while ((ch >= '0') && (ch <= '9')) { checked { n *= 10; n += (sbyte)(it * (ch - 48)); } ch = Read(); }
             if (!b) throw Error("Bad number (sbyte)"); if (k) Next('"');
             return n;
         }
 
         private byte ParseByte(int outer)
         {
-            bool b = false, k;
+            bool b, k;
             int ch = Space();
             byte n = 0;
             TypeInfo t;
@@ -610,7 +611,8 @@ namespace System.Text.Json
                     return (byte)e.Value;
                 }
             }
-            while ((ch >= '0') && (ch <= '9') && (b = true)) { checked { n *= 10; n += (byte)(ch - 48); } ch = Read(); }
+            b = (ch >= '0') && (ch <= '9');
+            if (b) while ((ch >= '0') && (ch <= '9')) { checked { n *= 10; n += (byte)(ch - 48); } ch = Read(); }
             if (!b) throw Error("Bad number (byte)"); if (k) Next('"');
             return n;
         }
@@ -618,7 +620,7 @@ namespace System.Text.Json
         private short ParseInt16(int outer)
         {
             short it = 1, n = 0;
-            bool b = false, k;
+            bool b, k;
             int ch = Space();
             TypeInfo t;
             if (k = ((outer > 0) && (ch == '"')))
@@ -632,14 +634,15 @@ namespace System.Text.Json
                 }
             }
             if (ch == '-') { ch = Read(); it = (short)-it; }
-            while ((ch >= '0') && (ch <= '9') && (b = true)) { checked { n *= 10; n += (short)(it * (ch - 48)); } ch = Read(); }
+            b = (ch >= '0') && (ch <= '9');
+            if (b) while ((ch >= '0') && (ch <= '9')) { checked { n *= 10; n += (short)(it * (ch - 48)); } ch = Read(); }
             if (!b) throw Error("Bad number (short)"); if (k) Next('"');
             return n;
         }
 
         private ushort ParseUInt16(int outer)
         {
-            bool b = false, k;
+            bool b, k;
             int ch = Space();
             ushort n = 0;
             TypeInfo t;
@@ -653,7 +656,8 @@ namespace System.Text.Json
                     return (ushort)e.Value;
                 }
             }
-            while ((ch >= '0') && (ch <= '9') && (b = true)) { checked { n *= 10; n += (ushort)(ch - 48); } ch = Read(); }
+            b = (ch >= '0') && (ch <= '9');
+            if (b) while ((ch >= '0') && (ch <= '9')) { checked { n *= 10; n += (ushort)(ch - 48); } ch = Read(); }
             if (!b) throw Error("Bad number (ushort)"); if (k) Next('"');
             return n;
         }
@@ -661,7 +665,7 @@ namespace System.Text.Json
         private int ParseInt32(int outer)
         {
             int it = 1, n = 0;
-            bool b = false, k;
+            bool b, k;
             int ch = Space();
             TypeInfo t;
             if (k = ((outer > 0) && (ch == '"')))
@@ -675,14 +679,15 @@ namespace System.Text.Json
                 }
             }
             if (ch == '-') { ch = Read(); it = -it; }
-            while ((ch >= '0') && (ch <= '9') && (b = true)) { checked { n *= 10; n += (it * (ch - 48)); } ch = Read(); }
+            b = (ch >= '0') && (ch <= '9');
+            if (b) while ((ch >= '0') && (ch <= '9')) { checked { n *= 10; n += (it * (ch - 48)); } ch = Read(); }
             if (!b) throw Error("Bad number (int)"); if (k) Next('"');
             return n;
         }
 
         private uint ParseUInt32(int outer)
         {
-            bool b = false, k;
+            bool b, k;
             int ch = Space();
             uint n = 0;
             TypeInfo t;
@@ -696,7 +701,8 @@ namespace System.Text.Json
                     return (uint)e.Value;
                 }
             }
-            while ((ch >= '0') && (ch <= '9') && (b = true)) { checked { n *= 10; n += (uint)(ch - 48); } ch = Read(); }
+            b = (ch >= '0') && (ch <= '9');
+            if (b) while ((ch >= '0') && (ch <= '9')) { checked { n *= 10; n += (uint)(ch - 48); } ch = Read(); }
             if (!b) throw Error("Bad number (uint)"); if (k) Next('"');
             return n;
         }
@@ -704,7 +710,7 @@ namespace System.Text.Json
         private long ParseInt64(int outer)
         {
             long it = 1, n = 0;
-            bool b = false, k;
+            bool b, k;
             int ch = Space();
             TypeInfo t;
             if (k = ((outer > 0) && (ch == '"')))
@@ -718,14 +724,15 @@ namespace System.Text.Json
                 }
             }
             if (ch == '-') { ch = Read(); it = -it; }
-            while ((ch >= '0') && (ch <= '9') && (b = true)) { checked { n *= 10; n += (long)(it * (ch - 48)); } ch = Read(); }
+            b = (ch >= '0') && (ch <= '9');
+            if (b) while ((ch >= '0') && (ch <= '9')) { checked { n *= 10; n += (long)(it * (ch - 48)); } ch = Read(); }
             if (!b) throw Error("Bad number (long)"); if (k) Next('"');
             return n;
         }
 
         private ulong ParseUInt64(int outer)
         {
-            bool b = false, k;
+            bool b, k;
             int ch = Space();
             ulong n = 0;
             TypeInfo t;
@@ -739,20 +746,22 @@ namespace System.Text.Json
                     return (ulong)e.Value;
                 }
             }
-            while ((ch >= '0') && (ch <= '9') && (b = true)) { checked { n *= 10; n += (ulong)(ch - 48); } ch = Read(); }
+            b = (ch >= '0') && (ch <= '9');
+            if (b) while ((ch >= '0') && (ch <= '9')) { checked { n *= 10; n += (ulong)(ch - 48); } ch = Read(); }
             if (!b) throw Error("Bad number (ulong)"); if (k) Next('"');
             return n;
         }
 
         private float ParseSingle(int outer)
         {
-            bool b = false, k;
+            bool b, k;
             int ch = Space();
             string s;
             lsb.Length = 0; lln = 0;
             if (k = ((outer > 0) && (ch == '"'))) ch = Read();
             if (ch == '-') ch = Char(ch);
-            while ((ch >= '0') && (ch <= '9') && (b = true)) ch = Char(ch);
+            b = (ch >= '0') && (ch <= '9');
+            if (b) while ((ch >= '0') && (ch <= '9')) ch = Char(ch);
             if (ch == '.') { ch = Char(ch); while ((ch >= '0') && (ch <= '9')) ch = Char(ch); }
             if ((ch == 'e') || (ch == 'E')) { ch = Char(ch); if ((ch == '-') || (ch == '+')) ch = Char(ch); while ((ch >= '0') && (ch <= '9')) ch = Char(ch); }
             if (!b) throw Error("Bad number (float)"); if (k) Next('"');
@@ -762,13 +771,14 @@ namespace System.Text.Json
 
         private double ParseDouble(int outer)
         {
-            bool b = false, k;
+            bool b, k;
             int ch = Space();
             string s;
             lsb.Length = 0; lln = 0;
             if (k = ((outer > 0) && (ch == '"'))) ch = Read();
             if (ch == '-') ch = Char(ch);
-            while ((ch >= '0') && (ch <= '9') && (b = true)) ch = Char(ch);
+            b = (ch >= '0') && (ch <= '9');
+            if (b) while ((ch >= '0') && (ch <= '9')) ch = Char(ch);
             if (ch == '.') { ch = Char(ch); while ((ch >= '0') && (ch <= '9')) ch = Char(ch); }
             if ((ch == 'e') || (ch == 'E')) { ch = Char(ch); if ((ch == '-') || (ch == '+')) ch = Char(ch); while ((ch >= '0') && (ch <= '9')) ch = Char(ch); }
             if (!b) throw Error("Bad number (double)"); if (k) Next('"');
@@ -778,13 +788,14 @@ namespace System.Text.Json
 
         private decimal ParseDecimal(int outer)
         {
-            bool b = false, k;
+            bool b, k;
             int ch = Space();
             string s;
             lsb.Length = 0; lln = 0;
             if (k = ((outer > 0) && (ch == '"'))) ch = Read();
             if (ch == '-') ch = Char(ch);
-            while ((ch >= '0') && (ch <= '9') && (b = true)) ch = Char(ch);
+            b = (ch >= '0') && (ch <= '9');
+            if (b) while ((ch >= '0') && (ch <= '9')) ch = Char(ch);
             if (ch == '.') { ch = Char(ch); while ((ch >= '0') && (ch <= '9')) ch = Char(ch); }
             if (!b) throw Error("Bad number (decimal)"); if (k) Next('"');
             s = ((lsb.Length > 0) ? lsb.ToString() : new string(lbf, 0, lln));
@@ -879,10 +890,11 @@ namespace System.Text.Json
         private object Num(int outer)
         {
             var ch = chr;
-            var b = false;
+            bool b;
             lsb.Length = 0; lln = 0;
             if (ch == '-') ch = Char(ch);
-            while ((ch >= '0') && (ch <= '9') && (b = true)) ch = Char(ch);
+            b = (ch >= '0') && (ch <= '9');
+            if (b) while ((ch >= '0') && (ch <= '9')) ch = Char(ch);
             if (ch == '.') { ch = Char(ch); while ((ch >= '0') && (ch <= '9')) ch = Char(ch); }
             if ((ch == 'e') || (ch == 'E')) { ch = Char(ch); if ((ch == '-') || (ch == '+')) ch = Char(ch); while ((ch >= '0') && (ch <= '9')) ch = Char(ch); }
             if (!b) throw Error("Bad number");
