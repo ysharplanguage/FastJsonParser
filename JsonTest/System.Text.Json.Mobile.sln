@@ -10,6 +10,22 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Text.Json.Droid", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Text.Json.WP8", "System.Text.Json\System.Text.Json.WP8.csproj", "{477EBFA2-BD2D-46A6-A2DA-55755FBF1809}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{4C718CFB-E823-4D8A-BABA-CEAF259736F1}"
+	ProjectSection(SolutionItems) = preProject
+		..\.nuget\Build All.ps1 = ..\.nuget\Build All.ps1
+		..\.nuget\Clean All.ps1 = ..\.nuget\Clean All.ps1
+		..\.nuget\NuGet.Config = ..\.nuget\NuGet.Config
+		..\.nuget\NuGet.targets = ..\.nuget\NuGet.targets
+		..\.nuget\Push All.ps1 = ..\.nuget\Push All.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Definition", "Definition", "{41AC87E3-6C28-4758-B538-8CCFEA5F0789}"
+	ProjectSection(SolutionItems) = preProject
+		..\.nuget\Definition\Build.ps1 = ..\.nuget\Definition\Build.ps1
+		..\.nuget\Definition\Clean.ps1 = ..\.nuget\Definition\Clean.ps1
+		..\.nuget\Definition\System.Text.Json.Mobile.NuSpec = ..\.nuget\Definition\System.Text.Json.Mobile.NuSpec
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -76,5 +92,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{41AC87E3-6C28-4758-B538-8CCFEA5F0789} = {4C718CFB-E823-4D8A-BABA-CEAF259736F1}
 	EndGlobalSection
 EndGlobal
