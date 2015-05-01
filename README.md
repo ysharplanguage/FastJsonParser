@@ -44,15 +44,13 @@ Design goal
 
 This aims at parsing textual JSON data, and to deserialize it into our (strongly typed) [POCO](http://en.wikipedia.org/wiki/Plain_Old_CLR_Object)s, as fast as possible.
 
-For now ( * ), the only tiers of interest for this parser are the desktop / server tiers. There are other JSON librairies with good performance, and already well tested / documented, which *also* support mobile / handheld devices that run more limited flavors of .NET (e.g., [Json.NET](http://james.newtonking.com/json) and [ServiceStack](https://github.com/ServiceStack/ServiceStack) come to mind).
+For now, the **main** tiers of interest for this parser are the desktop / server tiers. There are other JSON librairies with good performance, and already well tested / documented, which *also* support mobile / handheld devices that run more limited flavors of .NET (e.g., [Json.NET](http://james.newtonking.com/json) and [ServiceStack](https://github.com/ServiceStack/ServiceStack) come to mind).
 
-(* i.e., until it gets stable enough and I hear people's interest for it to run elsewhere)
-
-This JSON parser / deserializer thus aims first at staying "simple", short, fast, and for use by some desktop- or server-side code that would require the full .NET anyway, and unlikely to ever be usable on mobile devices (unless those can eventually run the full .NET).
-
-Nevertheless, [Sami](https://github.com/sami1971) has just recently been able to do a quick performance test on his Android device (as the code could luckily compile for it *as-is*), and came up with a few benchmark results (a dozen or so) which do seem encouraging - i.e., see this thread of Xamarin's Android forum :
+However, [Sami](https://github.com/sami1971) was able to do a quick performance test on his Android device (as the code could luckily compile for it *as-is*), and came up with a few benchmark results (a dozen or so) which do seem encouraging - i.e., see this thread of Xamarin's Android forum :
 
 http://forums.xamarin.com/discussion/comment/39011/#Comment_39011
+
+Thus, starting with [version 2.0.0.6](https://www.nuget.org/packages/System.Text.Json.Mobile), Android and WP8 are supported (see <a href="#NuGet">NuGet</a> section below).
 
 <a name="NuGet"></a>
 
