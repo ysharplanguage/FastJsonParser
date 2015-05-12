@@ -1,6 +1,6 @@
 // On GitHub: https://github.com/ysharplanguage/FastJsonParser
 /*
- * Copyright (c) 2013, 2014 Cyril Jandia
+ * Copyright (c) 2013, 2014, 2015 Cyril Jandia
  *
  * http://www.cjandia.com/
  *
