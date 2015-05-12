@@ -222,6 +222,10 @@ namespace System.Text.Json
             internal Func<object> Ctor;
             internal EnumInfo[] Enums;
             internal ItemInfo[] Props;
+#if FASTER_GETPROPINFO
+            internal char[] Mlk;
+            internal int Mnl;
+#endif
             internal ItemInfo Dico;
             internal ItemInfo List;
             internal bool IsAnonymous;
@@ -420,6 +424,23 @@ namespace System.Text.Json
                     for (var i = 0; i < args.Length; i++) infos.Add(args[i].Name, new ItemInfo { Type = args[i].ParameterType, Name = args[i].Name, Atm = i, Len = args[i].Name.Length });
                 }
                 Props = infos.OrderBy(pair => pair.Key).Select(pair => pair.Value).ToArray();
+#if FASTER_GETPROPINFO
+                if (Props.Length > 0)
+                {
+                    Mnl = Props.Max(p => p.Name.Length) + 1;
+                    Mlk = new char[Mnl * (Props.Length + 1)];
+                    for (var i = 0; i < Props.Length; i++)
+                    {
+                        var p = Props[i]; var n = p.Name; var l = n.Length;
+                        n.CopyTo(0, Mlk, Mnl * i, l);
+                    }
+                }
+                else
+                {
+                    Mnl = 1;
+                    Mlk = new char[1];
+                }
+#endif
             }
         }
 
@@ -863,6 +884,7 @@ namespace System.Text.Json
             throw Error("Bad key");
         }
 
+#if !FASTER_GETPROPINFO
         private ItemInfo GetPropInfo(ItemInfo[] a)
         {
             int ch = Space(), n = a.Length, c = 0, i = 0;
@@ -881,6 +903,29 @@ namespace System.Text.Json
             }
             throw Error("Bad key");
         }
+#else
+        private unsafe ItemInfo FasterGetPropInfo(TypeInfo type)
+        {
+            var p = type.Props; var m = type.Mlk; int ch = Space(), l = type.Mnl, n = p.Length, c = m[0], i = 0, k = 0, z = n * l;
+            var e = false;
+            if (ch == '"')
+            {
+                Read();
+                fixed (char* a = m)
+                {
+                    while (true)
+                    {
+                        if ((ch = chr) == '"') { Read(); return i < n ? p[i] : null; }
+                        if (e = (ch == '\\')) ch = Read();
+                        if (ch < EOF) { if (!e || (ch >= 128)) Read(); else { ch = Esc(ch); e = false; } } else break;
+                        while (k < z && c != ch) { c = a[k += l]; i++; }
+                        c = a[++k];
+                    }
+                }
+            }
+            throw Error("Bad key");
+        }
+#endif
 
         private object Error(int outer) { throw Error("Bad value"); }
         private object Null(int outer) { Read(); Next('u'); Next('l'); Next('l'); return null; }
@@ -945,7 +990,11 @@ namespace System.Text.Json
                 obj = null;
                 while (ch < EOF)
                 {
+#if FASTER_GETPROPINFO
+                    var prop = (typed ? FasterGetPropInfo(cached) : null);
+#else
                     var prop = (typed ? GetPropInfo(props) : null);
+#endif
                     var slot = (!typed ? Parse(keyed) : null);
                     Func<object, object> read = null;
                     Space();
