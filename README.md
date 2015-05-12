@@ -52,6 +52,8 @@ http://forums.xamarin.com/discussion/comment/39011/#Comment_39011
 
 Thus, starting with [version 2.0.0.6](https://www.nuget.org/packages/System.Text.Json.Mobile), Android and WP8 are also supported (see <a href="#NuGet">NuGet</a> section below).
 
+Thank you [Sami](https://github.com/sami1971) :)
+
 <a name="NuGet"></a>
 
 Available on NuGet
