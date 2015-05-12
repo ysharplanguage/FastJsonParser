@@ -1,9 +1,9 @@
 // On GitHub: https://github.com/ysharplanguage/FastJsonParser
-#define THIS_JSON_PARSER_ONLY
+#define THIS_JSON_PARSER_ONLY // (If not defined, these tests will require a reference to Json.NET)
 #define RUN_UNIT_TESTS
 #define RUN_BASIC_JSONPATH_TESTS
 #define RUN_ADVANCED_JSONPATH_TESTS
-#define RUN_SERVICESTACK_TESTS
+#define RUN_SERVICESTACK_TESTS // (If defined, these tests will require a reference to ServiceStack)
 
 using System;
 using System.Collections.Generic;
@@ -303,9 +303,9 @@ namespace Test
         private static readonly string HUGE_TEST_FILE_PATH = string.Format(@"..{0}..{0}TestData{0}huge.json.txt", Path.DirectorySeparatorChar);
 
 #if RUN_UNIT_TESTS
-        static object UnitTest<T>(string input, Func<string, T> parse) { return UnitTest(input, parse, false); }
+        static object UnitTest<T>(string input, Func<string, T> parse, ref int count, ref int passed) { return UnitTest(input, parse, ref count, ref passed, false); }
 
-        static object UnitTest<T>(string input, Func<string, T> parse, bool errorCase)
+        static object UnitTest<T>(string input, Func<string, T> parse, ref int count, ref int passed, bool errorCase)
         {
             object obj;
             Console.WriteLine();
@@ -318,12 +318,21 @@ namespace Test
             Console.WriteLine("Press a key...");
             Console.WriteLine();
             Console.ReadKey();
+            count++;
+            if (!errorCase)
+            {
+                passed += !(obj is Exception) ? 1 : 0;
+            }
+            else
+            {
+                passed += (obj is Exception) ? 1 : 0;
+            }
             return obj;
         }
 
         static void UnitTests()
         {
-            object obj;
+            object obj; int count = 0, passed = 0;
             Console.Clear();
             Console.WriteLine("Press ESC to skip the unit tests or any other key to start...");
             Console.WriteLine();
@@ -581,67 +590,67 @@ namespace Test
 #endif
 
             // A few nominal cases
-            obj = UnitTest("null", s => new JsonParser().Parse(s));
+            obj = UnitTest("null", s => new JsonParser().Parse(s), ref count, ref passed);
             Assert(obj == null);
 
-            obj = UnitTest("true", s => new JsonParser().Parse(s));
+            obj = UnitTest("true", s => new JsonParser().Parse(s), ref count, ref passed);
             Assert(obj is bool && (bool)obj);
 
-            obj = UnitTest(@"""\z""", s => new JsonParser().Parse<char>(s));
+            obj = UnitTest(@"""\z""", s => new JsonParser().Parse<char>(s), ref count, ref passed);
             Assert(obj is char && (char)obj == 'z');
 
-            obj = UnitTest(@"""\t""", s => new JsonParser().Parse<char>(s));
+            obj = UnitTest(@"""\t""", s => new JsonParser().Parse<char>(s), ref count, ref passed);
             Assert(obj is char && (char)obj == '\t');
 
-            obj = UnitTest(@"""\u0021""", s => new JsonParser().Parse<char>(s));
+            obj = UnitTest(@"""\u0021""", s => new JsonParser().Parse<char>(s), ref count, ref passed);
             Assert(obj is char && (char)obj == '!');
 
-            obj = UnitTest(@"""\u007D""", s => new JsonParser().Parse<char>(s));
+            obj = UnitTest(@"""\u007D""", s => new JsonParser().Parse<char>(s), ref count, ref passed);
             Assert(obj is char && (char)obj == '}');
 
-            obj = UnitTest(@" ""\u007e"" ", s => new JsonParser().Parse<char>(s));
+            obj = UnitTest(@" ""\u007e"" ", s => new JsonParser().Parse<char>(s), ref count, ref passed);
             Assert(obj is char && (char)obj == '~');
 
-            obj = UnitTest(@" ""\u202A"" ", s => new JsonParser().Parse<char>(s));
+            obj = UnitTest(@" ""\u202A"" ", s => new JsonParser().Parse<char>(s), ref count, ref passed);
             Assert(obj is char && (int)(char)obj == 0x202a);
 
-            obj = UnitTest("123", s => new JsonParser().Parse<int>(s));
+            obj = UnitTest("123", s => new JsonParser().Parse<int>(s), ref count, ref passed);
             Assert(obj is int && (int)obj == 123);
 
-            obj = UnitTest("\"\"", s => new JsonParser().Parse<string>(s));
+            obj = UnitTest("\"\"", s => new JsonParser().Parse<string>(s), ref count, ref passed);
             Assert(obj is string && (string)obj == String.Empty);
 
-            obj = UnitTest("\"Abc\\tdef\"", s => new JsonParser().Parse<string>(s));
+            obj = UnitTest("\"Abc\\tdef\"", s => new JsonParser().Parse<string>(s), ref count, ref passed);
             Assert(obj is string && (string)obj == "Abc\tdef");
 
-            obj = UnitTest("[null]", s => new JsonParser().Parse<object[]>(s));
+            obj = UnitTest("[null]", s => new JsonParser().Parse<object[]>(s), ref count, ref passed);
             Assert(obj is object[] && ((object[])obj).Length == 1 && ((object[])obj)[0] == null);
 
-            obj = UnitTest("[true]", s => new JsonParser().Parse<IList<bool>>(s));
+            obj = UnitTest("[true]", s => new JsonParser().Parse<IList<bool>>(s), ref count, ref passed);
             Assert(obj is IList<bool> && ((IList<bool>)obj).Count == 1 && ((IList<bool>)obj)[0]);
 
-            obj = UnitTest("[1,2,3,4,5]", s => new JsonParser().Parse<int[]>(s));
+            obj = UnitTest("[1,2,3,4,5]", s => new JsonParser().Parse<int[]>(s), ref count, ref passed);
             Assert(obj is int[] && ((int[])obj).Length == 5 && ((int[])obj)[4] == 5);
 
-            obj = UnitTest("123.456", s => new JsonParser().Parse<decimal>(s));
+            obj = UnitTest("123.456", s => new JsonParser().Parse<decimal>(s), ref count, ref passed);
             Assert(obj is decimal && (decimal)obj == 123.456m);
 
-            obj = UnitTest("{\"a\":123,\"b\":true}", s => new JsonParser().Parse(s));
+            obj = UnitTest("{\"a\":123,\"b\":true}", s => new JsonParser().Parse(s), ref count, ref passed);
             Assert(obj is IDictionary<string, object> && (((IDictionary<string, object>)obj)["a"] as string) == "123" && ((obj = ((IDictionary<string, object>)obj)["b"]) is bool) && (bool)obj);
 
-            obj = UnitTest("1", s => new JsonParser().Parse<Status>(s));
+            obj = UnitTest("1", s => new JsonParser().Parse<Status>(s), ref count, ref passed);
             Assert(obj is Status && (Status)obj == Status.Married);
 
-            obj = UnitTest("\"Divorced\"", s => new JsonParser().Parse<Status>(s));
+            obj = UnitTest("\"Divorced\"", s => new JsonParser().Parse<Status>(s), ref count, ref passed);
             Assert(obj is Status && (Status)obj == Status.Divorced);
 
-            obj = UnitTest("{\"Name\":\"Peter\",\"Status\":0}", s => new JsonParser().Parse<Person>(s));
+            obj = UnitTest("{\"Name\":\"Peter\",\"Status\":0}", s => new JsonParser().Parse<Person>(s), ref count, ref passed);
             Assert(obj is Person && ((Person)obj).Name == "Peter" && ((Person)obj).Status == Status.Single);
 
-            obj = UnitTest("{\"Name\":\"Paul\",\"Status\":\"Married\"}", s => new JsonParser().Parse<Person>(s));
+            obj = UnitTest("{\"Name\":\"Paul\",\"Status\":\"Married\"}", s => new JsonParser().Parse<Person>(s), ref count, ref passed);
             Assert(obj is Person && ((Person)obj).Name == "Paul" && ((Person)obj).Status == Status.Married);
 
-            obj = UnitTest("{\"History\":[{\"key\":\"1801-06-30T00:00:00Z\",\"value\":\"Birth date\"}]}", s => new JsonParser().Parse<Person>(s));
+            obj = UnitTest("{\"History\":[{\"key\":\"1801-06-30T00:00:00Z\",\"value\":\"Birth date\"}]}", s => new JsonParser().Parse<Person>(s), ref count, ref passed);
             Assert(obj is Person && ((Person)obj).History[new DateTime(1801, 6, 30, 0, 0, 0, DateTimeKind.Utc)] == "Birth date");
 
             obj = UnitTest(@"{""Items"":[
@@ -656,7 +665,7 @@ namespace Test
                     ""UniqueId"": ""aad737f7-0caa-4574-9ca5-f39964d50f41"",
                     ""SmallInt1"": 127,
                     ""SmallInt2"": -128
-                }]}", s => new JsonParser().Parse<StuffHolder>(s));
+                }]}", s => new JsonParser().Parse<StuffHolder>(s), ref count, ref passed);
             Assert
             (
                 obj is StuffHolder && ((StuffHolder)obj).Items.Count == 2 &&
@@ -699,7 +708,7 @@ namespace Test
                 }
             }";
 
-            obj = UnitTest(configTestInputVendors, s => new JsonParser().Parse<SampleConfigData<VendorID>>(s));
+            obj = UnitTest(configTestInputVendors, s => new JsonParser().Parse<SampleConfigData<VendorID>>(s), ref count, ref passed);
             Assert
             (
                 obj is SampleConfigData<VendorID> &&
@@ -708,7 +717,7 @@ namespace Test
                 ((SampleConfigItem)((SampleConfigData<VendorID>)obj).ConfigItems[VendorID.Vendor3]).Id == 300
             );
 
-            obj = UnitTest(configTestInputIntegers, s => new JsonParser().Parse<SampleConfigData<int>>(s));
+            obj = UnitTest(configTestInputIntegers, s => new JsonParser().Parse<SampleConfigData<int>>(s), ref count, ref passed);
             Assert
             (
                 obj is SampleConfigData<int> &&
@@ -738,7 +747,7 @@ namespace Test
                     { ""key"": { ""Id"": 1, ""Name"": ""Peter"" }, ""value"": 15999.99 },
                     { ""key"": { ""Id"": 2, ""Name"": ""Paul"" }, ""value"": 250000.05 }
                 ]
-            }", s => new JsonParser().Parse<Owners>(s));
+            }", s => new JsonParser().Parse<Owners>(s), ref count, ref passed);
             Owner peter, owner;
             Assert
             (
@@ -752,7 +761,7 @@ namespace Test
                 (owner.Assets[0].Name == "Car")
             );
 
-            var nea = (Status?[])UnitTest(@"[1,""Married"",null,2]", s => new JsonParser().Parse<Status?[]>(s));
+            var nea = (Status?[])UnitTest(@"[1,""Married"",null,2]", s => new JsonParser().Parse<Status?[]>(s), ref count, ref passed);
             Assert(nea[0].Value == Status.Married && nea[1].Value == nea[0].Value && !nea[2].HasValue && nea[3].Value == Status.Divorced);
 
             var anon = new { Int1 = default(int?), Stat = default(Status?), Stat2 = default(Status?), Stat3 = default(Status?) };
@@ -797,7 +806,7 @@ namespace Test
             // => '{"$type":"Test.ParserTests+Person, Test","Id":123,"Name":"Foo","Status":0,"Address":null,"Scores":[100,200,300],"Data":null,"History":null,"Abc":"#"}'
 
             // (Note the Parse<object>(...))
-            object restoredObject = UnitTest(jsonNetString, s => new JsonParser().Parse<object>(jsonNetString));
+            object restoredObject = UnitTest(jsonNetString, s => new JsonParser().Parse<object>(jsonNetString), ref count, ref passed);
             Assert
             (
                 restoredObject is Person &&
@@ -836,7 +845,7 @@ namespace Test
                 (
                     UnitTest(
                         SO_26426594_input,
-                        FacebookPostDeserialization_SO_26426594
+                        FacebookPostDeserialization_SO_26426594, ref count, ref passed
                     ) as
                     Dictionary<string, Post[]>
                 );
@@ -846,23 +855,23 @@ namespace Test
             Assert(posts != null && posts["data"][0].likes["data"][1].id == "like 2");
 
             // A few error cases
-            obj = UnitTest("\"unfinished", s => new JsonParser().Parse<string>(s), true);
+            obj = UnitTest("\"unfinished", s => new JsonParser().Parse<string>(s), ref count, ref passed, true);
             Assert(obj is Exception && ((Exception)obj).Message.StartsWith("Bad string"));
 
-            obj = UnitTest("[123]", s => new JsonParser().Parse<string[]>(s), true);
+            obj = UnitTest("[123]", s => new JsonParser().Parse<string[]>(s), ref count, ref passed, true);
             Assert(obj is Exception && ((Exception)obj).Message.StartsWith("Bad string"));
 
-            obj = UnitTest("[null]", s => new JsonParser().Parse<short[]>(s), true);
+            obj = UnitTest("[null]", s => new JsonParser().Parse<short[]>(s), ref count, ref passed, true);
             Assert(obj is Exception && ((Exception)obj).Message.StartsWith("Bad number (short)"));
 
-            obj = UnitTest("[123.456]", s => new JsonParser().Parse<int[]>(s), true);
+            obj = UnitTest("[123.456]", s => new JsonParser().Parse<int[]>(s), ref count, ref passed, true);
             Assert(obj is Exception && ((Exception)obj).Message.StartsWith("Unexpected character at 4"));
 
-            obj = UnitTest("\"Unknown\"", s => new JsonParser().Parse<Status>(s), true);
+            obj = UnitTest("\"Unknown\"", s => new JsonParser().Parse<Status>(s), ref count, ref passed, true);
             Assert(obj is Exception && ((Exception)obj).Message.StartsWith("Bad enum value"));
 
             Console.Clear();
-            Console.WriteLine("... Unit tests done.");
+            Console.WriteLine("... Unit tests done: {0} passed, out of {1}.", passed, count);
             Console.WriteLine();
             Console.WriteLine("Press a key to start the speed tests...");
             Console.ReadKey();
