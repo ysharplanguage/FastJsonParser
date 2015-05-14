@@ -914,7 +914,7 @@ namespace System.Text.Json
                     char* a = c, z = c + n * l;
                     while (true)
                     {
-                        if ((ch = Read()) == '"') { Read(); return i < n ? p[i] : null; }
+                        if ((ch = Read()) == '"') { Read(); return i < n && c < a ? p[i] : null; }
                         while (*a != ch) { if (z <= a) break; a += l; i++; }
                         a++;
                     }
