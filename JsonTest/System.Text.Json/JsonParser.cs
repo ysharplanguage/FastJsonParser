@@ -906,20 +906,17 @@ namespace System.Text.Json
 #else
         private unsafe ItemInfo FasterGetPropInfo(TypeInfo type)
         {
-            var p = type.Props; var m = type.Mlk; int ch = Space(), l = type.Mnl, n = p.Length, c = m[0], i = 0, k = 0, z = n * l;
-            var e = false;
+            var p = type.Props; var m = type.Mlk; int ch = Space(), l = type.Mnl, n = p.Length, i = 0;
             if (ch == '"')
             {
-                Read();
-                fixed (char* a = m)
+                fixed (char* c = m)
                 {
+                    char* a = c, z = c + n * l;
                     while (true)
                     {
-                        if ((ch = chr) == '"') { Read(); return i < n ? p[i] : null; }
-                        if (e = (ch == '\\')) ch = Read();
-                        if (ch < EOF) { if (!e || (ch >= 128)) Read(); else { ch = Esc(ch); e = false; } } else break;
-                        while (k < z && c != ch) { c = a[k += l]; i++; }
-                        c = a[++k];
+                        if ((ch = Read()) == '"') { Read(); return i < n ? p[i] : null; }
+                        while (*a != ch) { if (z <= a) break; a += l; i++; }
+                        a++;
                     }
                 }
             }
