@@ -912,12 +912,13 @@ namespace System.Text.Json
                 fixed (char* c = m)
                 {
                     char* a = c, z = c + n * l;
-                    while (true)
+                    while (i <= n)
                     {
                         if ((ch = Read()) == '"') { Read(); return i < n && c < a ? p[i] : null; }
                         while (*a != ch) { if (z <= a) break; a += l; i++; }
                         a++;
                     }
+                    return null;
                 }
             }
             throw Error("Bad key");
