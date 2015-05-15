@@ -298,7 +298,7 @@ There is therefore type inference - performed at run-time by the [JsonPathSelect
 
 Finally, notice how those delegates' static return type is in fact [System.Object](http://msdn.microsoft.com/en-us/library/System.Object.aspx) (and not [System.Boolean](http://msdn.microsoft.com/en-us/library/System.Boolean.aspx)), for uniformity with the more general member selector expression, as used as an [alternative to explicit names or indices](http://goessner.net/articles/JsonPath/#e2).
 
-More [JSONPath](http://goessner.net/articles/JsonPath) usage examples (after JSON deserialization by [System.Text.Json.JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs)) can be found [here](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L333).
+More [JSONPath](http://goessner.net/articles/JsonPath) usage examples (after JSON deserialization by [System.Text.Json.JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs)) can be found [here](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L342).
 
 E.g., the following [JSONPath](http://goessner.net/articles/JsonPath) expressions work as expected, in [version 1.9.9.7](https://www.nuget.org/packages/System.Text.Json) and up :
 
@@ -347,7 +347,7 @@ E.g., the following [JSONPath](http://goessner.net/articles/JsonPath) expression
 Anonymous types support
 -----------------------
 
-Starting with [version 1.9.9.8](https://www.nuget.org/packages/System.Text.Json), the deserialization into anonymous types instances is also supported. [Here is an example](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L510) to get started :
+Starting with [version 1.9.9.8](https://www.nuget.org/packages/System.Text.Json), the deserialization into anonymous types instances is also supported. [Here is an example](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L519) to get started :
 
             // Anonymous type instance prototype of the target object model,
             // used for static type inference by the C# compiler (see below)
@@ -428,7 +428,7 @@ Integral types support
 
 Starting with [version 2.0.0.0](https://www.nuget.org/packages/System.Text.Json), the following integral types are supported (including as possible [underlying types](http://msdn.microsoft.com/en-us/library/system.enum.getunderlyingtype(v=vs.110).aspx) of programmer-defined [enumeration types](http://msdn.microsoft.com/en-us/library/system.enum(v=vs.110).aspx)) :
 
-([example](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L647))
+([example](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L656))
 
 * [System.SByte (aka "sbyte" in C#)](http://msdn.microsoft.com/en-us/library/System.SByte.aspx) (&gt;= 2.0.0.0)
 * [System.Byte (aka "byte")](http://msdn.microsoft.com/en-us/library/System.Byte.aspx)
@@ -444,8 +444,8 @@ Starting with [version 2.0.0.0](https://www.nuget.org/packages/System.Text.Json)
 Miscellaneous types support
 ---------------------------
 
-* Starting with [version 2.0.0.1](https://www.nuget.org/packages/System.Text.Json), [System.Guid](http://msdn.microsoft.com/en-us/library/System.Guid.aspx) is supported ([example](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L647))
-* Starting with [version 2.0.0.2](https://www.nuget.org/packages/System.Text.Json), some well-known [nullable types](http://msdn.microsoft.com/en-us/library/b3h38hb0.aspx) are supported ([example](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L647)) - these are, in C# syntax :
+* Starting with [version 2.0.0.1](https://www.nuget.org/packages/System.Text.Json), [System.Guid](http://msdn.microsoft.com/en-us/library/System.Guid.aspx) is supported ([example](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L656))
+* Starting with [version 2.0.0.2](https://www.nuget.org/packages/System.Text.Json), some well-known [nullable types](http://msdn.microsoft.com/en-us/library/b3h38hb0.aspx) are supported ([example](https://github.com/ysharplanguage/FastJsonParser/blob/master/JsonTest/ParserTests.cs#L656)) - these are, in C# syntax :
     * bool?
     * char?
     * sbyte?
