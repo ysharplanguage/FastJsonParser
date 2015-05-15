@@ -1,5 +1,5 @@
 // On GitHub: https://github.com/ysharplanguage/FastJsonParser
-#define THIS_JSON_PARSER_ONLY // (If *not* defined, the speed tests will require a reference to (at least) Json.NET)
+//#define THIS_JSON_PARSER_ONLY // (If *not* defined, the speed tests will require a reference to (at least) Json.NET)
 #define RUN_UNIT_TESTS
 #define RUN_BASIC_JSONPATH_TESTS
 #define RUN_ADVANCED_JSONPATH_TESTS
@@ -23,8 +23,7 @@ using NetJSON; // Cf. https://www.nuget.org/packages/NetJSON
 #endif
 #endif
 
-// Our stuff; cf. https://www.nuget.org/packages/System.Text.Json
-using System.Text.Json;
+using System.Text.Json; // Our stuff; cf. https://www.nuget.org/packages/System.Text.Json
 
 namespace Test
 {
@@ -293,6 +292,7 @@ namespace Test
 
     class ParserTests
     {
+        private static readonly string THE_BURNING_MONK_TEST_FILE_PATH = string.Format(@"..{0}..{0}TestData{0}yan-cui-10k-simple-objects.json.txt", Path.DirectorySeparatorChar);
         private static readonly string OJ_TEST_FILE_PATH = string.Format(@"..{0}..{0}TestData{0}_oj-highly-nested.json.txt", Path.DirectorySeparatorChar);
         private static readonly string BOON_SMALL_TEST_FILE_PATH = string.Format(@"..{0}..{0}TestData{0}boon-small.json.txt", Path.DirectorySeparatorChar);
         private static readonly string TINY_TEST_FILE_PATH = string.Format(@"..{0}..{0}TestData{0}tiny.json.txt", Path.DirectorySeparatorChar);
@@ -499,18 +499,18 @@ namespace Test
             var parser = new JsonParser();
             var parsed = parser.Parse<FathersData>(System.IO.File.ReadAllText(FATHERS_TEST_FILE_PATH));
             var jsonPath = new JsonPathSelection(parsed, evaluator);
-            var st = DateTime.Now;
+            var st = Time.Start();
             var minorSonCount = jsonPath.SelectNodes("$.fathers[*].sons[?(@.age < 18)]").Length;
             var legalSonCount = jsonPath.SelectNodes("$.fathers[*].sons[?(@.age >= 18)]").Length;
             var totalSonCount = jsonPath.SelectNodes("$.fathers[*].sons[*]").Length;
-            var tm = (int)DateTime.Now.Subtract(st).TotalMilliseconds;
+            var tm = st.ElapsedMilliseconds;
             Assert(totalSonCount == minorSonCount + legalSonCount);
             Console.WriteLine();
             Console.WriteLine("\t\t\t$.fathers[*].sons[?(@.age < 18)]\t:\t{0}", minorSonCount);
             Console.WriteLine("\t\t\t$.fathers[*].sons[?(@.age >= 18)]\t:\t{0}", legalSonCount);
             Console.WriteLine("\t\t\t$.fathers[*].sons[*]\t\t\t:\t{0}", totalSonCount);
             Console.WriteLine();
-            Console.WriteLine("\t\t\t... in {0} ms.", tm);
+            Console.WriteLine("\t\t\t... in {0} ms.", tm.ToString("0,0"));
             Console.WriteLine();
             Console.WriteLine("Press a key...");
             Console.WriteLine();
@@ -898,11 +898,11 @@ namespace Test
             var initialMemory = System.GC.GetTotalMemory(true);
 
             var json = System.IO.File.ReadAllText(testFile);
-            var st = DateTime.Now;
+            var st = Time.Start();
             var l = new List<object>();
             for (var i = 0; i < count; i++)
                 l.Add(parseFunc(json));
-            var tm = (int)DateTime.Now.Subtract(st).TotalMilliseconds;
+            var tm = st.ElapsedMilliseconds;
 
             System.Threading.Thread.MemoryBarrier();
             var finalMemory = System.GC.GetTotalMemory(true);
@@ -951,7 +951,7 @@ namespace Test
             var initialMemory = System.GC.GetTotalMemory(true);
 
             var json = System.IO.File.ReadAllText(testFile);
-            var st = DateTime.Now;
+            var st = Time.Start();
             var o = parseFunc(json);
             if (jsonPathTest)
             {
@@ -959,7 +959,7 @@ namespace Test
                 var assertion = jsonPathAssert(selection);
                 Assert(assertion);
             }
-            var tm = (int)DateTime.Now.Subtract(st).TotalMilliseconds;
+            var tm = st.ElapsedMilliseconds;
 
             System.Threading.Thread.MemoryBarrier();
             var finalMemory = System.GC.GetTotalMemory(true);
@@ -982,8 +982,41 @@ namespace Test
             Console.ReadKey();
         }
 
+        public sealed class Time
+        {
+            private System.Diagnostics.Stopwatch w = System.Diagnostics.Stopwatch.StartNew();
+            private Time() { }
+            public static Time Start() { return new Time(); }
+            public long Reset() { w.Stop(); var t = (long)w.ElapsedMilliseconds; w.Restart(); return t; }
+            public long ElapsedMilliseconds { get { return Reset(); } }
+        }
+
         static void SpeedTests()
         {
+#if !THIS_JSON_PARSER_ONLY
+            //LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<TheBurningMonk.RootObject>, THE_BURNING_MONK_TEST_FILE_PATH, 10);
+            LoopTest(GetVersionString(typeof(JsonConvert).Assembly.GetName()), JsonConvert.DeserializeObject<TheBurningMonk.RootObject>, THE_BURNING_MONK_TEST_FILE_PATH, 10);
+#if RUN_SERVICESTACK_TESTS
+            LoopTest("ServiceStack", new JsonSerializer<TheBurningMonk.RootObject>().DeserializeFromString, THE_BURNING_MONK_TEST_FILE_PATH, 10);
+#endif
+#if RUN_NETJSON_TESTS
+            LoopTest(GetVersionString(typeof(NetJSON.NetJSON).Assembly.GetName()), NetJSON.NetJSON.Deserialize<TheBurningMonk.RootObject>, THE_BURNING_MONK_TEST_FILE_PATH, 10);
+#endif
+#endif
+            LoopTest(GetVersionString(typeof(JsonParser).Assembly.GetName()), new JsonParser().Parse<TheBurningMonk.RootObject>, THE_BURNING_MONK_TEST_FILE_PATH, 10);
+
+#if !THIS_JSON_PARSER_ONLY
+            //LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().Deserialize<TheBurningMonk.RootObject>, THE_BURNING_MONK_TEST_FILE_PATH, 100);
+            LoopTest(GetVersionString(typeof(JsonConvert).Assembly.GetName()), JsonConvert.DeserializeObject<TheBurningMonk.RootObject>, THE_BURNING_MONK_TEST_FILE_PATH, 100);
+#if RUN_SERVICESTACK_TESTS
+            LoopTest("ServiceStack", new JsonSerializer<TheBurningMonk.RootObject>().DeserializeFromString, THE_BURNING_MONK_TEST_FILE_PATH, 100);
+#endif
+#if RUN_NETJSON_TESTS
+            LoopTest(GetVersionString(typeof(NetJSON.NetJSON).Assembly.GetName()), NetJSON.NetJSON.Deserialize<TheBurningMonk.RootObject>, THE_BURNING_MONK_TEST_FILE_PATH, 100);
+#endif
+#endif
+            LoopTest(GetVersionString(typeof(JsonParser).Assembly.GetName()), new JsonParser().Parse<TheBurningMonk.RootObject>, THE_BURNING_MONK_TEST_FILE_PATH, 100);
+
 #if !THIS_JSON_PARSER_ONLY
             LoopTest(typeof(JavaScriptSerializer).FullName, new JavaScriptSerializer().DeserializeObject, OJ_TEST_FILE_PATH, 10000);
             LoopTest(GetVersionString(typeof(JsonConvert).Assembly.GetName()), JsonConvert.DeserializeObject, OJ_TEST_FILE_PATH, 10000);
@@ -1239,9 +1272,9 @@ namespace Test
                 Console.WriteLine("\"Fathers\" Test... streamed{0} (press a key)", (filter != null) ? " AND filtered" : String.Empty);
                 Console.WriteLine();
                 Console.ReadKey();
-                var st = DateTime.Now;
+                var st = Time.Start();
                 var o = new JsonParser().Parse<FathersData>(reader, filter);
-                var tm = (int)DateTime.Now.Subtract(st).TotalMilliseconds;
+                var tm = st.ElapsedMilliseconds;
 
                 System.Threading.Thread.MemoryBarrier();
                 var finalMemory = System.GC.GetTotalMemory(true);
@@ -1253,7 +1286,7 @@ namespace Test
                     Assert(o.fathers.Length == 30000);
                 }
                 Console.WriteLine();
-                Console.WriteLine("... {0} ms", tm);
+                Console.WriteLine("... {0} ms", tm.ToString("0,0"));
                 Console.WriteLine();
                 Console.WriteLine("\tMemory used : {0}", ((decimal)finalMemory).ToString("0,0"));
                 Console.WriteLine();
@@ -1448,6 +1481,25 @@ namespace Test
                 Console.Error.WriteLine("\t\t\t\t^^^ TEST FAILED!");
             }
         }
+    }
+}
+
+namespace TheBurningMonk
+{
+    public class RootObject
+    {
+        public SimpleObject[] All { get; set; }
+    }
+
+    public class SimpleObject
+    {
+        public int Id { get; set; }
+
+        public string Name { get; set; }
+
+        public string Address { get; set; }
+
+        public int[] Scores { get; set; }
     }
 }
 
