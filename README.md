@@ -11,14 +11,14 @@ System.Text.Json
 * <a href="#AnonymousTypes">Anonymous types support</a> (&gt;= 1.9.9.8)
 * <a href="#IntegralTypes">Integral types support</a> (&gt;= 2.0.0.0)
 * <a href="#MiscellaneousTypes">Miscellaneous types support</a>
-* <a href="#Performance">Performance</a>
-    * <a href="#PerfOverview">Speed Tests Results : Overview</a>
-    * <a href="#PerfDetailed">Speed Tests Results : Detailed</a>
-* <a href="#POCOs">Test target POCOs</a>
 * <a href="#Limitations">Known limitations / caveats</a>
 * <a href="#Roadmap">Roadmap</a>
 * <a href="#Background">Background</a>
 * <a href="#FAQ">CFAQ</a>
+* <a href="#Performance">Performance</a>
+    * <a href="#PerfOverview">Speed Tests Results : Overview</a>
+    * <a href="#PerfDetailed">Speed Tests Results : Detailed</a>
+* <a href="#POCOs">Test target POCOs</a>
 
 <a name="Overview"></a>
 
@@ -464,6 +464,76 @@ Miscellaneous types support
     * DateTimeOffset?
     * ... as well as any programmer-defined nullable [enumeration type](http://msdn.microsoft.com/en-us/library/system.enum(v=vs.110).aspx)
 
+<a name="Limitations"></a>
+
+Known limitations / caveats
+---------------------------
+
+* The current [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs)'s instance methods implementation is **neither** [thread-safe or reentrant](http://en.wikipedia.org/wiki/Thread_safety#Implementation_approaches).
+    * (Work is underway to make [the "Parse" methods of the public interface](#Interface) *at least* [reentrant](http://en.wikipedia.org/wiki/Reentrancy_(computing)#Rules_for_reentrancy) for any given [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) instance.)
+* <s>Incoming "null"s are not yet recognized as a valid "value" (or rather, absence thereof) for nullable types members of the target POCO(s).</s>
+    * <s>(Support for such explicited "null"s will be added asap.)</s> (fixed in [version 2.0.0.5](https://www.nuget.org/packages/System.Text.Json))
+
+<a name="Roadmap"></a>
+
+Roadmap
+-------
+
+None really worth of the name for now (beyond what is mentioned in "[known limitations](#Limitations)" above).
+
+<s>However, one thing I would like to support as soon as I can, is the ability to deserialize into [C#'s anonymous types](http://en.wikipedia.org/wiki/Anonymous_type). I've done it before, but I need to put more thinking into it (vs. [my first, other attempt at it](https://code.google.com/p/ysharp/source/browse/trunk/TestJSONParser/%28System.Text.Json%29Parser.cs)), in order to avoid the potential significant loss in performance I'm aware of.</s>
+
+<s>Another, quite obvious, item on the wish list is to provide some support for custom deserialization. Design-wise, I do have a preference for a [functional approach](http://en.wikipedia.org/wiki/First-class_function#Language_support) which would be based on (more or less) arbitrary "reviver" [delegate types](http://en.wikipedia.org/wiki/Delegate_%28CLI%29#Technical_Implementation_Details), for use by the parser's methods (for typical IoC / callback use cases).</s>
+
+<s>Again, the main implementation challenge will be not drifting too much from the current parsing speed ballpark.</s>
+
+In any case, I don't plan to make this small JSON deserializer as general-purpose and extensible as Json.NET or ServiceStack's, I just want to keep it as simple, short, and fast as possible for my present and future needs (read on).
+
+<a name="Background"></a>
+
+Background
+----------
+
+Pure parsing + deserialization speed isn't in fact my *long term* goal, or not for any *arbitrary* JSON input, anyway. For another, and broader project - still in design stage - that I have, I plan to use JSON as a "malleable" IR (intermediate representation) for code and meta data transformations that I'll have to make happen in-between a high level source language (e.g., C#, or F#,...) and the target CIL (or some other lower target).
+
+[Json.NET](http://james.newtonking.com/json)'s deserialization performance is great, and so is [ServiceStack](https://github.com/ServiceStack/ServiceStack)'s - [really, they are, already](http://theburningmonk.com/benchmarks/) - but I would like to have something of my own in my toolbox much smaller / more manageable (in terms of # of SLOC), and simpler to extend, for whatever unforeseen requirements of the deserialization process (from JSON text into CLR types and values) I may have to tackle.
+
+This parser / deserializer is / was also a nice learning opportunity in regards to parsing JSON, and to verify by myself once again [what I had read about](http://msdn.microsoft.com/en-us/magazine/cc507639.aspx) and experienced many times before. That is: never try to merely guess about performance, but instead always do your best to measure and to find out *where exactly* the parsing and deserialization slowdowns (and memory consumption costs) *actually* come from.
+
+<a name="FAQ"></a>
+
+CFAQ
+----
+
+(Could-be Frequently Asked Questions)
+
+* Q : Isn't it a bit confusing, somehow, that [the "Parse" methods of the public interface](#Interface) do actually more than just parse the input against [the JSON syntax](http://www.json.org/), but also perform the work that most other JSON implementations call "Deserialize"?
+    * A : **Yes** and **no**. It is indeed true that [these "Parse" methods](#Interface) do more than just parse the input, but they have been named that way because this [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) is designed to remain only that : *merely* a JSON **parser** and **deserializer**, thus *without* any JSON *serialization*-related feature. By not naming them "Deserialize", this helps to avoid another otherwise possible confusion as to why there are no "Serialize" methods to be found anywhere, w.r.t. the dual operation (*serialization* vs. *deserialization*).
+* Q : Do you foresee that you'll make any breaking changes to [the public interface](#Interface) in the near-, mid-, or long-term?
+    * A : For [most of it](#Interface), **no**, I should not and I won't. The only [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs)'s instance methods that may be subject to change / to some refactoring (or disappear altogether) in the future, are those taking that last "IDictionary&lt;Type, Func&lt;...&gt;&gt; mappers" parameter (for now a rudimentary provision to support custom filtered deserialization use cases). So, all of the following are definitely going to stay around for as long as [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) is developed and maintained here :
+
+[JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs)'s (*stable* public interface)
+
+        object Parse(string input)
+        object Parse(TextReader input)
+        object Parse(Stream input)
+        object Parse(Stream input, Encoding encoding)
+        T Parse<T>(string input)
+        T Parse<T>(T prototype, string input)
+        T Parse<T>(TextReader input)
+        T Parse<T>(T prototype, TextReader input)
+        T Parse<T>(Stream input)
+        T Parse<T>(T prototype, Stream input)
+        T Parse<T>(Stream input, Encoding encoding)
+        T Parse<T>(T prototype, Stream input, Encoding encoding)
+
+Other questions?
+----------------
+
+Feel free to send them to :
+
+ysharp {dot} design {at} gmail {dot} com
+
 <a name="Performance"></a>
 <a name="Performances"></a>
 
@@ -904,73 +974,3 @@ These are used by some of the above tests :
         {
             public string maidenName { get; set; }
         }
-
-<a name="Limitations"></a>
-
-Known limitations / caveats
----------------------------
-
-* The current [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs)'s instance methods implementation is **neither** [thread-safe or reentrant](http://en.wikipedia.org/wiki/Thread_safety#Implementation_approaches).
-    * (Work is underway to make [the "Parse" methods of the public interface](#Interface) *at least* [reentrant](http://en.wikipedia.org/wiki/Reentrancy_(computing)#Rules_for_reentrancy) for any given [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) instance.)
-* <s>Incoming "null"s are not yet recognized as a valid "value" (or rather, absence thereof) for nullable types members of the target POCO(s).</s>
-    * <s>(Support for such explicited "null"s will be added asap.)</s> (fixed in [version 2.0.0.5](https://www.nuget.org/packages/System.Text.Json))
-
-<a name="Roadmap"></a>
-
-Roadmap
--------
-
-None really worth of the name for now (beyond what is mentioned in "[known limitations](#Limitations)" above).
-
-<s>However, one thing I would like to support as soon as I can, is the ability to deserialize into [C#'s anonymous types](http://en.wikipedia.org/wiki/Anonymous_type). I've done it before, but I need to put more thinking into it (vs. [my first, other attempt at it](https://code.google.com/p/ysharp/source/browse/trunk/TestJSONParser/%28System.Text.Json%29Parser.cs)), in order to avoid the potential significant loss in performance I'm aware of.</s>
-
-<s>Another, quite obvious, item on the wish list is to provide some support for custom deserialization. Design-wise, I do have a preference for a [functional approach](http://en.wikipedia.org/wiki/First-class_function#Language_support) which would be based on (more or less) arbitrary "reviver" [delegate types](http://en.wikipedia.org/wiki/Delegate_%28CLI%29#Technical_Implementation_Details), for use by the parser's methods (for typical IoC / callback use cases).</s>
-
-<s>Again, the main implementation challenge will be not drifting too much from the current parsing speed ballpark.</s>
-
-In any case, I don't plan to make this small JSON deserializer as general-purpose and extensible as Json.NET or ServiceStack's, I just want to keep it as simple, short, and fast as possible for my present and future needs (read on).
-
-<a name="Background"></a>
-
-Background
-----------
-
-Pure parsing + deserialization speed isn't in fact my *long term* goal, or not for any *arbitrary* JSON input, anyway. For another, and broader project - still in design stage - that I have, I plan to use JSON as a "malleable" IR (intermediate representation) for code and meta data transformations that I'll have to make happen in-between a high level source language (e.g., C#, or F#,...) and the target CIL (or some other lower target).
-
-[Json.NET](http://james.newtonking.com/json)'s deserialization performance is great, and so is [ServiceStack](https://github.com/ServiceStack/ServiceStack)'s - [really, they are, already](http://theburningmonk.com/benchmarks/) - but I would like to have something of my own in my toolbox much smaller / more manageable (in terms of # of SLOC), and simpler to extend, for whatever unforeseen requirements of the deserialization process (from JSON text into CLR types and values) I may have to tackle.
-
-This parser / deserializer is / was also a nice learning opportunity in regards to parsing JSON, and to verify by myself once again [what I had read about](http://msdn.microsoft.com/en-us/magazine/cc507639.aspx) and experienced many times before. That is: never try to merely guess about performance, but instead always do your best to measure and to find out *where exactly* the parsing and deserialization slowdowns (and memory consumption costs) *actually* come from.
-
-<a name="FAQ"></a>
-
-CFAQ
-----
-
-(Could-be Frequently Asked Questions)
-
-* Q : Isn't it a bit confusing, somehow, that [the "Parse" methods of the public interface](#Interface) do actually more than just parse the input against [the JSON syntax](http://www.json.org/), but also perform the work that most other JSON implementations call "Deserialize"?
-    * A : **Yes** and **no**. It is indeed true that [these "Parse" methods](#Interface) do more than just parse the input, but they have been named that way because this [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) is designed to remain only that : *merely* a JSON **parser** and **deserializer**, thus *without* any JSON *serialization*-related feature. By not naming them "Deserialize", this helps to avoid another otherwise possible confusion as to why there are no "Serialize" methods to be found anywhere, w.r.t. the dual operation (*serialization* vs. *deserialization*).
-* Q : Do you foresee that you'll make any breaking changes to [the public interface](#Interface) in the near-, mid-, or long-term?
-    * A : For [most of it](#Interface), **no**, I should not and I won't. The only [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs)'s instance methods that may be subject to change / to some refactoring (or disappear altogether) in the future, are those taking that last "IDictionary&lt;Type, Func&lt;...&gt;&gt; mappers" parameter (for now a rudimentary provision to support custom filtered deserialization use cases). So, all of the following are definitely going to stay around for as long as [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) is developed and maintained here :
-
-[JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs)'s (*stable* public interface)
-
-        object Parse(string input)
-        object Parse(TextReader input)
-        object Parse(Stream input)
-        object Parse(Stream input, Encoding encoding)
-        T Parse<T>(string input)
-        T Parse<T>(T prototype, string input)
-        T Parse<T>(TextReader input)
-        T Parse<T>(T prototype, TextReader input)
-        T Parse<T>(Stream input)
-        T Parse<T>(T prototype, Stream input)
-        T Parse<T>(Stream input, Encoding encoding)
-        T Parse<T>(T prototype, Stream input, Encoding encoding)
-
-Other questions?
-----------------
-
-Feel free to send them to :
-
-ysharp {dot} design {at} gmail {dot} com
