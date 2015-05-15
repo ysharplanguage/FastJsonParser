@@ -1168,8 +1168,8 @@ namespace Test
 #if RUN_SERVICESTACK_TESTS
             Test("ServiceStack", new JsonSerializer<FathersData>().DeserializeFromString, FATHERS_TEST_FILE_PATH);
 #endif
-#if RUN_NETJSON_TESTS
-            Test(GetVersionString(typeof(NetJSON.NetJSON).Assembly.GetName()), NetJSON.NetJSON.Deserialize<FathersData>, FATHERS_TEST_FILE_PATH);
+#if RUN_NETJSON_TESTS // Has an issue with NetJSON 1.0.7...
+            //Test(GetVersionString(typeof(NetJSON.NetJSON).Assembly.GetName()), NetJSON.NetJSON.Deserialize<FathersData>, FATHERS_TEST_FILE_PATH);
 #endif
 #endif
             Test(GetVersionString(typeof(JsonParser).Assembly.GetName()), new JsonParser().Parse<FathersData>, FATHERS_TEST_FILE_PATH);
