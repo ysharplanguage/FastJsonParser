@@ -1,29 +1,29 @@
 // On GitHub: https://github.com/ysharplanguage/FastJsonParser
-#define THIS_JSON_PARSER_ONLY // (If not defined, these tests will require a reference to Json.NET)
+#define THIS_JSON_PARSER_ONLY // (If *not* defined, the speed tests will require a reference to (at least) Json.NET)
 #define RUN_UNIT_TESTS
 #define RUN_BASIC_JSONPATH_TESTS
 #define RUN_ADVANCED_JSONPATH_TESTS
-#define RUN_SERVICESTACK_TESTS // (If defined, these tests will require a reference to ServiceStack)
+#define RUN_SERVICESTACK_TESTS              // (If defined, the speed tests may require a reference to ServiceStack)
+#define RUN_NETJSON_TESTS                   // (If defined, the speed tests may require a reference to NetJSON)
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-// For the JavaScriptSerializer
-using System.Web.Script.Serialization;
+using System.Web.Script.Serialization; // For Microsoft's JavaScriptSerializer
 
 #if !THIS_JSON_PARSER_ONLY
-// For Json.NET
-using Newtonsoft.Json;
-
+using Newtonsoft.Json; // Cf. https://www.nuget.org/packages/Newtonsoft.Json
 #if RUN_SERVICESTACK_TESTS
-// For ServiceStack
-using ServiceStack.Text;
+using ServiceStack.Text; // Cf. https://www.nuget.org/packages/ServiceStack.Text
+#endif
+#if RUN_NETJSON_TESTS
+using NetJSON; // Cf. https://www.nuget.org/packages/NetJSON
 #endif
 #endif
 
-// Our stuff
+// Our stuff; cf. https://www.nuget.org/packages/System.Text.Json
 using System.Text.Json;
 
 namespace Test
@@ -999,6 +999,9 @@ namespace Test
 #if RUN_SERVICESTACK_TESTS
             LoopTest("ServiceStack", new JsonSerializer<HighlyNested>().DeserializeFromString, OJ_TEST_FILE_PATH, 10000);
 #endif
+#if RUN_NETJSON_TESTS
+            LoopTest(GetVersionString(typeof(NetJSON.NetJSON).Assembly.GetName()), NetJSON.NetJSON.Deserialize<HighlyNested>, OJ_TEST_FILE_PATH, 10000);
+#endif
 #endif
             LoopTest(GetVersionString(typeof(JsonParser).Assembly.GetName()), new JsonParser().Parse<HighlyNested>, OJ_TEST_FILE_PATH, 10000);
 
@@ -1016,6 +1019,9 @@ namespace Test
             LoopTest(GetVersionString(typeof(JsonConvert).Assembly.GetName()), JsonConvert.DeserializeObject<HighlyNested>, OJ_TEST_FILE_PATH, 100000);
 #if RUN_SERVICESTACK_TESTS
             LoopTest("ServiceStack", new JsonSerializer<HighlyNested>().DeserializeFromString, OJ_TEST_FILE_PATH, 100000);
+#endif
+#if RUN_NETJSON_TESTS
+            LoopTest(GetVersionString(typeof(NetJSON.NetJSON).Assembly.GetName()), NetJSON.NetJSON.Deserialize<HighlyNested>, OJ_TEST_FILE_PATH, 100000);
 #endif
 #endif
             LoopTest(GetVersionString(typeof(JsonParser).Assembly.GetName()), new JsonParser().Parse<HighlyNested>, OJ_TEST_FILE_PATH, 100000);
@@ -1116,6 +1122,9 @@ namespace Test
 #if RUN_SERVICESTACK_TESTS
             LoopTest("ServiceStack", new JsonSerializer<TwitterSample.RootObject>().DeserializeFromString, TWITTER_TEST_FILE_PATH, 100000);
 #endif
+#if RUN_NETJSON_TESTS
+            LoopTest(GetVersionString(typeof(NetJSON.NetJSON).Assembly.GetName()), NetJSON.NetJSON.Deserialize<TwitterSample.RootObject>, TWITTER_TEST_FILE_PATH, 100000);
+#endif
 #endif
             LoopTest(GetVersionString(typeof(JsonParser).Assembly.GetName()), new JsonParser().Parse<TwitterSample.RootObject>, TWITTER_TEST_FILE_PATH, 100000);
 
@@ -1125,6 +1134,9 @@ namespace Test
             Test(GetVersionString(typeof(JsonConvert).Assembly.GetName()), JsonConvert.DeserializeObject<FathersData>, FATHERS_TEST_FILE_PATH);
 #if RUN_SERVICESTACK_TESTS
             Test("ServiceStack", new JsonSerializer<FathersData>().DeserializeFromString, FATHERS_TEST_FILE_PATH);
+#endif
+#if RUN_NETJSON_TESTS
+            Test(GetVersionString(typeof(NetJSON.NetJSON).Assembly.GetName()), NetJSON.NetJSON.Deserialize<FathersData>, FATHERS_TEST_FILE_PATH);
 #endif
 #endif
             Test(GetVersionString(typeof(JsonParser).Assembly.GetName()), new JsonParser().Parse<FathersData>, FATHERS_TEST_FILE_PATH);
