@@ -595,6 +595,41 @@ Just for comparison out of curiosity, on the third row of the table below I also
 
 So, without further ado... (larger figure - # parses per second - means faster)
 
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<div id="chart_div"></div>
+
+<script type="text/javascript">//<!--
+google.load('visualization', '1', {packages: ['corechart', 'bar']});
+google.setOnLoadCallback(drawBasic);
+
+function drawBasic() {
+
+      var data = google.visualization.arrayToDataTable([
+        ['JSON source', 'Microsoft\'s JavaScriptSerializer', 'Json.NET', 'ServiceStack', 'This JsonParser'],
+        ['_oj-highly-nested.json x 100K',	1000,		12600, 	0,		36900],
+        ['boon-small.json	(POCO) x 10M',	33100,	143300, 	182500,	271000],
+        ['tiny.json (POCO) x 1M',		18400,	101000, 	147000, 	169500],
+        ['dicos.json (POCO) x 1M',		0,		7200,		18700,	38800]
+      ]);
+
+      var options = {
+        title: 'Speed Tests Results',
+        chartArea: {width: '50%'},
+        hAxis: {
+          title: 'Parses / sec',
+          minValue: 0
+        },
+        vAxis: {
+          title: 'JSON source'
+        }
+      };
+
+      var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+
+      chart.draw(data, options);
+    }
+//--></script>
+
 <table border="1" width="100%">
 <tr>
 <th>Test /<br/>JSON size /<br/># Iterations /<br/>POCO or<br/>loosely-typed?</th>
