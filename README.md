@@ -540,6 +540,10 @@ ysharp {dot} design {at} gmail {dot} com
 Performance
 -----------
 
+![Speed Tests Results](http://i.imgur.com/3NXqBEo.png "Speed Tests Results")
+
+([Bar chart on jsfiddle.net](http://jsfiddle.net/9hsp9107/5))
+
 Following in the table below: a few figures, the outcome *average numbers* (only) that I obtain from the tests provided here.
 
 Consistently enough, I also obtain similar performance ratios for the same 4 parsers / deserializers when compared one-to-one, after I adapt (for this [JsonParser](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs) doesn't provide object-to-JSON text *serialization*) and I run "the burning monk's" simple speed tester for JSON, which can be found at :
@@ -594,8 +598,6 @@ Just for comparison out of curiosity, on the third row of the table below I also
 ***Speed Tests Results : Detailed***
 
 So, without further ado... (larger figure - # parses per second - means faster)
-
-([Bar chart on jsfiddle.net](http://jsfiddle.net/9hsp9107/5))
 
 <table border="1" width="100%">
 <tr>
