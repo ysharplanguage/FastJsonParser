@@ -595,7 +595,7 @@ Just for comparison out of curiosity, on the third row of the table below I also
 
 So, without further ado... (larger figure - # parses per second - means faster)
 
-([Bar chart on jsfiddle.net](https://jsfiddle.net/9hsp9107))
+([Bar chart on jsfiddle.net](http://jsfiddle.net/9hsp9107/5))
 
 <table border="1" width="100%">
 <tr>
