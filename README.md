@@ -27,7 +27,7 @@ System.Text.Json
 "Small is beautiful."
 ---------------------
 
-This is a minimalistic and fast JSON parser / deserializer, for full .NET.
+This is a minimalistic and fast [JSON](http://www.json.org/) parser / [deserializer](https://en.wikipedia.org/wiki/Serialization#Serialization_formats), for full .NET.
 
 The complete source code of the parser is pretty short (in a [single source file less than 1,700 SLOC-long](https://raw.githubusercontent.com/ysharplanguage/FastJsonParser/master/JsonTest/System.Text.Json/JsonParser.cs), not counting the comments) and comes with some speed tests and their sample data, all in the "JsonTest" and "TestData" folders.
 
