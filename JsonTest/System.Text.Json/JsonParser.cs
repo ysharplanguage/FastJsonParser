@@ -873,7 +873,7 @@ namespace System.Text.Json
         private Guid ParseGuid(int outer)
         {
             var s = ParseString(0);
-            if (!String.IsNullOrWhiteSpace(s))
+            if (!StringExtensions.IsNullOrWhiteSpace(s))
                 return new Guid(s);
             throw Error("Bad GUID");
         }
