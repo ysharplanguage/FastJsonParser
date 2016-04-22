@@ -1,6 +1,8 @@
 System.Text.Json
 ================
 
+[![Join the chat at https://gitter.im/ysharplanguage/FastJsonParser](https://badges.gitter.im/ysharplanguage/FastJsonParser.svg)](https://gitter.im/ysharplanguage/FastJsonParser?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 * <a href="#Overview">Overview</a>
     * <a href="#Introduction">Introduction</a>
     * <a href="#Goal">Design goal</a>
