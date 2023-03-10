@@ -2,7 +2,7 @@
 /*
  * Copyright (c) 2013, 2014, 2015 Cyril Jandia
  *
- * http://www.cjandia.com/
+ * https://ysharp.io/
  *
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
